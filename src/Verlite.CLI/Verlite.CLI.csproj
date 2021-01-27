@@ -7,7 +7,6 @@
 
     <Description>Automatic Git versioning with a focus on tags and continuous delivery.</Description>
     <RootNamespace>Verlite.CLI</RootNamespace>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
