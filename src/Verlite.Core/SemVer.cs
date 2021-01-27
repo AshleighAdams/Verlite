@@ -79,9 +79,9 @@ namespace Verlite
 				return true;
 			else if (input is >= 'A' and <= 'Z')
 				return true;
-			else if (input is >= '.')
+			else if (input is '.')
 				return true;
-			else if (input is >= '-')
+			else if (input is '-')
 				return true;
 			else
 				return false;
