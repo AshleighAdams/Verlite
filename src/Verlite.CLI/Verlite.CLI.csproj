@@ -1,12 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <OutputType>Exe</OutputType>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>verlite</ToolCommandName>
 
     <Description>Automatic Git versioning with a focus on tags and continuous delivery.</Description>
     <RootNamespace>Verlite.CLI</RootNamespace>
+
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <!-- The below will cause our exception messages to be translated. -->
+    <UseSystemResourceKeys>false</UseSystemResourceKeys>
   </PropertyGroup>
 
   <ItemGroup>

@@ -10,16 +10,18 @@ namespace Verlite.CLI
 {
 	public static class Program
 	{
+		public static readonly VersionCalculationOptions DefaultOptions = new();
+
 		public static SemVer ParseMinSemVerArg(System.CommandLine.Parsing.ArgumentResult result)
 		{
 			if (result.Tokens.Count == 0)
-				return VersionCalculationOptions.DefaultMinimiumVersion;
+				return DefaultOptions.MinimiumVersion;
 
 			var tokenValue = result.Tokens.Single().Value;
 			if (!SemVer.TryParse(tokenValue, out var version))
 			{
 				result.ErrorMessage = $"Failed to parse version {tokenValue} for option {result.Argument.Name}";
-				return VersionCalculationOptions.DefaultMinimiumVersion;
+				return DefaultOptions.MinimiumVersion;
 			}
 
 			return version.Value;
@@ -27,17 +29,15 @@ namespace Verlite.CLI
 
 		public static async Task<int> Main(string[] args)
 		{
-			var defaultOpts = new VersionCalculationOptions();
-
 			var rootCommand = new RootCommand
 			{
 				new Option<string>(
 					aliases: new[] { "--tag-prefix", "-t" },
-					getDefaultValue: () => defaultOpts.TagPrefix.ToString(),
+					getDefaultValue: () => DefaultOptions.TagPrefix.ToString(),
 					description: "Tags starting with this represent versions."),
 				new Option<string>(
 					aliases: new[] { "--default-prerelease-phase", "-d" },
-					getDefaultValue: () => defaultOpts.DefaultPrereleasePhase.ToString(),
+					getDefaultValue: () => DefaultOptions.DefaultPrereleasePhase.ToString(),
 					description: "The default phase for the prerlease label.\nFor MinVer compatibility, set this to \"alpha.0\"."),
 				new Option<SemVer>(
 					aliases: new[] { "--min-version", "-m" },
@@ -46,7 +46,7 @@ namespace Verlite.CLI
 					description: "The minimum RTM version, i.e the destined version."),
 				new Option<int>(
 					aliases: new[] { "--prerelease-base-height", "-p" },
-					getDefaultValue: () => defaultOpts.PrereleaseBaseHeight,
+					getDefaultValue: () => DefaultOptions.PrereleaseBaseHeight,
 					description: "The height for continious deliverable auto heights should begin at.\nFor MinVer compatibility, set this to 0."),
 				new Argument<string>(
 					name: "sourceDirectory",
@@ -72,7 +72,8 @@ namespace Verlite.CLI
 				PrereleaseBaseHeight = prereleaseBaseHeight,
 			};
 
-			Console.WriteLine($"Hello, world! {tagPrefix} {defaultPrereleasePhase} {minVersion} {prereleaseBaseHeight} {sourceDirectory}");
+			//Console.WriteLine($"Hello, world! {tagPrefix} {defaultPrereleasePhase} {minVersion} {prereleaseBaseHeight} {sourceDirectory}");
+			Console.WriteLine($"{minVersion}");
 		}
 	}
 }

@@ -13,7 +13,6 @@ static Verlite.SemVer.operator >(Verlite.SemVer left, Verlite.SemVer right) -> b
 static Verlite.SemVer.operator >=(Verlite.SemVer left, Verlite.SemVer right) -> bool
 static Verlite.SemVer.Parse(string! input) -> Verlite.SemVer
 static Verlite.SemVer.TryParse(string! input, out Verlite.SemVer? version) -> bool
-static Verlite.VersionCalculationOptions.DefaultMinimiumVersion.get -> Verlite.SemVer
 static Verlite.VersionCalculator.Bump(Verlite.SemVer version, Verlite.VersionCalculationOptions! options, int height) -> Verlite.SemVer
 static Verlite.VersionCalculator.CalculateVersion(Verlite.SemVer? lastTag, Verlite.VersionCalculationOptions! options, int height) -> Verlite.SemVer
 static Verlite.VersionCalculator.NextVersion(Verlite.SemVer lastTag, Verlite.VersionCalculationOptions! options) -> Verlite.SemVer
