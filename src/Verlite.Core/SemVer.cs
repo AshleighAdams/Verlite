@@ -53,13 +53,13 @@ namespace Verlite
 
 			if (string.IsNullOrEmpty(prerelease))
 				prerelease = null;
-			else if (!IsValidIdentifierString(prerelease))
-				return false;
+			else
+				Debug.Assert(IsValidIdentifierString(prerelease));
 
 			if (string.IsNullOrEmpty(buildMetadata))
 				buildMetadata = null;
-			else if (!IsValidIdentifierString(buildMetadata))
-				return false;
+			else
+				Debug.Assert(IsValidIdentifierString(buildMetadata));
 
 			version = new SemVer(major, minor, patch, prerelease, buildMetadata);
 			return true;
@@ -73,15 +73,18 @@ namespace Verlite
 
 		public static bool IsValidIdentifierCharacter(char input)
 		{
-			return input switch
-			{
-				>= '0' and <= '9' => true,
-				>= 'a' and <= 'z' => true,
-				>= 'A' and <= 'Z' => true,
-				'.' => true,
-				'-' => true,
-				_ => false,
-			};
+			if (input is >= '0' and <= '9')
+				return true;
+			else if (input is >= 'a' and <= 'z')
+				return true;
+			else if (input is >= 'A' and <= 'Z')
+				return true;
+			else if (input is >= '.')
+				return true;
+			else if (input is >= '-')
+				return true;
+			else
+				return false;
 		}
 		public static bool IsValidIdentifierString(string input)
 		{
@@ -127,10 +130,11 @@ namespace Verlite
 
 					Debug.Assert(leftOrdinalStr.Length > 0 && rightOrdinalStr.Length > 0);
 
-					if (!TryParseInt(leftOrdinalStr, out int leftOrdinal))
-						throw new FormatException("Can't parse ordinal in prerelease");
-					if (!TryParseInt(rightOrdinalStr, out int rightOrdinal))
-						throw new FormatException("Can't parse ordinal in prerelease");
+					bool parsedInts = true;
+					parsedInts &= TryParseInt(leftOrdinalStr, out int leftOrdinal);
+					parsedInts &= TryParseInt(rightOrdinalStr, out int rightOrdinal);
+
+					Debug.Assert(parsedInts);
 
 					int cmpOrdinal = leftOrdinal.CompareTo(rightOrdinal);
 					if (cmpOrdinal != 0)
@@ -159,6 +163,7 @@ namespace Verlite
 			return ret;
 		}
 
+		[ExcludeFromCodeCoverage]
 		public override int GetHashCode() => HashCode.Combine(Major, Minor, Patch, Prerelease, BuildMetadata);
 		public override bool Equals(object? obj) => obj is SemVer ver && this == ver;
 		public bool Equals(SemVer other) => this == other;

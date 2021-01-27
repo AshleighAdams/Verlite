@@ -1,5 +1,8 @@
-﻿namespace Verlite
+using System.Diagnostics.CodeAnalysis;
+
+namespace Verlite
 {
+	[ExcludeFromCodeCoverage]
 	public class VersionCalculationOptions
 	{
 		public string DefaultPrereleaseTag { get; set; } = "alpha";

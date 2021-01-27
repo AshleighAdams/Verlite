@@ -1,9 +1,10 @@
-﻿
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace Verlite
 {
+	[ExcludeFromCodeCoverage]
 	public class VersionCalculationException : SystemException
 	{
 		public VersionCalculationException() { }
