@@ -21,5 +21,19 @@ namespace UnitTests
 
 			SemVer.Parse("1.2.3---alpha-abc.4.5+6").Should().Be(new SemVer(1, 2, 3, "--alpha-abc.4.5", "6"));
 		}
+
+		[Theory]
+		[InlineData("alpha")]
+		[InlineData("1")]
+		[InlineData("1.0.")]
+		[InlineData(".1.0.0")]
+		[InlineData("01.0.0")]
+		[InlineData("1.0")]
+		[InlineData("1.0-alpha")]
+		[InlineData("-alpha")]
+		public void InvalidVersionsFailParse(string version)
+		{
+			SemVer.TryParse(version, out _).Should().BeFalse();
+		}
 	}
 }

@@ -3,9 +3,9 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Text;
 using System.Text.RegularExpressions;
 
+[assembly: CLSCompliant(true)]
 namespace Verlite
 {
 	public struct SemVer : IComparable<SemVer>, IEquatable<SemVer>
@@ -42,12 +42,11 @@ namespace Verlite
 			var match = VersionRegex.Match(input);
 			if (!match.Success)
 				return false;
-			if (!TryParseInt(match.Groups["major"].Value, out int major))
-				return false;
-			if (!TryParseInt(match.Groups["minor"].Value, out int minor))
-				return false;
-			if (!TryParseInt(match.Groups["patch"].Value, out int patch))
-				return false;
+			bool majorGood = TryParseInt(match.Groups["major"].Value, out int major);
+			bool minorGood = TryParseInt(match.Groups["minor"].Value, out int minor);
+			bool patchGood = TryParseInt(match.Groups["patch"].Value, out int patch);
+
+			Debug.Assert(majorGood && minorGood && patchGood);
 
 			string? prerelease = match.Groups["prerelease"].Value;
 			string? buildMetadata = match.Groups["buildmetadata"].Value;
