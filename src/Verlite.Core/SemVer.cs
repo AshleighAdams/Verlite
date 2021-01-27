@@ -151,7 +151,7 @@ namespace Verlite
 			return left.Length.CompareTo(right.Length);
 		}
 
-		public override string? ToString()
+		public override string ToString()
 		{
 			string ret = $"{Major}.{Minor}.{Patch}";
 

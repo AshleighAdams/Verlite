@@ -11,7 +11,7 @@ namespace Verlite
 				throw new ArgumentOutOfRangeException(nameof(height), height, "Must be greater than zero.");
 
 			SemVer ret = version;
-			ret.Prerelease ??= options.DefaultPrereleaseTag;
+			ret.Prerelease ??= options.DefaultPrereleasePhase;
 			ret.Prerelease += $".{options.PrereleaseBaseHeight + (height - 1)}";
 			return ret;
 		}

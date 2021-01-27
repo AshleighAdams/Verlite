@@ -1,7 +1,7 @@
 #nullable enable
 override Verlite.SemVer.Equals(object? obj) -> bool
 override Verlite.SemVer.GetHashCode() -> int
-override Verlite.SemVer.ToString() -> string?
+override Verlite.SemVer.ToString() -> string!
 static Verlite.SemVer.ComparePrerelease(System.ReadOnlySpan<char> left, System.ReadOnlySpan<char> right) -> int
 static Verlite.SemVer.IsValidIdentifierCharacter(char input) -> bool
 static Verlite.SemVer.IsValidIdentifierString(string! input) -> bool
@@ -13,6 +13,7 @@ static Verlite.SemVer.operator >(Verlite.SemVer left, Verlite.SemVer right) -> b
 static Verlite.SemVer.operator >=(Verlite.SemVer left, Verlite.SemVer right) -> bool
 static Verlite.SemVer.Parse(string! input) -> Verlite.SemVer
 static Verlite.SemVer.TryParse(string! input, out Verlite.SemVer? version) -> bool
+static Verlite.VersionCalculationOptions.DefaultMinimiumVersion.get -> Verlite.SemVer
 static Verlite.VersionCalculator.Bump(Verlite.SemVer version, Verlite.VersionCalculationOptions! options, int height) -> Verlite.SemVer
 static Verlite.VersionCalculator.CalculateVersion(Verlite.SemVer? lastTag, Verlite.VersionCalculationOptions! options, int height) -> Verlite.SemVer
 static Verlite.VersionCalculator.NextVersion(Verlite.SemVer lastTag, Verlite.VersionCalculationOptions! options) -> Verlite.SemVer
@@ -38,11 +39,13 @@ Verlite.VersionCalculationException.VersionCalculationException(string? message)
 Verlite.VersionCalculationException.VersionCalculationException(string? message, System.Exception? innerException) -> void
 Verlite.VersionCalculationException.VersionCalculationException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
 Verlite.VersionCalculationOptions
-Verlite.VersionCalculationOptions.DefaultPrereleaseTag.get -> string!
-Verlite.VersionCalculationOptions.DefaultPrereleaseTag.set -> void
+Verlite.VersionCalculationOptions.DefaultPrereleasePhase.get -> string!
+Verlite.VersionCalculationOptions.DefaultPrereleasePhase.set -> void
 Verlite.VersionCalculationOptions.MinimiumVersion.get -> Verlite.SemVer
 Verlite.VersionCalculationOptions.MinimiumVersion.set -> void
 Verlite.VersionCalculationOptions.PrereleaseBaseHeight.get -> int
 Verlite.VersionCalculationOptions.PrereleaseBaseHeight.set -> void
+Verlite.VersionCalculationOptions.TagPrefix.get -> string!
+Verlite.VersionCalculationOptions.TagPrefix.set -> void
 Verlite.VersionCalculationOptions.VersionCalculationOptions() -> void
 Verlite.VersionCalculator
