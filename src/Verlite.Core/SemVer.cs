@@ -96,7 +96,7 @@ namespace Verlite
 			return true;
 		}
 
-		private static ReadOnlySpan<char> SelectOrdinals(ReadOnlySpan<char> input)
+		private static string SelectOrdinals(string input)
 		{
 			int got = 0;
 			for (int i = 0; i < input.Length; i++)
@@ -106,15 +106,15 @@ namespace Verlite
 				got++;
 			}
 
-			return input[..got];
+			return input.Substring(0, got);
 		}
 
-		private static bool TryParseInt(ReadOnlySpan<char> input, out int ret)
+		private static bool TryParseInt(string input, out int ret)
 		{
 			return int.TryParse(input, NumberStyles.Integer, CultureInfo.InvariantCulture, out ret);
 		}
 
-		public static int ComparePrerelease(ReadOnlySpan<char> left, ReadOnlySpan<char> right)
+		public static int ComparePrerelease(string left, string right)
 		{
 			int minLen = Math.Min(left.Length, right.Length);
 
@@ -125,8 +125,8 @@ namespace Verlite
 
 				if (char.IsDigit(l) && char.IsDigit(r))
 				{
-					var leftOrdinalStr = SelectOrdinals(left[i..]);
-					var rightOrdinalStr = SelectOrdinals(right[i..]);
+					var leftOrdinalStr = SelectOrdinals(left.Substring(i));
+					var rightOrdinalStr = SelectOrdinals(right.Substring(i));
 
 					Debug.Assert(leftOrdinalStr.Length > 0 && rightOrdinalStr.Length > 0);
 
@@ -164,7 +164,7 @@ namespace Verlite
 		}
 
 		[ExcludeFromCodeCoverage]
-		public override int GetHashCode() => HashCode.Combine(Major, Minor, Patch, Prerelease, BuildMetadata);
+		public override int GetHashCode() => Major.GetHashCode() ^ Minor.GetHashCode() ^ Patch.GetHashCode() ^ (Prerelease?.GetHashCode() ?? 0) ^ (BuildMetadata?.GetHashCode() ?? 0);
 		public override bool Equals(object? obj) => obj is SemVer ver && this == ver;
 		public bool Equals(SemVer other) => this == other;
 		public static bool operator ==(SemVer left, SemVer right) =>

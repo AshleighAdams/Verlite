@@ -2,7 +2,7 @@
 override Verlite.SemVer.Equals(object? obj) -> bool
 override Verlite.SemVer.GetHashCode() -> int
 override Verlite.SemVer.ToString() -> string!
-static Verlite.SemVer.ComparePrerelease(System.ReadOnlySpan<char> left, System.ReadOnlySpan<char> right) -> int
+static Verlite.SemVer.ComparePrerelease(string! left, string! right) -> int
 static Verlite.SemVer.IsValidIdentifierCharacter(char input) -> bool
 static Verlite.SemVer.IsValidIdentifierString(string! input) -> bool
 static Verlite.SemVer.operator !=(Verlite.SemVer left, Verlite.SemVer right) -> bool
