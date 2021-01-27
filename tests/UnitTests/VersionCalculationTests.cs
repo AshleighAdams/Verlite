@@ -3,6 +3,7 @@ using Verlite;
 using FluentAssertions;
 
 using Xunit;
+using System;
 
 namespace UnitTests
 {
@@ -41,6 +42,26 @@ namespace UnitTests
 
 			gotVersion.Should().Be(result);
 			gotVersion.ToString().Should().Be(resultStr);
+		}
+
+		[Fact]
+		public void BumpWithInvalidHeightThrows()
+		{
+			Assert.Throws<ArgumentOutOfRangeException>(
+				() => VersionCalculator.Bump(
+					version: new(1, 0, 0),
+					options: new(),
+					height: 0));
+		}
+
+		[Fact]
+		public void TagBelowMinimumVersionThrows()
+		{
+			Assert.Throws<VersionCalculationException>(
+				() => VersionCalculator.CalculateVersion(
+					lastTag: new(1, 0, 0),
+					options: new() { MinimiumVersion = new(2, 0, 0) },
+					height: 0));
 		}
 	}
 }
