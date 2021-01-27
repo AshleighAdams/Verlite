@@ -39,7 +39,7 @@
   <!-- Automatic versioning -->
   <PropertyGroup>
     <MinVerTagPrefix>v</MinVerTagPrefix>
-    <MinVerMinimumMajorMinor>0.2</MinVerMinimumMajorMinor>
+    <MinVerMinimumMajorMinor>0.1</MinVerMinimumMajorMinor>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MinVer" Version="2.4.0">
