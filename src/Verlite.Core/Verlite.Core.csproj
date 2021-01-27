@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <Description>Automatic Git versioning with a focus on tags and continuous delivery.</Description>
+    <RootNamespace>Verlite</RootNamespace>
+  </PropertyGroup>
+</Project>

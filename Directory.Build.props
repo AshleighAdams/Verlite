@@ -1,0 +1,92 @@
+<Project>
+
+  <!-- project global settings -->
+  <PropertyGroup>
+    <!-- Enable the new nullability syntax and analyzing -->
+    <Nullable>enable</Nullable>
+    <!-- Allow using `init` and records in .NET Core versions prior to .NET 5 -->
+    <LangVersion>9.0</LangVersion>
+    <!-- 1591: Ignore missing inline documentation. -->
+    <!-- CA1062: Prefer T? for possible nulls. -->
+    <!-- CA2225: Don't want operators to have methods.. -->
+    <!-- CA1303: Don't localize internal strings. -->
+    <NoWarn>$(NoWarn);1591;CA1062;CA2225;CA1303;</NoWarn>
+    <!-- Generate XMLdocs -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- Disable system locales -->
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <NeutralLanguage>en</NeutralLanguage>
+    <!-- Ensure code style is followed, with heightened warnings -->
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>5.0</AnalysisLevel>
+    <!-- Meta info -->
+    <Authors>Ashleigh Adams</Authors>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Copyright>Copyright 2020 Ashleigh Adams</Copyright>
+    <!-- <PackageIcon>images/packageicon.png</PackageIcon> -->
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Allow using `init` and records in .NET Core versions prior to .NET 5 -->
+    <PackageReference Include="IsExternalInit" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+  <!-- <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)/.meta/packageicon.png" Pack="true" PackagePath="/images/" Visible="false" />
+  </ItemGroup> -->
+
+  <!-- Automatic versioning -->
+  <PropertyGroup>
+    <MinVerTagPrefix>v</MinVerTagPrefix>
+    <MinVerMinimumMajorMinor>0.2</MinVerMinimumMajorMinor>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MinVer" Version="2.4.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- Deterministic CI builds, normalizing file paths etc... -->
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <!-- SourceLink support -->
+  <PropertyGroup>
+    <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <!-- Embed source files that are not tracked by the source control manager in the PDB -->
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <!-- Embed all sources instead of git links -->
+    <!--<EmbedAllSources>true</EmbedAllSources>-->
+
+    <!-- Embed symbols containing Source Link in the main file (exe/dll) -->
+    <!--<DebugType>embedded</DebugType>-->
+
+    <!-- Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
+    <!--<IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>-->
+
+    <!-- Embed symbols containing Source Link in the NuGet package -->
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
+    <!-- <PackageReference Include="Microsoft.SourceLink.Bitbucket.Git" Version="1.0.0" PrivateAssets="All"/>
+    <SourceLinkBitbucketHost Include="bitbucket.ingg.com"/>-->
+  </ItemGroup>
+
+  <!-- Code analyizers: https://github.com/dotnet/roslyn-analyzers -->
+  <PropertyGroup>
+    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="5.0.3" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.2" PrivateAssets="All" />
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)/.meta/BannedSymbols.txt" />
+  </ItemGroup>
+
+</Project>

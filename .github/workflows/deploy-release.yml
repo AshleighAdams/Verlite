@@ -1,0 +1,91 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - v*
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: '0'
+
+    - name: Setup .NET 5
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+
+    - name: Setup NuGet
+      run: dotnet nuget update source github --store-password-in-clear-text --username AshleighAdams --password ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+    - name: NuGet Restore Cache
+      uses: actions/cache@v2
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/Directory.Build.props') }}-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Setup GitVersion for release
+      run: |
+        git fetch --tags --force
+        git checkout "${GITHUB_REF#refs/*/}"
+        dotnet tool install --global minver-cli --version 2.4.0
+        curl https://github.com/AshleighAdams.gpg | gpg --import
+
+    - name: Restore
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Test
+      run: dotnet test --configuration Release --no-build --logger GitHubActions
+    - name: Pack
+      run: dotnet pack --configuration Release --no-restore
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: nuget
+        path:  |
+          src/**/*.nupkg
+          src/**/*.snupkg
+
+    - name: Create Release
+      run: |
+        set -x
+        tag="${GITHUB_REF#refs/*/}"
+        options=()
+
+        git tag -v --format='%(subject)' "$tag" > msg.txt
+        echo >> msg.txt
+        git tag -v --format='%(body)' "$tag" >> msg.txt
+        options+=("-F" "msg.txt")
+
+        if [[ "$(minver --tag-prefix=v --verbosity=e)" == *"-"* ]]; then
+          options+=("--prerelease")
+        fi
+
+        IFS=$'\n';
+        for asset in $(find ./src -name "*.nupkg"); do
+          options+=("-a" "$asset")
+        done
+
+        hub release create "${options[@]}" "$tag"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Publish Nuget
+      run: |
+        dotnet nuget push src/**/*.nupkg -k ${NUGETORG_TOKEN} -s https://api.nuget.org/v3/index.json --skip-duplicate --no-symbols 1
+        dotnet nuget push src/**/*.nupkg -k ${GITHUB_TOKEN} -s github --skip-duplicate --no-symbols 1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NUGETORG_TOKEN: ${{ secrets.NUGETORG_TOKEN }}

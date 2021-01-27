@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29509.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D0F10406-C62D-49CE-A369-4CEDB84DC800}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
+		NuGet.config = NuGet.config
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub", "GitHub", "{822C85C4-D55D-43B2-8D5D-1B05AC9A99A1}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\continuous-delivery.yml = .github\workflows\continuous-delivery.yml
+		.github\workflows\continuous-integration.yml = .github\workflows\continuous-integration.yml
+		.github\workflows\deploy-release.yml = .github\workflows\deploy-release.yml
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "tests\UnitTests\UnitTests.csproj", "{B7286702-244F-49B7-9A81-19BBB2DEBF6D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Verlite.Core", "src\Verlite.Core\Verlite.Core.csproj", "{DCD40A83-1B0B-49F0-A3A7-43773334199A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B7286702-244F-49B7-9A81-19BBB2DEBF6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7286702-244F-49B7-9A81-19BBB2DEBF6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7286702-244F-49B7-9A81-19BBB2DEBF6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7286702-244F-49B7-9A81-19BBB2DEBF6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCD40A83-1B0B-49F0-A3A7-43773334199A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCD40A83-1B0B-49F0-A3A7-43773334199A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCD40A83-1B0B-49F0-A3A7-43773334199A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCD40A83-1B0B-49F0-A3A7-43773334199A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {35E5E150-27F7-4F1B-9ABD-BFA9D2B62698}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,55 @@
+name: Continious Integration
+
+on:
+  pull_request:
+    branches:
+      - master
+      - support/*
+#    paths-ignore:
+#      - 'README.md'
+#      - 'CODEOWNERS'
+#      - 'docs/**'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: '0'
+
+    - name: Setup .NET 5
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+
+    - name: Setup NuGet
+      run: dotnet nuget update source github --store-password-in-clear-text --username AshleighAdams --password ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+    - name: NuGet Restore Cache
+      uses: actions/cache@v2
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/Directory.Build.props') }}-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Restore
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Test
+      run: dotnet test --configuration Release --no-build --logger GitHubActions
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: nuget
+        path: |
+          src/**/*.nupkg
+          src/**/*.snupkg
