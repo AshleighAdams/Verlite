@@ -135,9 +135,20 @@ namespace Verlite.CLI
 			};
 			await repo.SetPath(sourceDirectory);
 
-			var (height, lastTag) = await HeightCalculator.FromRepository(repo, opts.TagPrefix, autoFetch);
-			var version = VersionCalculator.CalculateVersion(lastTag, opts, height);
+			var (height, lastTagVer) = await HeightCalculator.FromRepository(repo, opts.TagPrefix, autoFetch);
+			var version = VersionCalculator.CalculateVersion(lastTagVer?.Version, opts, height);
 			version.BuildMetadata = opts.BuildMetadata;
+
+			if (lastTagVer is not null && autoFetch)
+			{
+				var localTag = (await repo.GetTags(QueryTarget.Local))
+					.Where(x => x == lastTagVer.Tag);
+				if (!localTag.Any())
+				{
+					Console.Error.WriteLine("Local repo missing version tag, fetching.");
+					await repo.FetchTag(lastTagVer.Tag, "origin");
+				}
+			}
 
 			string toShow = show switch
 			{

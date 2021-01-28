@@ -207,5 +207,13 @@ namespace Verlite
 
 			return new TagContainer(tags);
 		}
+
+		public async Task FetchTag(Tag tag, string remote)
+		{
+			if (IsShallow ?? true)
+				await Git("fetch", "--depth", "1", remote, $"refs/tags/{tag.Name}:refs/tags/{tag.Name}");
+			else
+				await Git("fetch", remote, $"refs/tags/{tag.Name}:refs/tags/{tag.Name}");
+		}
 	}
 }

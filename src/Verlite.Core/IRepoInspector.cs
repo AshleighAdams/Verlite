@@ -40,5 +40,6 @@ namespace Verlite
 		Task<Commit?> GetHead();
 		Task<Commit?> GetParent(Commit commit);
 		Task<TagContainer> GetTags(QueryTarget queryTarget);
+		Task FetchTag(Tag tag, string remote);
 	}
 }

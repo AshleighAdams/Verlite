@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Verlite
 {
-	public static class HeightCalculator
+	public static partial class HeightCalculator
 	{
-		private static IEnumerable<SemVer> SelectWhereSemver(this IEnumerable<Tag> tags, string tagPrefix)
+		private static IEnumerable<(SemVer version, Tag tag)> SelectWhereSemver(this IEnumerable<Tag> tags, string tagPrefix)
 		{
 			foreach (var tag in tags)
 			{
@@ -19,11 +19,34 @@ namespace Verlite
 					Console.Error.WriteLineAsync($"Warning: Failed to parse SemVer from tag {tag}, ignoring.");
 					continue;
 				}
-				yield return version.Value;
+				yield return (version.Value, tag);
 			}
 		}
 
-		public static async Task<(int height, SemVer? lastVersion)> FromRepository(IRepoInspector repo, string tagPrefix, bool queryRemoteTags)
+		private static T MaxBy<T, TSelector>(this IEnumerable<T> self, Func<T, TSelector> selector)
+			where TSelector : struct
+		{
+			T max = default!;
+			TSelector? select = null;
+			Comparer<TSelector>? comparer = Comparer<TSelector>.Default;
+
+			foreach (T item in self)
+			{
+				TSelector new_select = selector(item);
+				if (!select.HasValue || comparer.Compare(select.Value, new_select) < 0)
+				{
+					max = item;
+					select = new_select;
+				}
+			}
+
+			if (!select.HasValue)
+				throw new ArgumentException("no values to get the max of", nameof(self));
+
+			return max;
+		}
+
+		public static async Task<(int height, TaggedVersion?)> FromRepository(IRepoInspector repo, string tagPrefix, bool queryRemoteTags)
 		{
 			QueryTarget queryTags = QueryTarget.Local;
 			if (queryRemoteTags)
@@ -57,7 +80,9 @@ namespace Verlite
 				{
 					foreach (var ver in versions)
 						Debug.WriteLine($"  found version: {ver}");
-					return (height, versions.Max());
+
+					var (version, tag) = versions.MaxBy(ver => ver.version);
+					return (height, new TaggedVersion(version, tag));
 				}
 
 				var parent = await repo.GetParent(current);
