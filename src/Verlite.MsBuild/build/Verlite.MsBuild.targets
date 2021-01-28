@@ -20,7 +20,7 @@ This file has been modified by Ashleigh Adams and adapted for Verlite -->
     <_VerliteSetTagPrefix>false</_VerliteSetTagPrefix>
     <VerliteDetailed>low</VerliteDetailed>
 
-    <Error Condition="$(VerliteDisableTagPrefix)' == 'true' And '$(VerliteTagPrefix)' != ''" Code="VERLITE0002" Text="Attempted to disable version prefix with a version prefix set." />
+    <Error Condition="'$(VerliteDisableTagPrefix)' == 'true' And '$(VerliteTagPrefix)' != ''" Code="VERLITE0002" Text="Attempted to disable version prefix with a version prefix set." />
     <_VerliteSetTagPrefix Condition="'$(VerliteDisableTagPrefix)' == 'true' Or '$(VerliteTagPrefix)' != ''">true</_VerliteSetTagPrefix>
     <VerliteVerbosity Condition="'$(VerliteVerbosity)' == ''">normal</VerliteVerbosity>
     

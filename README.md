@@ -5,7 +5,8 @@
 | Description                                                         | CLI Short, CLI Long, MsBuild Property                         | Default |
 | ------------------------------------------------------------------- | :------------------------------------------------------------ | :------ |
 | Disable invoking Verlite.                                           | VerliteDisabled                                               | false   |
-| Tags starting with this represent versions.                         | -t, --tag-prefix, VerliteTagPrefix, VerliteDisableTagPrefix   | v       |
+| Tags starting with this represent versions.                         | -t, --tag-prefix, VerliteTagPrefix                            | v       |
+| Disable the version prefix.                                         | VerliteDisableTagPrefix                                       | false   |
 | The default phase for the prerlease label.                          | -d, --default-prerelease-phase, VerliteDefaultPrereleasePhase | alpha   |
 | The minimum RTM version, i.e the destined version.                  | -m, --min-version, VerliteMinimumVersion                      | 0.1.0   |
 | The height for continious deliverable auto heights should begin at. | -p, --prerelease-base-height, VerlitePrereleaseBaseHeight     | 1       |
