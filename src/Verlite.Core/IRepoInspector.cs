@@ -37,8 +37,8 @@ namespace Verlite
 
 	public interface IRepoInspector
 	{
-		Task<Commit> GetHead();
-		Task<IReadOnlyList<Commit>> GetParents(Commit commit);
+		Task<Commit?> GetHead();
+		Task<Commit?> GetParent(Commit commit);
 		Task<TagContainer> GetTags(QueryTarget queryTarget);
 	}
 }

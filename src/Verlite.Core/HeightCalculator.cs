@@ -23,16 +23,36 @@ namespace Verlite
 			}
 		}
 
+		private struct Timer : IDisposable
+		{
+			readonly Stopwatch sw;
+			private Timer(Stopwatch sw)
+			{
+				this.sw = sw;
+			}
+			public void Dispose()
+			{
+				Console.WriteLine(sw.Elapsed);
+			}
+
+			public static Timer StartNew() => new Timer(Stopwatch.StartNew());
+
+		}
+
 		public static async Task<(int height, SemVer? lastVersion)> FromRepository(IRepoInspector repo, string tagPrefix)
 		{
+			using var timer1 = Timer.StartNew();
+
 			var head = await repo.GetHead();
 			var tags = await repo.GetTags(QueryTarget.Local | QueryTarget.Remote);
+
+			using var timer2 = Timer.StartNew();
 
 			Debug.WriteLine("Found the following tags:");
 			foreach (var tag in tags)
 				Debug.WriteLine($"  {tag}");
 
-			var current = head;
+			var current = head.Value;
 			int height = 0;
 			while (true)
 			{
@@ -57,10 +77,10 @@ namespace Verlite
 					return (height, versions.Max());
 				}
 
-				var parents = await repo.GetParents(current);
-				if (parents.Count == 0)
+				var parent = await repo.GetParent(current);
+				if (parent is null)
 					break;
-				current = parents[0];
+				current = parent.Value;
 				height++;
 			}
 
