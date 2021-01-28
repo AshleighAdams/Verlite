@@ -1,6 +1,7 @@
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -9,7 +10,6 @@ using System.Threading.Tasks;
 [assembly: CLSCompliant(false)]
 namespace Verlite.CLI
 {
-
 	public static class Program
 	{
 		public static readonly VersionCalculationOptions DefaultOptions = new();
@@ -59,10 +59,36 @@ namespace Verlite.CLI
 					description: "Part of the version to print: All, Major, Minor, Patch, Prerelease, or Metadata"),
 			};
 			rootCommand.Handler = CommandHandler.Create<string, string, SemVer, int, SemVer?, Verbosity, string?, Show, string>(RootCommand);
-			return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
+			return await rootCommand.InvokeAsync(args);
 		}
 
 		public static void RootCommand(
+			string tagPrefix,
+			string defaultPrereleasePhase,
+			SemVer minVersion,
+			int prereleaseBaseHeight,
+			SemVer? versionOverride,
+			Verbosity verbosity,
+			string? buildMetadata,
+			Show show,
+			string sourceDirectory)
+		{
+			var task = RootCommandAsync(
+				tagPrefix,
+				defaultPrereleasePhase,
+				minVersion,
+				prereleaseBaseHeight,
+				versionOverride,
+				verbosity,
+				buildMetadata,
+				show,
+				sourceDirectory);
+
+			task.Wait();
+			task.GetAwaiter().GetResult();
+		}
+
+		public async static Task RootCommandAsync(
 			string tagPrefix,
 			string defaultPrereleasePhase,
 			SemVer minVersion,
@@ -83,8 +109,13 @@ namespace Verlite.CLI
 				BuildMetadata = buildMetadata,
 			};
 
-			int height = 1;
-			var lastTag = SemVer.Parse("1.0.0");
+			var repo = new GitRepoInspector()
+			{
+				CanDeepen = true,
+			};
+			await repo.SetPath(sourceDirectory);
+
+			var (height, lastTag) = await HeightCalculator.FromRepository(repo, opts.TagPrefix);
 
 			var version = VersionCalculator.CalculateVersion(lastTag, opts, height);
 			version.BuildMetadata = opts.BuildMetadata;

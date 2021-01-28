@@ -3,7 +3,7 @@
 ## Options
 
 | Description                                                         | CLI Short, CLI Long, MsBuild Property                         | Default |
-| ------------------------------------------------------------------- | :------------------------------------------------------------ | :------ |
+| :------------------------------------------------------------------ | :------------------------------------------------------------ | :------ |
 | Disable invoking Verlite.                                           | VerliteDisabled                                               | false   |
 | Tags starting with this represent versions.                         | -t, --tag-prefix, VerliteTagPrefix                            | v       |
 | Disable the version prefix.                                         | VerliteDisableTagPrefix                                       | false   |
@@ -13,7 +13,7 @@
 | Force the calculated version to be this version.                    | --version-override, VerliteVersionOverride                    |         |
 | Logging level.                                                      | --verbosity, VerliteVerbosity                                 | Normal  |
 | Set the build data to this value.                                   | -b, --build-metadata, VerliteBuildMetadata                    |         |
-| Part of the version to print.                                       | -b, --show,                                                   | All     |
+| Part of the version to print.                                       | -s, --show                                                    | All     |
 
 To make Verlite behave the same as MinVer's default settings, set the following properties in your projects:
 
@@ -22,4 +22,13 @@ To make Verlite behave the same as MinVer's default settings, set the following 
 	<VerliteDisableTagPrefix>true</VerliteDisableTagPrefix>
 	<VerliteDefaultPrereleasePhase>alpha.0</VerliteDefaultPrereleasePhase>
 <PropertyGroup>
+```
+
+## Deepen
+
+```sh
+git ls-remote --tags "$(git ls-remote --get-url)" "refs/tags/v*"
+
+# deepen until a hash is seen
+# fetch the seen tag
 ```
