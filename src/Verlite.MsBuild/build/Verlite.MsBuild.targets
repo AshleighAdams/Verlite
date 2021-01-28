@@ -34,6 +34,7 @@ This file has been modified by Ashleigh Adams and adapted for Verlite -->
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteTagPrefix=$(VerliteTagPrefix)" />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteVerbosity=$(VerliteVerbosity)" />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteVersionOverride=$(VerliteVersionOverride)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerlitePrereleaseBaseHeight=$(VerlitePrereleaseBaseHeight)" />
     <ItemGroup>
       <VerliteInputs Remove="@(VerliteInputs)" />
       <VerliteConsoleOutput Remove="@(VerliteConsoleOutput)" />
@@ -41,12 +42,13 @@ This file has been modified by Ashleigh Adams and adapted for Verlite -->
     </ItemGroup>
     <ItemGroup>
       <VerliteInputs Include="&quot;$(MSBuildProjectDirectory)&quot;" />
-      <VerliteInputs Include="--build-metadata &quot;$(VerliteBuildMetadata)&quot;" />
-      <VerliteInputs Include="--default-prerelease-phase &quot;$(VerliteDefaultPrereleasePhase)&quot;" />
-      <VerliteInputs Include="--min-version &quot;$(VerliteMinimumVersion)&quot;" />
-      <VerliteInputs Include="--tag-prefix &quot;$(VerliteTagPrefix)&quot;" />
-      <VerliteInputs Include="--verbosity &quot;$(VerliteVerbosity)&quot;" />
-      <VerliteInputs Include="--version-override &quot;$(VerliteVersionOverride)&quot;" />
+      <VerliteInputs Condition="'$(VerliteBuildMetadata)' != ''"           Include="--build-metadata &quot;$(VerliteBuildMetadata)&quot;" />
+      <VerliteInputs Condition="'$(VerliteDefaultPrereleasePhase)' != ''"  Include="--default-prerelease-phase &quot;$(VerliteDefaultPrereleasePhase)&quot;" />
+      <VerliteInputs Condition="'$(VerliteMinimumVersion)' != ''"          Include="--min-version &quot;$(VerliteMinimumVersion)&quot;" />
+      <VerliteInputs Condition="'$(VerliteTagPrefix)' != ''"               Include="--tag-prefix &quot;$(VerliteTagPrefix)&quot;" />
+      <VerliteInputs Condition="'$(VerliteVerbosity)' != ''"               Include="--verbosity &quot;$(VerliteVerbosity)&quot;" />
+      <VerliteInputs Condition="'$(VerliteVersionOverride)' != ''"         Include="--version-override &quot;$(VerliteVersionOverride)&quot;" />
+      <VerliteInputs Condition="'$(VerlitePrereleaseBaseHeight)' != ''"    Include="--prerelease-base-height &quot;$(VerlitePrereleaseBaseHeight)&quot;" />
     </ItemGroup>
     <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)../verlite/Verlite.MsBuild.dll&quot; @(VerliteInputs->'%(Identity)', ' ')" ConsoleToMSBuild="true" StandardOutputImportance="Low" >
       <Output TaskParameter="ConsoleOutput" ItemName="VerliteConsoleOutput" />

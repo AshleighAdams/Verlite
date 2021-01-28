@@ -28,12 +28,12 @@ namespace Verlite.CLI
 
 			return tokenValue.ToUpperInvariant() switch
 			{
-				"ALL" => Show.All,
-				"major" => Show.Major,
-				"minor" => Show.Minor,
-				"patch" => Show.Patch,
-				"prerelease" => Show.Prerelease,
-				"metadata" => Show.Metadata,
+				"ALL"        => Show.All,
+				"MAJOR"      => Show.Major,
+				"MINOR"      => Show.Minor,
+				"PATCH"      => Show.Patch,
+				"PRERELEASE" => Show.Prerelease,
+				"METADATA"   => Show.Metadata,
 				_ => invalid(),
 			};
 		}
