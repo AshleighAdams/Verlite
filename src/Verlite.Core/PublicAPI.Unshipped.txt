@@ -38,6 +38,8 @@ Verlite.VersionCalculationException.VersionCalculationException(string? message)
 Verlite.VersionCalculationException.VersionCalculationException(string? message, System.Exception? innerException) -> void
 Verlite.VersionCalculationException.VersionCalculationException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
 Verlite.VersionCalculationOptions
+Verlite.VersionCalculationOptions.BuildMetadata.get -> string?
+Verlite.VersionCalculationOptions.BuildMetadata.set -> void
 Verlite.VersionCalculationOptions.DefaultPrereleasePhase.get -> string!
 Verlite.VersionCalculationOptions.DefaultPrereleasePhase.set -> void
 Verlite.VersionCalculationOptions.MinimiumVersion.get -> Verlite.SemVer
@@ -47,4 +49,6 @@ Verlite.VersionCalculationOptions.PrereleaseBaseHeight.set -> void
 Verlite.VersionCalculationOptions.TagPrefix.get -> string!
 Verlite.VersionCalculationOptions.TagPrefix.set -> void
 Verlite.VersionCalculationOptions.VersionCalculationOptions() -> void
+Verlite.VersionCalculationOptions.VersionOverride.get -> Verlite.SemVer?
+Verlite.VersionCalculationOptions.VersionOverride.set -> void
 Verlite.VersionCalculator

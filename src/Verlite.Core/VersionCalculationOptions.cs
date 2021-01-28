@@ -9,5 +9,7 @@ namespace Verlite
 		public string DefaultPrereleasePhase { get; set; } = "alpha";
 		public SemVer MinimiumVersion { get; set; } = new SemVer(0, 1, 0);
 		public int PrereleaseBaseHeight { get; set; } = 1;
+		public SemVer? VersionOverride { get; set; }
+		public string? BuildMetadata { get; set; }
 	}
 }
