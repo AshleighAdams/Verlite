@@ -10,7 +10,7 @@ override Verlite.Tag.GetHashCode() -> int
 override Verlite.Tag.ToString() -> string!
 static Verlite.Commit.operator !=(Verlite.Commit left, Verlite.Commit right) -> bool
 static Verlite.Commit.operator ==(Verlite.Commit left, Verlite.Commit right) -> bool
-static Verlite.HeightCalculator.FromRepository(Verlite.IRepoInspector! repo, string! tagPrefix) -> System.Threading.Tasks.Task<(int height, Verlite.SemVer? lastVersion)>!
+static Verlite.HeightCalculator.FromRepository(Verlite.IRepoInspector! repo, string! tagPrefix, bool queryRemoteTags) -> System.Threading.Tasks.Task<(int height, Verlite.SemVer? lastVersion)>!
 static Verlite.SemVer.ComparePrerelease(string! left, string! right) -> int
 static Verlite.SemVer.IsValidIdentifierCharacter(char input) -> bool
 static Verlite.SemVer.IsValidIdentifierString(string! input) -> bool
@@ -27,6 +27,8 @@ static Verlite.Tag.operator ==(Verlite.Tag left, Verlite.Tag right) -> bool
 static Verlite.VersionCalculator.Bump(Verlite.SemVer version, Verlite.VersionCalculationOptions! options, int height) -> Verlite.SemVer
 static Verlite.VersionCalculator.CalculateVersion(Verlite.SemVer? lastTag, Verlite.VersionCalculationOptions! options, int height) -> Verlite.SemVer
 static Verlite.VersionCalculator.NextVersion(Verlite.SemVer lastTag, Verlite.VersionCalculationOptions! options) -> Verlite.SemVer
+Verlite.AutoDeepenException
+Verlite.AutoDeepenException.AutoDeepenException() -> void
 Verlite.Commit
 Verlite.Commit.Commit() -> void
 Verlite.Commit.Commit(string! id) -> void
@@ -50,6 +52,7 @@ Verlite.QueryTarget
 Verlite.QueryTarget.Local = 1 -> Verlite.QueryTarget
 Verlite.QueryTarget.None = 0 -> Verlite.QueryTarget
 Verlite.QueryTarget.Remote = 2 -> Verlite.QueryTarget
+Verlite.RepoTooShallowException
 Verlite.SemVer
 Verlite.SemVer.BuildMetadata.get -> string?
 Verlite.SemVer.BuildMetadata.set -> void

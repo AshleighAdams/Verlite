@@ -10,11 +10,11 @@ namespace Verlite
 {
 	public static class HeightCalculator
 	{
-		private static IEnumerable<SemVer> SelectWhereSemver(this IEnumerable<string> tags)
+		private static IEnumerable<SemVer> SelectWhereSemver(this IEnumerable<Tag> tags, string tagPrefix)
 		{
 			foreach (var tag in tags)
 			{
-				if (!SemVer.TryParse(tag, out var version))
+				if (!SemVer.TryParse(tag.Name.Substring(tagPrefix.Length), out var version))
 				{
 					Console.Error.WriteLineAsync($"Warning: Failed to parse SemVer from tag {tag}, ignoring.");
 					continue;
@@ -23,30 +23,14 @@ namespace Verlite
 			}
 		}
 
-		private struct Timer : IDisposable
+		public static async Task<(int height, SemVer? lastVersion)> FromRepository(IRepoInspector repo, string tagPrefix, bool queryRemoteTags)
 		{
-			readonly Stopwatch sw;
-			private Timer(Stopwatch sw)
-			{
-				this.sw = sw;
-			}
-			public void Dispose()
-			{
-				Console.WriteLine(sw.Elapsed);
-			}
-
-			public static Timer StartNew() => new Timer(Stopwatch.StartNew());
-
-		}
-
-		public static async Task<(int height, SemVer? lastVersion)> FromRepository(IRepoInspector repo, string tagPrefix)
-		{
-			using var timer1 = Timer.StartNew();
+			QueryTarget queryTags = QueryTarget.Local;
+			if (queryRemoteTags)
+				queryTags |= QueryTarget.Remote;
 
 			var head = await repo.GetHead();
-			var tags = await repo.GetTags(QueryTarget.Local | QueryTarget.Remote);
-
-			using var timer2 = Timer.StartNew();
+			var tags = await repo.GetTags(queryTags);
 
 			Debug.WriteLine("Found the following tags:");
 			foreach (var tag in tags)
@@ -59,9 +43,8 @@ namespace Verlite
 				var currentTags = tags.FindCommitTags(current);
 				var versions = currentTags
 					.Where(t => t.Name.StartsWith(tagPrefix, StringComparison.Ordinal))
-					.Select(t => t.Name.Substring(tagPrefix.Length))
-					.SelectWhereSemver()
-					.OrderBy(v => v)
+					.SelectWhereSemver(tagPrefix)
+					.OrderByDescending(v => v)
 					.ToList();
 
 				Debug.WriteLine($"HEAD^{height} {current} has {currentTags.Count} total tags with {versions.Count} versions.");
@@ -73,7 +56,7 @@ namespace Verlite
 				if (versions.Count != 0)
 				{
 					foreach (var ver in versions)
-						await Console.Error.WriteLineAsync($"  found version: {ver}");
+						Debug.WriteLine($"  found version: {ver}");
 					return (height, versions.Max());
 				}
 

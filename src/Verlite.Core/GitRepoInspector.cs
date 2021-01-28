@@ -5,6 +5,16 @@ using System.Threading.Tasks;
 
 namespace Verlite
 {
+	public class AutoDeepenException : SystemException
+	{
+		public AutoDeepenException() : base("Failed to automatically deepen the repository") { }
+		internal AutoDeepenException(CommandException parent) : base("Failed to automatically deepen the repository: " + parent.Message, parent) { }
+	}
+	public class RepoTooShallowException : SystemException
+	{
+		internal RepoTooShallowException(CommandException parent) : base("No version tag found before shallow clone reached end.", parent) { }
+	}
+
 	public sealed class GitRepoInspector : IRepoInspector
 	{
 		public bool CanDeepen { get; set; }
@@ -84,7 +94,15 @@ namespace Verlite
 			FetchDepth = Math.Max(32, FetchDepth.Value + incremeant);
 
 			await Console.Error.WriteLineAsync($"Deepening to the repository from {wasDepth} to {FetchDepth}");
-			_ = await Git("fetch", $"--depth={FetchDepth}");
+
+			try
+			{
+				_ = await Git("fetch", $"--depth={FetchDepth}");
+			}
+			catch (CommandException ex)
+			{
+				throw new AutoDeepenException(ex);
+			}
 		}
 
 		private async Task<string> GetCommitObject(Commit commit)
@@ -93,6 +111,10 @@ namespace Verlite
 			{
 				var (contents, _) = await Git("cat-file", "commit", commit.Id);
 				return contents;
+			}
+			catch (CommandException ex) when (!CanDeepen && ex.StandardError.Contains($"{commit}: bad file"))
+			{
+				throw new RepoTooShallowException(ex);
 			}
 			catch (CommandException ex) when (CanDeepen && ex.StandardError.Contains($"{commit}: bad file"))
 			{
@@ -107,7 +129,7 @@ namespace Verlite
 				catch (CommandException ex2) when (ex2.StandardError.Contains($"{commit}: bad file"))
 				{
 					await Console.Error.WriteLineAsync($"Failed to deepen repo and fetch commit {commit}.");
-					throw;
+					throw new AutoDeepenException(ex2);
 				}
 			}
 		}

@@ -57,8 +57,12 @@ namespace Verlite.CLI
 					isDefault: true,
 					parseArgument: new System.CommandLine.Parsing.ParseArgument<Show>(Parsers.ParseShow),
 					description: "Part of the version to print: All, Major, Minor, Patch, Prerelease, or Metadata"),
+				new Option<bool>(
+					aliases: new[] { "--auto-fetch", "-a" },
+					getDefaultValue: () => false,
+					description: "Automatically fetch commits from a shallow repository until a version tag is encountered."),
 			};
-			rootCommand.Handler = CommandHandler.Create<string, string, SemVer, int, SemVer?, Verbosity, string?, Show, string>(RootCommand);
+			rootCommand.Handler = CommandHandler.Create<string, string, SemVer, int, SemVer?, Verbosity, string?, Show, bool, string>(RootCommand);
 			return await rootCommand.InvokeAsync(args);
 		}
 
@@ -71,6 +75,7 @@ namespace Verlite.CLI
 			Verbosity verbosity,
 			string? buildMetadata,
 			Show show,
+			bool autoFetch,
 			string sourceDirectory)
 		{
 			var task = RootCommandAsync(
@@ -82,10 +87,24 @@ namespace Verlite.CLI
 				verbosity,
 				buildMetadata,
 				show,
+				autoFetch,
 				sourceDirectory);
 
-			task.Wait();
-			task.GetAwaiter().GetResult();
+			try
+			{
+				task.GetAwaiter().GetResult();
+			}
+			catch (AutoDeepenException ex)
+			{
+				Console.Error.WriteLine(ex.Message);
+				Environment.Exit(1);
+			}
+			catch (RepoTooShallowException ex)
+			{
+				Console.Error.WriteLine(ex.Message);
+				Console.Error.WriteLine("For CI/CD, use `verlite --auto-fetch`");
+				Environment.Exit(1);
+			}
 		}
 
 		public async static Task RootCommandAsync(
@@ -97,6 +116,7 @@ namespace Verlite.CLI
 			Verbosity verbosity,
 			string? buildMetadata,
 			Show show,
+			bool autoFetch,
 			string sourceDirectory)
 		{
 			var opts = new VersionCalculationOptions()
@@ -111,12 +131,11 @@ namespace Verlite.CLI
 
 			var repo = new GitRepoInspector()
 			{
-				CanDeepen = true,
+				CanDeepen = autoFetch,
 			};
 			await repo.SetPath(sourceDirectory);
 
-			var (height, lastTag) = await HeightCalculator.FromRepository(repo, opts.TagPrefix);
-
+			var (height, lastTag) = await HeightCalculator.FromRepository(repo, opts.TagPrefix, autoFetch);
 			var version = VersionCalculator.CalculateVersion(lastTag, opts, height);
 			version.BuildMetadata = opts.BuildMetadata;
 
