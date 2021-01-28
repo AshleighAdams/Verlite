@@ -47,7 +47,7 @@ namespace Verlite.CLI
 					aliases: new[] { "--verbosity" },
 					isDefault: true,
 					parseArgument: new System.CommandLine.Parsing.ParseArgument<Verbosity>(Parsers.ParseVerbosity),
-					description: "normal, verbose, verbatim"),
+					description: "Normal, Verbose, or Verbatim"),
 				new Option<string?>(
 					aliases: new[] { "--build-metadata", "-b" },
 					getDefaultValue: () => null,
@@ -56,7 +56,7 @@ namespace Verlite.CLI
 					aliases: new[] { "--show", "-s" },
 					isDefault: true,
 					parseArgument: new System.CommandLine.Parsing.ParseArgument<Show>(Parsers.ParseShow),
-					description: "Parts of the version to print: All, Major, Minor, Patch, Prerelease, or Metadata"),
+					description: "Part of the version to print: All, Major, Minor, Patch, Prerelease, or Metadata"),
 			};
 			rootCommand.Handler = CommandHandler.Create<string, string, SemVer, int, SemVer?, Verbosity, string?, Show, string>(RootCommand);
 			return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
