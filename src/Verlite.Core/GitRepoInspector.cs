@@ -187,7 +187,7 @@ namespace Verlite
 				catch (CommandException) { }
 			}
 
-			if (queryTarget.HasFlag(QueryTarget.Remote))
+			if (queryTarget.HasFlag(QueryTarget.Local))
 			{
 				try
 				{

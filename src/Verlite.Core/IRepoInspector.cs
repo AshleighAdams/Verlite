@@ -8,9 +8,9 @@ namespace Verlite
 	[Flags]
 	public enum QueryTarget
 	{
-		None,
-		Local,
-		Remote,
+		None = 0,
+		Local = 1,
+		Remote = 2,
 	}
 
 	public class TagContainer : IEnumerable<Tag>
