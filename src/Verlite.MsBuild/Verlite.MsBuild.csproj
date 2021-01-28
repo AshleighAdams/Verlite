@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Verlite.MsBuild</RootNamespace>
+    <Description>Automatic Git versioning with a focus on tags and continuous delivery.</Description>
+    
+    <NoWarn>$(NoWarn);NU5100;NU5105</NoWarn>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <Authors>Ashleigh Adams, Adam Ralph</Authors>
+    <Copyright>Copyright 2020 Ashleigh Adams, Adam Ralph</Copyright>
+    <PackageLicenseExpression>(MIT AND Apache-2.0)</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="build\**\*" />
+    <None Remove="buildMultiTargeting\**\*" />
+    <Content Include="build\**\*" PackagePath="build" />
+    <Content Include="buildMultiTargeting\**\*" PackagePath="buildMultiTargeting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Verlite.CLI\Verlite.CLI.csproj" PrivateAssets="All" />
+    <PackageReference Update="Microsoft.NETCore.App" PrivateAssets="All" />
+  </ItemGroup>
+
+  <Target Name="AddVerliteOutput" BeforeTargets="_GetPackageFiles">
+    <ItemGroup>
+      <None Include="$(OutputPath)\**\*" Exclude="$(OutputPath)\**\*.dev.json" Pack="true" PackagePath="verlite" />
+    </ItemGroup>
+  </Target>
+</Project>

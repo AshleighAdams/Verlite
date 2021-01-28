@@ -26,6 +26,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Verlite.Core", "src\Verlite
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Verlite.CLI", "src\Verlite.CLI\Verlite.CLI.csproj", "{1505DCF8-176D-4EF2-BFF1-64A740D5E5AE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Verlite.MsBuild", "src\Verlite.MsBuild\Verlite.MsBuild.csproj", "{9E3D4CF9-815D-416A-8362-4499301E7D1F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{1505DCF8-176D-4EF2-BFF1-64A740D5E5AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1505DCF8-176D-4EF2-BFF1-64A740D5E5AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1505DCF8-176D-4EF2-BFF1-64A740D5E5AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E3D4CF9-815D-416A-8362-4499301E7D1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E3D4CF9-815D-416A-8362-4499301E7D1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E3D4CF9-815D-416A-8362-4499301E7D1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E3D4CF9-815D-416A-8362-4499301E7D1F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
