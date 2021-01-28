@@ -1,6 +1,6 @@
 <!--
 Copyright 2020 Ashleigh Adams
-Copyright 2020 Adam Ralph
+Copyright 2018-2020 Adam Ralph
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 
@@ -26,7 +26,7 @@ This file has been modified by Ashleigh Adams and adapted for Verlite -->
   <Target Name="Verlite"
           BeforeTargets="BeforeCompile;GetAssemblyVersion;CoreCompile;GenerateNuspec;_GenerateRestoreProjectSpec;_GetOutputItemsFromPack;EnsureWixToolsetInstalled"
           Condition="'$(DesignTimeBuild)' != 'true' AND '$(VerliteDisabled)' != 'true'">
-    <Error Condition="'$(UsingMicrosoftNETSdk)' != 'true'" Code="MINVER0001" Text="Verlite only works in SDK-style projects." />
+    <Error Condition="'$(UsingMicrosoftNETSdk)' != 'true'" Code="VERLITE0001" Text="Verlite only works in SDK-style projects." />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] MSBuildProjectDirectory=$(MSBuildProjectDirectory)" />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteBuildMetadata=$(VerliteBuildMetadata)" />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteDefaultPrereleasePhase=$(VerliteDefaultPrereleasePhase)" />
