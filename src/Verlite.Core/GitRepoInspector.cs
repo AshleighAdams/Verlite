@@ -90,10 +90,9 @@ namespace Verlite
 			FetchDepth ??= await MeasureDepth();
 
 			int wasDepth = FetchDepth.Value;
-			int incremeant = FetchDepth.Value >> 1;
-			FetchDepth = Math.Max(32, FetchDepth.Value + incremeant);
+			FetchDepth = Math.Max(32, FetchDepth.Value * 2);
 
-			await Console.Error.WriteLineAsync($"Deepening to the repository from {wasDepth} to {FetchDepth}");
+			await Console.Error.WriteLineAsync($"Fetching depth {FetchDepth} (was {wasDepth})");
 
 			try
 			{
