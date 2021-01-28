@@ -14,6 +14,7 @@
 | Logging level.                                                      | --verbosity, VerliteVerbosity                                 | Normal  |
 | Set the build data to this value.                                   | -b, --build-metadata, VerliteBuildMetadata                    |         |
 | Part of the version to print.                                       | -s, --show                                                    | All     |
+| Automatically fetch commits and a tag for shallow clones.           | -a, --auto-fetch                                              | false   |
 
 To make Verlite behave the same as MinVer's default settings, set the following properties in your projects:
 
