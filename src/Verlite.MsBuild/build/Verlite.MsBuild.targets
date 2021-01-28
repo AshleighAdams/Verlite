@@ -17,7 +17,7 @@ This file has been modified by Ashleigh Adams and adapted for Verlite -->
   </PropertyGroup>
 
   <PropertyGroup>
-    <VerliteVerbosity Condition="'$(VerliteVerbosity) == ''">normal</VerliteVerbosity>
+    <VerliteVerbosity Condition="'$(VerliteVerbosity)' == ''">normal</VerliteVerbosity>
     <VerliteDetailed>low</VerliteDetailed>
     <VerliteDetailed Condition="'$(VerliteVerbosity)' == 'verbose' Or '$(VerliteVerbosity)' == 'verbatim'">high</VerliteDetailed>
     <NoWarn>$(NoWarn);NU5105</NoWarn>
