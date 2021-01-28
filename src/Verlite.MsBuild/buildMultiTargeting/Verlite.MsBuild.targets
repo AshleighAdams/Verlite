@@ -1,0 +1,17 @@
+<!--
+Copyright 2020 Ashleigh Adams
+Copyright 2020 Adam Ralph
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+This file has been modified by Ashleigh Adams and adapted for Verlite -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildAssemblyVersion)' == '' Or '$(MSBuildAssemblyVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+  <Import Project="../build/Verlite.MsBuild.targets" />
+</Project>

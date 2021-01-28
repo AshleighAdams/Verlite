@@ -1,0 +1,83 @@
+<!--
+Copyright 2020 Ashleigh Adams
+Copyright 2020 Adam Ralph
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+This file has been modified by Ashleigh Adams and adapted for Verlite -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildAssemblyVersion)' == '' Or '$(MSBuildAssemblyVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <GetPackageVersionDependsOn>$(GetPackageVersionDependsOn);Verlite</GetPackageVersionDependsOn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <VerliteVerbosity Condition="'$(VerliteVerbosity) == ''">normal</VerliteVerbosity>
+    <VerliteDetailed>low</VerliteDetailed>
+    <VerliteDetailed Condition="'$(VerliteVerbosity)' == 'verbose' Or '$(VerliteVerbosity)' == 'verbatim'">high</VerliteDetailed>
+    <NoWarn>$(NoWarn);NU5105</NoWarn>
+  </PropertyGroup>
+
+  <Target Name="Verlite"
+          BeforeTargets="BeforeCompile;GetAssemblyVersion;CoreCompile;GenerateNuspec;_GenerateRestoreProjectSpec;_GetOutputItemsFromPack;EnsureWixToolsetInstalled"
+          Condition="'$(DesignTimeBuild)' != 'true' AND '$(VerliteDisabled)' != 'true'">
+    <Error Condition="'$(UsingMicrosoftNETSdk)' != 'true'" Code="MINVER0001" Text="Verlite only works in SDK-style projects." />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] MSBuildProjectDirectory=$(MSBuildProjectDirectory)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteBuildMetadata=$(VerliteBuildMetadata)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteDefaultPrereleasePhase=$(VerliteDefaultPrereleasePhase)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteMinimumVersion=$(VerliteMinimumVersion)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteTagPrefix=$(VerliteTagPrefix)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteVerbosity=$(VerliteVerbosity)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteVersionOverride=$(VerliteVersionOverride)" />
+    <ItemGroup>
+      <VerliteInputs Remove="@(VerliteInputs)" />
+      <VerliteConsoleOutput Remove="@(VerliteConsoleOutput)" />
+      <VerliteOutputVersion Remove="@(VerliteOutputVersion)" />
+    </ItemGroup>
+    <ItemGroup>
+      <VerliteInputs Include="&quot;$(MSBuildProjectDirectory)&quot;" />
+      <VerliteInputs Include="--build-metadata &quot;$(VerliteBuildMetadata)&quot;" />
+      <VerliteInputs Include="--default-prerelease-phase &quot;$(VerliteDefaultPrereleasePhase)&quot;" />
+      <VerliteInputs Include="--min-version &quot;$(VerliteMinimumVersion)&quot;" />
+      <VerliteInputs Include="--tag-prefix &quot;$(VerliteTagPrefix)&quot;" />
+      <VerliteInputs Include="--verbosity &quot;$(VerliteVerbosity)&quot;" />
+      <VerliteInputs Include="--version-override &quot;$(VerliteVersionOverride)&quot;" />
+    </ItemGroup>
+    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)../verlite/Verlite.MsBuild.dll&quot; @(VerliteInputs->'%(Identity)', ' ')" ConsoleToMSBuild="true" StandardOutputImportance="Low" >
+      <Output TaskParameter="ConsoleOutput" ItemName="VerliteConsoleOutput" />
+    </Exec>
+    <ItemGroup>
+      <VerliteOutputVersion Include="@(VerliteConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`Verlite:`))' != 'true'" />
+    </ItemGroup>
+    <PropertyGroup>
+      <VerliteVersion>@(VerliteOutputVersion)</VerliteVersion>
+      <VerliteMajor>$(VerliteVersion.Split(`.`)[0])</VerliteMajor>
+      <VerliteMinor>$(VerliteVersion.Split(`.`)[1])</VerliteMinor>
+      <VerlitePatch>$(VerliteVersion.Split(`.`)[2].Split(`-`)[0].Split(`+`)[0])</VerlitePatch>
+      <VerlitePrerelease></VerlitePrerelease>
+      <VerlitePrerelease Condition="$(VerliteVersion.Split(`+`)[0].Contains(`-`))">$(VerliteVersion.Split(`+`)[0].Split(`-`, 2)[1])</VerlitePrerelease>
+      <VerliteBuildMetadata></VerliteBuildMetadata>
+      <VerliteBuildMetadata Condition="$(VerliteVersion.Contains(`+`))">$(VerliteVersion.Split(`+`, 2)[1])</VerliteBuildMetadata>
+      <AssemblyVersion>$(VerliteMajor).0.0.0</AssemblyVersion>
+      <FileVersion>$(VerliteMajor).$(VerliteMinor).$(VerlitePatch).0</FileVersion>
+      <PackageVersion>$(VerliteVersion)</PackageVersion>
+      <Version>$(VerliteVersion)</Version>
+    </PropertyGroup>
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] VerliteVersion=$(VerliteVersion)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] VerliteMajor=$(VerliteMajor)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] VerliteMinor=$(VerliteMinor)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] VerlitePatch=$(VerlitePatch)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] VerlitePrerelease=$(VerlitePrerelease)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] VerliteBuildMetadata=$(VerliteBuildMetadata)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] AssemblyVersion=$(AssemblyVersion)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] FileVersion=$(FileVersion)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] PackageVersion=$(PackageVersion)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] Version=$(Version)" />
+  </Target>
+
+</Project>
