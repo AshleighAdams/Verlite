@@ -1,5 +1,9 @@
 # Verlite
 
+[![Verlite.MsBuild][verlite-msbuild-badge]][verlite-msbuild-link]
+[![Verlite.CLI][verlite-cli-badge]][verlite-cli-link]
+[![Verlite.Core][verlite-core-badge]][verlite-core-link]
+
 ## Options
 
 | Description                                                         | CLI Short, CLI Long, MsBuild Property                         | Default |
@@ -33,3 +37,10 @@ git ls-remote --tags "$(git ls-remote --get-url)" "refs/tags/v*"
 # deepen until a hash is seen
 # fetch the seen tag
 ```
+
+[verlite-msbuild-badge]: https://img.shields.io/nuget/vpre/Verlite.MsBuild?label=Verlite.MsBuild
+[verlite-msbuild-link]: https://www.nuget.org/packages/Verlite.MsBuild
+[verlite-cli-badge]: https://img.shields.io/nuget/vpre/Verlite.MsBuild?label=Verlite.CLI
+[verlite-cli-link]: https://www.nuget.org/packages/Verlite.CLI
+[verlite-core-badge]: https://img.shields.io/nuget/vpre/Verlite.MsBuild?label=Verlite.Core
+[verlite-core-link]: https://www.nuget.org/packages/Verlite.Core
