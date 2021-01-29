@@ -47,7 +47,7 @@ namespace Verlite.CLI
 					aliases: new[] { "--verbosity" },
 					isDefault: true,
 					parseArgument: new System.CommandLine.Parsing.ParseArgument<Verbosity>(Parsers.ParseVerbosity),
-					description: "Normal, Verbose, or Verbatim"),
+					description: "The level of logging to output."),
 				new Option<string?>(
 					aliases: new[] { "--build-metadata", "-b" },
 					getDefaultValue: () => null,
@@ -56,7 +56,7 @@ namespace Verlite.CLI
 					aliases: new[] { "--show", "-s" },
 					isDefault: true,
 					parseArgument: new System.CommandLine.Parsing.ParseArgument<Show>(Parsers.ParseShow),
-					description: "Part of the version to print: All, Major, Minor, Patch, Prerelease, or Metadata"),
+					description: "The version part which should be written to stdout."),
 				new Option<bool>(
 					aliases: new[] { "--auto-fetch", "-a" },
 					getDefaultValue: () => false,
@@ -94,6 +94,11 @@ namespace Verlite.CLI
 			{
 				task.GetAwaiter().GetResult();
 			}
+			catch (GitMissingOrNotGitRepoException)
+			{
+				Console.Error.WriteLine("Input is not a git repo or git not installed.");
+				Environment.Exit(1);
+			}
 			catch (AutoDeepenException ex)
 			{
 				Console.Error.WriteLine(ex.Message);
@@ -129,11 +134,8 @@ namespace Verlite.CLI
 				BuildMetadata = buildMetadata,
 			};
 
-			var repo = new GitRepoInspector()
-			{
-				CanDeepen = autoFetch,
-			};
-			await repo.SetPath(sourceDirectory);
+			var repo = await GitRepoInspector.FromPath(sourceDirectory);
+			repo.CanDeepen = autoFetch;
 
 			var (height, lastTagVer) = await HeightCalculator.FromRepository(repo, opts.TagPrefix, autoFetch);
 			var version = VersionCalculator.CalculateVersion(lastTagVer?.Version, opts, height);

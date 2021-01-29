@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -8,26 +9,45 @@ namespace Verlite
 	public class AutoDeepenException : SystemException
 	{
 		public AutoDeepenException() : base("Failed to automatically deepen the repository") { }
+		public AutoDeepenException(string message) : base($"Failed to automatically deepen the repository: {message}") { }
 		internal AutoDeepenException(CommandException parent) : base("Failed to automatically deepen the repository: " + parent.Message, parent) { }
 	}
 	public class RepoTooShallowException : SystemException
 	{
-		internal RepoTooShallowException(CommandException parent) : base("No version tag found before shallow clone reached end.", parent) { }
+		internal RepoTooShallowException() : base("No version tag found before shallow clone reached end.") { }
+	}
+	public class GitMissingOrNotGitRepoException : SystemException
+	{
 	}
 
 	public sealed class GitRepoInspector : IRepoInspector
 	{
-		public bool CanDeepen { get; set; }
-		public string? Root { get; private set; }
-		public async Task SetPath(string path)
+		public static async Task<GitRepoInspector> FromPath(string path)
 		{
-			(Root, _) = await Command.Run(path, "git", "rev-parse", "--show-toplevel");
-			CachedParents.Clear();
-			await CacheParents();
+			try
+			{
+				var (root, _) = await Command.Run(path, "git", "rev-parse", "--show-toplevel");
+				var ret = new GitRepoInspector(root);
+				await ret.CacheParents();
+				return ret;
+			}
+			catch
+			{
+				throw new GitMissingOrNotGitRepoException();
+			}
 		}
 
-		private Task<(string stdout, string stderr)> Git(params string[] args) =>
-			Command.Run(Root ?? throw new InvalidOperationException("Path not set"), "git", args);
+		public bool CanDeepen { get; set; }
+		public string Root { get; }
+		private Dictionary<Commit, Commit> CachedParents { get; } = new();
+		private (int depth, bool shallow)? FetchDepth { get; set; }
+
+		private GitRepoInspector(string root)
+		{
+			Root = root;
+		}
+
+		private Task<(string stdout, string stderr)> Git(params string[] args) => Command.Run(Root, "git", args);
 
 		public async Task<Commit?> GetHead()
 		{
@@ -35,9 +55,33 @@ namespace Verlite
 			return new Commit(commit);
 		}
 
-		private int? FetchDepth { get; set; }
-		private bool? IsShallow { get; set; }
-		private async Task<int> MeasureDepth()
+		private static Commit? ParseCommitObjectParent(string commitObj)
+		{
+			var lines = commitObj.Split('\n');
+			foreach (var line in lines)
+			{
+				if (string.IsNullOrEmpty(line))
+					return null;
+				else if (line.StartsWith("parent ", StringComparison.Ordinal))
+					return new(line.Substring("parent ".Length));
+			}
+			return null;
+		}
+
+		private async Task<string?> GetCommitObjectInternal(Commit commit)
+		{
+			try
+			{
+				var (contents, _) = await Git("cat-file", "commit", commit.Id);
+				return contents;
+			}
+			catch (CommandException ex) when (ex.StandardError.Contains($"{commit}: bad file"))
+			{
+				return null;
+			}
+		}
+
+		private async Task<(int depth, bool shallow)> MeasureDepth()
 		{
 			int depth = 0;
 			var current = await GetHead();
@@ -53,50 +97,36 @@ namespace Verlite
 
 			while (true)
 			{
-				string[]? lines;
-				try
-				{
-					var (contents, _) = await Git("cat-file", "commit", current.Value.Id);
-					lines = contents.Split('\n');
-				}
-				catch (CommandException ex) when (ex.StandardError.Contains($"{current}: bad file"))
-				{
-					IsShallow = true;
-					return depth;
-				}
+				string? commitObj = await GetCommitObjectInternal(current.Value);
+				if (commitObj is null)
+					return (depth, shallow: true);
 
-				foreach (var line in lines)
-				{
-					if (string.IsNullOrEmpty(line))
-					{
-						IsShallow = true;
-						return depth;
-					}
-					else if (line.StartsWith("parent ", StringComparison.Ordinal))
-					{
-						depth++;
-						current = new(line.Substring("parent ".Length));
-						break;
-					}
-				}
+				Commit? parent = ParseCommitObjectParent(commitObj);
+				if (parent is null)
+					return (depth, shallow: false);
+
+				depth++;
+				current = parent;
 			}
 		}
 
 		private async Task Deepen()
 		{
-			if (IsShallow is not null && IsShallow == false)
+			Debug.Assert(FetchDepth is null || FetchDepth.Value.shallow == true);
+
+			FetchDepth = await MeasureDepth();
+			if (FetchDepth.Value.shallow == false)
 				return;
 
-			FetchDepth ??= await MeasureDepth();
+			int wasDepth = FetchDepth.Value.depth;
+			int newDepth = Math.Max(32, FetchDepth.Value.depth * 2);
 
-			int wasDepth = FetchDepth.Value;
-			FetchDepth = Math.Max(32, FetchDepth.Value * 2);
-
-			await Console.Error.WriteLineAsync($"Fetching depth {FetchDepth} (was {wasDepth})");
+			await Console.Error.WriteLineAsync($"Fetching depth {newDepth} (was {wasDepth})");
 
 			try
 			{
-				_ = await Git("fetch", $"--depth={FetchDepth}");
+				_ = await Git("fetch", $"--depth={newDepth}");
+				await CacheParents();
 			}
 			catch (CommandException ex)
 			{
@@ -106,34 +136,20 @@ namespace Verlite
 
 		private async Task<string> GetCommitObject(Commit commit)
 		{
-			try
-			{
-				var (contents, _) = await Git("cat-file", "commit", commit.Id);
-				return contents;
-			}
-			catch (CommandException ex) when (!CanDeepen && ex.StandardError.Contains($"{commit}: bad file"))
-			{
-				throw new RepoTooShallowException(ex);
-			}
-			catch (CommandException ex) when (CanDeepen && ex.StandardError.Contains($"{commit}: bad file"))
-			{
-				await Deepen();
-				await CacheParents();
+			string? commitObj = await GetCommitObjectInternal(commit);
 
-				try
-				{
-					var (contents, _) = await Git("cat-file", "commit", commit.Id);
-					return contents;
-				}
-				catch (CommandException ex2) when (ex2.StandardError.Contains($"{commit}: bad file"))
-				{
-					await Console.Error.WriteLineAsync($"Failed to deepen repo and fetch commit {commit}.");
-					throw new AutoDeepenException(ex2);
-				}
-			}
+			if (commitObj is not null)
+				return commitObj;
+			else if (!CanDeepen)
+				throw new RepoTooShallowException();
+
+			await Deepen();
+			commitObj = await GetCommitObjectInternal(commit);
+
+			return commitObj
+				?? throw new AutoDeepenException($"Deepened repo did not contain commit {commit}");
 		}
 
-		private Dictionary<Commit, Commit> CachedParents { get; } = new();
 		private async Task CacheParents()
 		{
 			var (contents, _) = await Git("rev-list", "HEAD", "--first-parent");
@@ -149,17 +165,11 @@ namespace Verlite
 				return ret;
 
 			var contents = await GetCommitObject(commit);
-			var lines = contents.Split('\n');
+			var parent = ParseCommitObjectParent(contents);
 
-			foreach (string line in lines)
-			{
-				if (string.IsNullOrEmpty(line))
-					break;
-				if (line.StartsWith("parent ", StringComparison.Ordinal))
-					return CachedParents[commit] = new(line.Substring("parent ".Length));
-			}
-
-			return null;
+			if (parent is not null)
+				CachedParents[commit] = parent.Value;
+			return parent;
 		}
 
 		private static readonly Regex RefsTagRegex = new Regex(
@@ -210,7 +220,7 @@ namespace Verlite
 
 		public async Task FetchTag(Tag tag, string remote)
 		{
-			if (IsShallow ?? true)
+			if (FetchDepth?.shallow ?? true)
 				await Git("fetch", "--depth", "1", remote, $"refs/tags/{tag.Name}:refs/tags/{tag.Name}");
 			else
 				await Git("fetch", remote, $"refs/tags/{tag.Name}:refs/tags/{tag.Name}");
