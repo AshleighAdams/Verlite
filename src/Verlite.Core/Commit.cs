@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Verlite
 {
@@ -18,6 +19,7 @@ namespace Verlite
 			Equals(commit);
 		public static bool operator ==(Commit left, Commit right) => left.Equals(right);
 		public static bool operator !=(Commit left, Commit right) => !(left == right);
+		[ExcludeFromCodeCoverage]
 		public override int GetHashCode() => Id.GetHashCode();
 		public override string ToString() => Id;
 	}
