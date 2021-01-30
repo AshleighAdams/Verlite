@@ -8,6 +8,8 @@ override Verlite.SemVer.ToString() -> string!
 override Verlite.Tag.Equals(object? obj) -> bool
 override Verlite.Tag.GetHashCode() -> int
 override Verlite.Tag.ToString() -> string!
+override Verlite.TaggedVersion.Equals(object? obj) -> bool
+override Verlite.TaggedVersion.GetHashCode() -> int
 static Verlite.Commit.operator !=(Verlite.Commit left, Verlite.Commit right) -> bool
 static Verlite.Commit.operator ==(Verlite.Commit left, Verlite.Commit right) -> bool
 static Verlite.GitRepoInspector.FromPath(string! path) -> System.Threading.Tasks.Task<Verlite.GitRepoInspector!>!
@@ -25,6 +27,8 @@ static Verlite.SemVer.Parse(string! input) -> Verlite.SemVer
 static Verlite.SemVer.TryParse(string! input, out Verlite.SemVer? version) -> bool
 static Verlite.Tag.operator !=(Verlite.Tag left, Verlite.Tag right) -> bool
 static Verlite.Tag.operator ==(Verlite.Tag left, Verlite.Tag right) -> bool
+static Verlite.TaggedVersion.operator !=(Verlite.TaggedVersion! left, Verlite.TaggedVersion! right) -> bool
+static Verlite.TaggedVersion.operator ==(Verlite.TaggedVersion! left, Verlite.TaggedVersion! right) -> bool
 static Verlite.VersionCalculator.Bump(Verlite.SemVer version, Verlite.VersionCalculationOptions! options, int height) -> Verlite.SemVer
 static Verlite.VersionCalculator.CalculateVersion(Verlite.SemVer? lastTag, Verlite.VersionCalculationOptions! options, int height) -> Verlite.SemVer
 static Verlite.VersionCalculator.NextVersion(Verlite.SemVer lastTag, Verlite.VersionCalculationOptions! options) -> Verlite.SemVer
@@ -89,6 +93,7 @@ Verlite.TagContainer.FindCommitTags(Verlite.Commit commit) -> System.Collections
 Verlite.TagContainer.GetEnumerator() -> System.Collections.Generic.IEnumerator<Verlite.Tag>!
 Verlite.TagContainer.TagContainer(System.Collections.Generic.ISet<Verlite.Tag>! tags) -> void
 Verlite.TaggedVersion
+Verlite.TaggedVersion.Equals(Verlite.TaggedVersion? other) -> bool
 Verlite.TaggedVersion.Tag.get -> Verlite.Tag
 Verlite.TaggedVersion.TaggedVersion(Verlite.SemVer version, Verlite.Tag tag) -> void
 Verlite.TaggedVersion.Version.get -> Verlite.SemVer
