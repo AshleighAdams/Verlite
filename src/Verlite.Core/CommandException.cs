@@ -1,7 +1,9 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Verlite
 {
+	[ExcludeFromCodeCoverage]
 	internal class CommandException : InvalidOperationException
 	{
 		public int ExitCode { get; }

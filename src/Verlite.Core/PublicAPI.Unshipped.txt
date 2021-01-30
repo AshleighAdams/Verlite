@@ -56,6 +56,11 @@ Verlite.QueryTarget
 Verlite.QueryTarget.Local = 1 -> Verlite.QueryTarget
 Verlite.QueryTarget.None = 0 -> Verlite.QueryTarget
 Verlite.QueryTarget.Remote = 2 -> Verlite.QueryTarget
+Verlite.RepoInspectionException
+Verlite.RepoInspectionException.RepoInspectionException() -> void
+Verlite.RepoInspectionException.RepoInspectionException(string! message) -> void
+Verlite.RepoInspectionException.RepoInspectionException(string! message, System.Exception! innerException) -> void
+Verlite.RepoInspectionException.RepoInspectionException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
 Verlite.RepoTooShallowException
 Verlite.SemVer
 Verlite.SemVer.BuildMetadata.get -> string?

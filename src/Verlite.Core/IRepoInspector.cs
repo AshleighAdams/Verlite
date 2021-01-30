@@ -1,6 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace Verlite
@@ -13,26 +13,16 @@ namespace Verlite
 		Remote = 2,
 	}
 
-	public class TagContainer : IEnumerable<Tag>
+	[ExcludeFromCodeCoverage]
+	public class RepoInspectionException : SystemException
 	{
-		private ISet<Tag> Tags { get; }
+		protected RepoInspectionException() { }
 
-		public TagContainer(ISet<Tag> tags)
-		{
-			Tags = tags;
-		}
+		protected RepoInspectionException(string message) : base(message) { }
 
-		public IList<Tag> FindCommitTags(Commit commit)
-		{
-			var ret = new List<Tag>();
-			foreach (var tag in Tags)
-				if (tag.PointsTo == commit)
-					ret.Add(tag);
-			return ret;
-		}
+		protected RepoInspectionException(string message, Exception innerException) : base(message, innerException) { }
 
-		public IEnumerator<Tag> GetEnumerator() => Tags.GetEnumerator();
-		IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)Tags).GetEnumerator();
+		protected RepoInspectionException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 	}
 
 	public interface IRepoInspector

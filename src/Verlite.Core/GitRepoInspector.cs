@@ -1,22 +1,26 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Verlite
 {
-	public class AutoDeepenException : SystemException
+	[ExcludeFromCodeCoverage]
+	public class AutoDeepenException : RepoInspectionException
 	{
 		public AutoDeepenException() : base("Failed to automatically deepen the repository") { }
 		public AutoDeepenException(string message) : base($"Failed to automatically deepen the repository: {message}") { }
 		internal AutoDeepenException(CommandException parent) : base("Failed to automatically deepen the repository: " + parent.Message, parent) { }
 	}
-	public class RepoTooShallowException : SystemException
+	[ExcludeFromCodeCoverage]
+	public class RepoTooShallowException : RepoInspectionException
 	{
 		internal RepoTooShallowException() : base("No version tag found before shallow clone reached end.") { }
 	}
-	public class GitMissingOrNotGitRepoException : SystemException
+	[ExcludeFromCodeCoverage]
+	public class GitMissingOrNotGitRepoException : RepoInspectionException
 	{
 	}
 
