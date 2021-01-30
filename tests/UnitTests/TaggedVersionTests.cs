@@ -72,9 +72,12 @@ namespace UnitTests
 			object a = new TaggedVersion(Version1, TagVersion1A);
 			var b = new TaggedVersion(Version1, TagVersion1A);
 			var c = new TaggedVersion(Version1, TagVersion1B);
+			var d = new object();
 
 			a.Should().Be(b);
 			a.Should().NotBe(c);
+			a.Should().NotBe(d);
+			a.Should().NotBe(null);
 		}
 	}
 }
