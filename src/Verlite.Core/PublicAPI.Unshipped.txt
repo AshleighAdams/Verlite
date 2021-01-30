@@ -11,7 +11,7 @@ override Verlite.Tag.ToString() -> string!
 static Verlite.Commit.operator !=(Verlite.Commit left, Verlite.Commit right) -> bool
 static Verlite.Commit.operator ==(Verlite.Commit left, Verlite.Commit right) -> bool
 static Verlite.GitRepoInspector.FromPath(string! path) -> System.Threading.Tasks.Task<Verlite.GitRepoInspector!>!
-static Verlite.HeightCalculator.FromRepository(Verlite.IRepoInspector! repo, string! tagPrefix, bool queryRemoteTags) -> System.Threading.Tasks.Task<(int height, Verlite.HeightCalculator.TaggedVersion?)>!
+static Verlite.HeightCalculator.FromRepository(Verlite.IRepoInspector! repo, string! tagPrefix, bool queryRemoteTags) -> System.Threading.Tasks.Task<(int height, Verlite.TaggedVersion?)>!
 static Verlite.SemVer.ComparePrerelease(string! left, string! right) -> int
 static Verlite.SemVer.IsValidIdentifierCharacter(char input) -> bool
 static Verlite.SemVer.IsValidIdentifierString(string! input) -> bool
@@ -36,6 +36,8 @@ Verlite.Commit.Commit() -> void
 Verlite.Commit.Commit(string! id) -> void
 Verlite.Commit.Equals(Verlite.Commit other) -> bool
 Verlite.Commit.Id.get -> string!
+Verlite.GitMissingOrNotGitRepoException
+Verlite.GitMissingOrNotGitRepoException.GitMissingOrNotGitRepoException() -> void
 Verlite.GitRepoInspector
 Verlite.GitRepoInspector.CanDeepen.get -> bool
 Verlite.GitRepoInspector.CanDeepen.set -> void
@@ -45,10 +47,6 @@ Verlite.GitRepoInspector.GetParent(Verlite.Commit commit) -> System.Threading.Ta
 Verlite.GitRepoInspector.GetTags(Verlite.QueryTarget queryTarget) -> System.Threading.Tasks.Task<Verlite.TagContainer!>!
 Verlite.GitRepoInspector.Root.get -> string!
 Verlite.HeightCalculator
-Verlite.HeightCalculator.TaggedVersion
-Verlite.HeightCalculator.TaggedVersion.Tag.get -> Verlite.Tag
-Verlite.HeightCalculator.TaggedVersion.TaggedVersion(Verlite.SemVer version, Verlite.Tag tag) -> void
-Verlite.HeightCalculator.TaggedVersion.Version.get -> Verlite.SemVer
 Verlite.IRepoInspector
 Verlite.IRepoInspector.FetchTag(Verlite.Tag tag, string! remote) -> System.Threading.Tasks.Task!
 Verlite.IRepoInspector.GetHead() -> System.Threading.Tasks.Task<Verlite.Commit?>!
@@ -85,6 +83,10 @@ Verlite.TagContainer
 Verlite.TagContainer.FindCommitTags(Verlite.Commit commit) -> System.Collections.Generic.IList<Verlite.Tag>!
 Verlite.TagContainer.GetEnumerator() -> System.Collections.Generic.IEnumerator<Verlite.Tag>!
 Verlite.TagContainer.TagContainer(System.Collections.Generic.ISet<Verlite.Tag>! tags) -> void
+Verlite.TaggedVersion
+Verlite.TaggedVersion.Tag.get -> Verlite.Tag
+Verlite.TaggedVersion.TaggedVersion(Verlite.SemVer version, Verlite.Tag tag) -> void
+Verlite.TaggedVersion.Version.get -> Verlite.SemVer
 Verlite.VersionCalculationException
 Verlite.VersionCalculationException.VersionCalculationException() -> void
 Verlite.VersionCalculationException.VersionCalculationException(string? message) -> void
