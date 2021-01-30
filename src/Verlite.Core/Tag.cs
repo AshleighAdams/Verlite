@@ -1,5 +1,5 @@
 using System;
-using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Verlite
 {
@@ -20,6 +20,7 @@ namespace Verlite
 			Equals(tag);
 		public static bool operator ==(Tag left, Tag right) => left.Equals(right);
 		public static bool operator !=(Tag left, Tag right) => !(left == right);
+		[ExcludeFromCodeCoverage]
 		public override int GetHashCode() => Name.GetHashCode() ^ PointsTo.GetHashCode();
 		public override string ToString() => $"{Name} -> {PointsTo}";
 	}
