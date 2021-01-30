@@ -168,11 +168,11 @@ namespace Verlite
 		public override bool Equals(object? obj) => obj is SemVer ver && this == ver;
 		public bool Equals(SemVer other) => this == other;
 		public static bool operator ==(SemVer left, SemVer right) =>
-				left.Major == right.Major &&
-				left.Minor == right.Minor &&
-				left.Patch == right.Patch &&
-				left.Prerelease == right.Prerelease &&
-				left.BuildMetadata == right.BuildMetadata;
+			left.Major == right.Major &&
+			left.Minor == right.Minor &&
+			left.Patch == right.Patch &&
+			left.Prerelease == right.Prerelease &&
+			left.BuildMetadata == right.BuildMetadata;
 		public static bool operator !=(SemVer left, SemVer right) => !(left == right);
 
 		public int CompareTo(SemVer other)
