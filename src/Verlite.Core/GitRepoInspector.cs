@@ -30,7 +30,7 @@ namespace Verlite
 		{
 			try
 			{
-				var (root, _) = await Command.Run(path, "git", "rev-parse", "--show-toplevel");
+				var (root, _) = await Command.Run(path, "git", new string[] { "rev-parse", "--show-toplevel" });
 				var ret = new GitRepoInspector(root);
 				await ret.CacheParents();
 				return ret;
