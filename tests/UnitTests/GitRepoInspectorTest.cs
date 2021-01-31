@@ -33,8 +33,8 @@ namespace UnitTests
 			["GIT_AUTHOR_NAME"] = "Unit Test",
 			["GIT_AUTHOR_EMAIL"] = "no@reply",
 			["GIT_AUTHOR_DATE"] = "2020-08-22T13:37:42Z",
-			["GIT_COMITTER_NAME"] = "Unit Test",
-			["GIT_COMITTER_EMAIL"] = "no@reply",
+			["GIT_COMMITTER_NAME"] = "Unit Test",
+			["GIT_COMMITTER_EMAIL"] = "no@reply",
 			["GIT_COMMITTER_DATE"] = "2020-08-22T13:37:42Z",
 		};
 		private static Task<(string stdout, string stderr)> GitInternal(string root, params string[] args) => Command.Run(root, "git", args, EnvVars);
