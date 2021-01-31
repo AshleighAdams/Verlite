@@ -55,8 +55,15 @@ namespace Verlite
 
 		public async Task<Commit?> GetHead()
 		{
-			var (commit, _) = await Git("rev-parse", "HEAD");
-			return new Commit(commit);
+			try
+			{
+				var (commit, _) = await Git("rev-parse", "HEAD");
+				return new Commit(commit);
+			}
+			catch (CommandException)
+			{
+				return null;
+			}
 		}
 
 		private static Commit? ParseCommitObjectParent(string commitObj)
@@ -156,11 +163,17 @@ namespace Verlite
 
 		private async Task CacheParents()
 		{
-			var (contents, _) = await Git("rev-list", "HEAD", "--first-parent");
-			var lines = contents.Split('\n');
+			try
+			{
+				var (contents, _) = await Git("rev-list", "HEAD", "--first-parent");
+				var lines = contents.Split('\n');
 
-			for (int i = 0; i < lines.Length - 1; i++)
-				CachedParents[new(lines[i])] = new(lines[i + 1]);
+				for (int i = 0; i < lines.Length - 1; i++)
+					CachedParents[new(lines[i])] = new(lines[i + 1]);
+			}
+			catch (CommandException)
+			{
+			}
 		}
 
 		public async Task<Commit?> GetParent(Commit commit)
