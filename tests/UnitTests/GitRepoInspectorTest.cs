@@ -15,7 +15,7 @@ namespace UnitTests
 		public string RootPath { get; }
 
 		private static int nextDirectoryIndex;
-		private static string rootDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+		private static string rootDir = Path.Combine(Path.GetTempPath(), "Verlite.TestGitRepos", Path.GetRandomFileName());
 		public GitTestDirectory()
 		{
 			int index = Interlocked.Increment(ref nextDirectoryIndex);
@@ -50,7 +50,7 @@ namespace UnitTests
 		[Fact]
 		public async Task NoCommitsReturnsNullHead()
 		{
-			var x = await Git("init");
+			await Git("init");
 
 			var repo = await Repo;
 
