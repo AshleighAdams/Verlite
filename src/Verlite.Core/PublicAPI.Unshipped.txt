@@ -10,6 +10,7 @@ override Verlite.Tag.GetHashCode() -> int
 override Verlite.Tag.ToString() -> string!
 override Verlite.TaggedVersion.Equals(object? obj) -> bool
 override Verlite.TaggedVersion.GetHashCode() -> int
+static Verlite.Command.Run(string! directory, string! command, string![]! args, System.Collections.Generic.IDictionary<string!, string!>? envVars = null) -> System.Threading.Tasks.Task<(string! stdout, string! stderr)>!
 static Verlite.Commit.operator !=(Verlite.Commit left, Verlite.Commit right) -> bool
 static Verlite.Commit.operator ==(Verlite.Commit left, Verlite.Commit right) -> bool
 static Verlite.GitRepoInspector.FromPath(string! path) -> System.Threading.Tasks.Task<Verlite.GitRepoInspector!>!
