@@ -1,6 +1,5 @@
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -21,29 +20,6 @@ namespace Verlite
 				}
 				yield return (version.Value, tag);
 			}
-		}
-
-		private static T MaxBy<T, TSelector>(this IEnumerable<T> self, Func<T, TSelector> selector)
-			where TSelector : struct
-		{
-			T max = default!;
-			TSelector? select = null;
-			Comparer<TSelector>? comparer = Comparer<TSelector>.Default;
-
-			foreach (T item in self)
-			{
-				TSelector new_select = selector(item);
-				if (!select.HasValue || comparer.Compare(select.Value, new_select) < 0)
-				{
-					max = item;
-					select = new_select;
-				}
-			}
-
-			if (!select.HasValue)
-				throw new ArgumentException("no values to get the max of", nameof(self));
-
-			return max;
 		}
 
 		public static async Task<(int height, TaggedVersion?)> FromRepository(IRepoInspector repo, string tagPrefix, bool queryRemoteTags)
@@ -70,7 +46,7 @@ namespace Verlite
 				var versions = currentTags
 					.Where(t => t.Name.StartsWith(tagPrefix, StringComparison.Ordinal))
 					.SelectWhereSemver(tagPrefix)
-					.OrderByDescending(v => v)
+					.OrderByDescending(v => v.version)
 					.ToList();
 
 				Debug.WriteLine($"HEAD^{height} {current} has {currentTags.Count} total tags with {versions.Count} versions.");
@@ -84,7 +60,7 @@ namespace Verlite
 					foreach (var ver in versions)
 						Debug.WriteLine($"  found version: {ver}");
 
-					var (version, tag) = versions.MaxBy(ver => ver.version);
+					var (version, tag) = versions.First();
 					return (height, new TaggedVersion(version, tag));
 				}
 
