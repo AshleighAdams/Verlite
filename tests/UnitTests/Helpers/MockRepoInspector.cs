@@ -58,6 +58,8 @@ namespace UnitTests
 						throw new ArgumentException("Commits contained duplicate tag!", nameof(commits));
 				}
 				RemoteTags.AddRange(commit.Tags);
+
+				parent = commit.Id;
 			}
 			Commits.Reverse(); // reverse it to make First the HEAD.
 		}
@@ -76,7 +78,7 @@ namespace UnitTests
 
 		async Task<Commit?> IRepoInspector.GetParent(Commit commit)
 		{
-			return Commits.Where(commit.Equals).FirstOrDefault()?.ParentId;
+			return Commits.Where(ic => ic.Id == commit).FirstOrDefault()?.ParentId;
 		}
 
 		async Task<TagContainer> IRepoInspector.GetTags(QueryTarget queryTarget)
