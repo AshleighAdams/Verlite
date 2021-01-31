@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Verlite
 {
+	[ExcludeFromCodeCoverage]
 	public class AutoDeepenException : RepoInspectionException
 	{
-		[ExcludeFromCodeCoverage]
 		public AutoDeepenException() : base("Failed to automatically deepen the repository") { }
 		public AutoDeepenException(string message) : base($"Failed to automatically deepen the repository: {message}") { }
 		internal AutoDeepenException(CommandException parent) : base("Failed to automatically deepen the repository: " + parent.Message, parent) { }
@@ -235,7 +235,8 @@ namespace Verlite
 
 		public async Task FetchTag(Tag tag, string remote)
 		{
-			if (FetchDepth?.shallow ?? true)
+			FetchDepth ??= await MeasureDepth();
+			if (FetchDepth.Value.shallow)
 				await Git("fetch", "--depth", "1", remote, $"refs/tags/{tag.Name}:refs/tags/{tag.Name}");
 			else
 				await Git("fetch", remote, $"refs/tags/{tag.Name}:refs/tags/{tag.Name}");
