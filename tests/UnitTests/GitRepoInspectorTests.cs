@@ -53,6 +53,9 @@ namespace UnitTests
 
 		public void Dispose()
 		{
+			var directory = new DirectoryInfo(RootPath) { Attributes = FileAttributes.Normal };
+			foreach (var info in directory.GetFileSystemInfos("*", SearchOption.AllDirectories))
+				info.Attributes = FileAttributes.Normal;
 			Directory.Delete(RootPath, recursive: true);
 		}
 	}
@@ -80,6 +83,21 @@ namespace UnitTests
 			var head = await repo.GetHead();
 
 			head.Should().BeNull();
+		}
+
+		[Fact]
+		public async Task CommitsHaveReproducibileHashes()
+		{
+			await TestRepo.Git("init");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "first");
+
+			var repo = await Repo;
+			var head = await repo.GetHead();
+			head.Should().Be(new Commit("b2000fc1f1d2e5f816cfa51a4ad8764048f22f0a"));
+
+			await TestRepo.Git("commit", "--allow-empty", "-m", "second");
+			head = await repo.GetHead();
+			head.Should().Be(new Commit("110c6a3673eba54f33707cde2b721fb765443153"));
 		}
 	}
 }
