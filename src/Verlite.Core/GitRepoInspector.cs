@@ -7,19 +7,17 @@ using System.Threading.Tasks;
 
 namespace Verlite
 {
-	[ExcludeFromCodeCoverage]
 	public class AutoDeepenException : RepoInspectionException
 	{
+		[ExcludeFromCodeCoverage]
 		public AutoDeepenException() : base("Failed to automatically deepen the repository") { }
 		public AutoDeepenException(string message) : base($"Failed to automatically deepen the repository: {message}") { }
 		internal AutoDeepenException(CommandException parent) : base("Failed to automatically deepen the repository: " + parent.Message, parent) { }
 	}
-	[ExcludeFromCodeCoverage]
 	public class RepoTooShallowException : RepoInspectionException
 	{
 		internal RepoTooShallowException() : base("No version tag found before shallow clone reached end.") { }
 	}
-	[ExcludeFromCodeCoverage]
 	public class GitMissingOrNotGitRepoException : RepoInspectionException
 	{
 	}
