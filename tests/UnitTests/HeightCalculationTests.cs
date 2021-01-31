@@ -136,7 +136,7 @@ namespace UnitTests
 			var repo = new MockRepoInspector(new MockRepoCommit[]
 			{
 				new("commit_a"),
-				new("commit_b", "v1.0.0-alpha.1", "v1.0.0", "v1.0.0-rc.1"),
+				new("commit_b", "v1.0.0-alpha.1", "v1.0.0-rc.2", "v1.0.0-rc.10"),
 				new("commit_c"),
 			});
 
@@ -146,9 +146,9 @@ namespace UnitTests
 			SDebug.Assert(tag is not null);
 
 			height.Should().Be(1);
-			tag.Tag.Name.Should().Be("v1.0.0");
+			tag.Tag.Name.Should().Be("v1.0.0-rc.10");
 			tag.Tag.PointsTo.Id.Should().Be("commit_b");
-			tag.Version.Should().Be(new SemVer(1, 0, 0));
+			tag.Version.Should().Be(new SemVer(1, 0, 0, "rc.10"));
 		}
 
 
