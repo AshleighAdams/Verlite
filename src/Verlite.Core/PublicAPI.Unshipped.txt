@@ -35,6 +35,7 @@ static Verlite.VersionCalculator.NextVersion(Verlite.SemVer lastTag, Verlite.Ver
 Verlite.AutoDeepenException
 Verlite.AutoDeepenException.AutoDeepenException() -> void
 Verlite.AutoDeepenException.AutoDeepenException(string! message) -> void
+Verlite.Command
 Verlite.Commit
 Verlite.Commit.Commit() -> void
 Verlite.Commit.Commit(string! id) -> void

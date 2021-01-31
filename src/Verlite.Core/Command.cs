@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Verlite
 {
-	internal static class Command
+	public static class Command
 	{
 		public static async Task<(string stdout, string stderr)> Run(string directory, string command, params string[] args)
 		{
