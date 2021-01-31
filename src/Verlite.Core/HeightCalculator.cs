@@ -59,6 +59,9 @@ namespace Verlite
 			foreach (var tag in tags)
 				Debug.WriteLine($"  {tag}");
 
+			if (head is null)
+				return (1, null);
+
 			var current = head.Value;
 			int height = 0;
 			while (true)
@@ -85,11 +88,11 @@ namespace Verlite
 					return (height, new TaggedVersion(version, tag));
 				}
 
+				height++;
 				var parent = await repo.GetParent(current);
 				if (parent is null)
 					break;
 				current = parent.Value;
-				height++;
 			}
 
 			return (height, null);
