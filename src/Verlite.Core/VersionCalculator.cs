@@ -30,9 +30,8 @@ namespace Verlite
 
 		public static SemVer FromTagInfomation(SemVer? lastTag, VersionCalculationOptions options, int height)
 		{
-			// if there has never been a tag, pretend the next version is minimum version and that there was a tag before the first commit
 			if (lastTag is null)
-				return Bump(options.MinimiumVersion, options, height + 1);
+				return Bump(options.MinimiumVersion, options, height);
 
 			bool directTag = height == 0;
 			if (directTag)
