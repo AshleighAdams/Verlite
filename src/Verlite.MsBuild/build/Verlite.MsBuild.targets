@@ -41,6 +41,7 @@ This file has been modified by Ashleigh Adams and adapted for Verlite -->
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteVerbosity=$(VerliteVerbosity)" />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteVersionOverride=$(VerliteVersionOverride)" />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerlitePrereleaseBaseHeight=$(VerlitePrereleaseBaseHeight)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteAutoIncrement=$(VerliteAutoIncrement)" />
     <ItemGroup>
       <VerliteInputs Remove="@(VerliteInputs)" />
       <VerliteConsoleOutput Remove="@(VerliteConsoleOutput)" />
@@ -55,6 +56,7 @@ This file has been modified by Ashleigh Adams and adapted for Verlite -->
       <VerliteInputs Condition="'$(VerliteVerbosity)' != ''"               Include="--verbosity &quot;$(VerliteVerbosity)&quot;" />
       <VerliteInputs Condition="'$(VerliteVersionOverride)' != ''"         Include="--version-override &quot;$(VerliteVersionOverride)&quot;" />
       <VerliteInputs Condition="'$(VerlitePrereleaseBaseHeight)' != ''"    Include="--prerelease-base-height &quot;$(VerlitePrereleaseBaseHeight)&quot;" />
+      <VerliteInputs Condition="'$(VerliteAutoIncrement)' != ''"           Include="--auto-increment &quot;$(VerliteAutoIncrement)&quot;" />
     </ItemGroup>
     <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)../verlite/Verlite.MsBuild.dll&quot; @(VerliteInputs->'%(Identity)', ' ')" ConsoleToMSBuild="true" StandardOutputImportance="Low" >
       <Output TaskParameter="ConsoleOutput" ItemName="VerliteConsoleOutput" />

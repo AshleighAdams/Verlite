@@ -1,15 +1,29 @@
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.Diagnostics;
+using System.CommandLine.Parsing;
 using System.Globalization;
-using System.IO;
-using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+
+using CommandLineCommand = System.CommandLine.Command;
 
 [assembly: CLSCompliant(false)]
 namespace Verlite.CLI
 {
+	internal static class ExtensionMethods
+	{
+		internal static CommandLineCommand WithHandler(this CommandLineCommand command, string name)
+		{
+			var flags = BindingFlags.NonPublic | BindingFlags.Static;
+			var method = typeof(Program).GetMethod(name, flags);
+
+			var handler = CommandHandler.Create(method!);
+			command.Handler = handler;
+			return command;
+		}
+	}
+
 	public static class Program
 	{
 		public static readonly VersionCalculationOptions DefaultOptions = new();
@@ -32,7 +46,7 @@ namespace Verlite.CLI
 				new Option<SemVer>(
 					aliases: new[] { "--min-version", "-m" },
 					isDefault: true,
-					parseArgument: new System.CommandLine.Parsing.ParseArgument<SemVer>(Parsers.ParseMinSemVer),
+					parseArgument: new ParseArgument<SemVer>(Parsers.ParseMinSemVer),
 					description: "The minimum RTM version, i.e the destined version."),
 				new Option<int>(
 					aliases: new[] { "--prerelease-base-height", "-p" },
@@ -41,12 +55,12 @@ namespace Verlite.CLI
 				new Option<SemVer?>(
 					aliases: new[] { "--version-override" },
 					isDefault: true,
-					parseArgument: new System.CommandLine.Parsing.ParseArgument<SemVer?>(Parsers.ParseVersion),
+					parseArgument: new ParseArgument<SemVer?>(Parsers.ParseVersion),
 					description: "Force the calculated version to be this version."),
 				new Option<Verbosity>(
 					aliases: new[] { "--verbosity" },
 					isDefault: true,
-					parseArgument: new System.CommandLine.Parsing.ParseArgument<Verbosity>(Parsers.ParseVerbosity),
+					parseArgument: new ParseArgument<Verbosity>(Parsers.ParseVerbosity),
 					description: "The level of logging to output."),
 				new Option<string?>(
 					aliases: new[] { "--build-metadata", "-b" },
@@ -58,15 +72,20 @@ namespace Verlite.CLI
 					parseArgument: new System.CommandLine.Parsing.ParseArgument<Show>(Parsers.ParseShow),
 					description: "The version part which should be written to stdout."),
 				new Option<bool>(
-					aliases: new[] { "--auto-fetch", "-a" },
+					aliases: new[] { "--auto-fetch", "-f" },
 					getDefaultValue: () => false,
 					description: "Automatically fetch commits from a shallow repository until a version tag is encountered."),
+				new Option<VersionPart>(
+					aliases: new[] { "--auto-increment", "-a" },
+					isDefault: true,
+					parseArgument: new ParseArgument<VersionPart>(Parsers.ParseAutoIncrement),
+					description: "Which version part should be bumped after an RTM release."),
 			};
-			rootCommand.Handler = CommandHandler.Create<string, string, SemVer, int, SemVer?, Verbosity, string?, Show, bool, string>(RootCommand);
+			rootCommand.WithHandler(nameof(RootCommandAsync));
 			return await rootCommand.InvokeAsync(args);
 		}
 
-		public static void RootCommand(
+		private async static Task RootCommandAsync(
 			string tagPrefix,
 			string defaultPrereleasePhase,
 			SemVer minVersion,
@@ -76,23 +95,40 @@ namespace Verlite.CLI
 			string? buildMetadata,
 			Show show,
 			bool autoFetch,
+			VersionPart autoIncrement,
 			string sourceDirectory)
 		{
-			var task = RootCommandAsync(
-				tagPrefix,
-				defaultPrereleasePhase,
-				minVersion,
-				prereleaseBaseHeight,
-				versionOverride,
-				verbosity,
-				buildMetadata,
-				show,
-				autoFetch,
-				sourceDirectory);
-
 			try
 			{
-				task.GetAwaiter().GetResult();
+				var opts = new VersionCalculationOptions()
+				{
+					TagPrefix = tagPrefix,
+					DefaultPrereleasePhase = defaultPrereleasePhase,
+					MinimiumVersion = minVersion,
+					PrereleaseBaseHeight = prereleaseBaseHeight,
+					VersionOverride = versionOverride,
+					BuildMetadata = buildMetadata,
+					QueryRemoteTags = autoFetch,
+					AutoIncrement = autoIncrement,
+				};
+
+				var repo = await GitRepoInspector.FromPath(sourceDirectory);
+				repo.CanDeepen = autoFetch;
+
+				var version = await VersionCalculator.FromRepository(repo, opts);
+
+				string toShow = show switch
+				{
+					Show.All => version.ToString(),
+					Show.Major => version.Major.ToString(CultureInfo.InvariantCulture),
+					Show.Minor => version.Minor.ToString(CultureInfo.InvariantCulture),
+					Show.Patch => version.Patch.ToString(CultureInfo.InvariantCulture),
+					Show.Prerelease => version.Prerelease?.ToString(CultureInfo.InvariantCulture) ?? string.Empty,
+					Show.Metadata => version.BuildMetadata?.ToString(CultureInfo.InvariantCulture) ?? string.Empty,
+					_ => throw new NotImplementedException(),
+				};
+
+				Console.WriteLine($"{toShow}");
 			}
 			catch (GitMissingOrNotGitRepoException)
 			{
@@ -110,48 +146,8 @@ namespace Verlite.CLI
 				Console.Error.WriteLine("For CI/CD, use `verlite --auto-fetch`");
 				Environment.Exit(1);
 			}
-		}
 
-		public async static Task RootCommandAsync(
-			string tagPrefix,
-			string defaultPrereleasePhase,
-			SemVer minVersion,
-			int prereleaseBaseHeight,
-			SemVer? versionOverride,
-			Verbosity verbosity,
-			string? buildMetadata,
-			Show show,
-			bool autoFetch,
-			string sourceDirectory)
-		{
-			var opts = new VersionCalculationOptions()
-			{
-				TagPrefix = tagPrefix,
-				DefaultPrereleasePhase = defaultPrereleasePhase,
-				MinimiumVersion =  minVersion,
-				PrereleaseBaseHeight = prereleaseBaseHeight,
-				VersionOverride = versionOverride,
-				BuildMetadata = buildMetadata,
-				QueryRemoteTags = autoFetch,
-			};
-
-			var repo = await GitRepoInspector.FromPath(sourceDirectory);
-			repo.CanDeepen = autoFetch;
-
-			var version = await VersionCalculator.FromRepository(repo, opts);
-
-			string toShow = show switch
-			{
-				Show.All => version.ToString(),
-				Show.Major => version.Major.ToString(CultureInfo.InvariantCulture),
-				Show.Minor => version.Minor.ToString(CultureInfo.InvariantCulture),
-				Show.Patch => version.Patch.ToString(CultureInfo.InvariantCulture),
-				Show.Prerelease => version.Prerelease?.ToString(CultureInfo.InvariantCulture) ?? string.Empty,
-				Show.Metadata => version.BuildMetadata?.ToString(CultureInfo.InvariantCulture) ?? string.Empty,
-				_ => throw new NotImplementedException(),
-			};
-
-			Console.WriteLine($"{toShow}");
+			
 		}
 	}
 }

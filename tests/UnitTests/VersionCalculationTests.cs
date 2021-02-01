@@ -28,6 +28,9 @@ namespace UnitTests
 		[InlineData("1.0.0",          "1.0.0",      0, "1.0.0")]
 		[InlineData("1.0.0",          "1.0.0",      1, "1.0.1-alpha.1")]
 		[InlineData("1.0.0",          "2.0.0",      1, "2.0.0-alpha.1")]
+
+		[InlineData("1.0.0-pre+meta",    null,      0, "1.0.0-pre+meta")]
+		[InlineData("1.0.0+meta",        null,      0, "1.0.0+meta")]
 		public void CheckVersionBumps(string? versionStr, string? minVer, int height, string resultStr)
 		{
 			var options = new VersionCalculationOptions()
@@ -52,6 +55,30 @@ namespace UnitTests
 					version: new(1, 0, 0),
 					options: new(),
 					height: 0));
+		}
+
+		[Theory]
+		[InlineData("1.0.0", VersionPart.Patch, "1.0.1")]
+		[InlineData("1.0.0", VersionPart.Minor, "1.1.0")]
+		[InlineData("1.0.0", VersionPart.Major, "2.0.0")]
+		[InlineData("1.1.2", VersionPart.Patch, "1.1.3")]
+		[InlineData("1.1.2", VersionPart.Minor, "1.2.0")]
+		[InlineData("1.1.2", VersionPart.Major, "2.0.0")]
+		[InlineData("1.0.0-alpha.1+data.2", VersionPart.Patch, "1.0.0-alpha.1")]
+		[InlineData("1.0.0-alpha.1+data.2", VersionPart.Minor, "1.0.0-alpha.1")]
+		[InlineData("1.0.0-alpha.1+data.2", VersionPart.Major, "1.0.0-alpha.1")]
+		public void NextVersion(string versionStr, VersionPart part, string expectedNextStr)
+		{
+			var version = SemVer.Parse(versionStr);
+			var expectedNext = SemVer.Parse(expectedNextStr);
+			var opts = new VersionCalculationOptions()
+			{
+				AutoIncrement = part,
+			};
+
+			var actualNext = VersionCalculator.NextVersion(version, opts);
+
+			actualNext.Should().Be(expectedNext);
 		}
 
 		[Fact]

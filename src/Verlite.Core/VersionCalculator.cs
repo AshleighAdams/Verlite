@@ -25,7 +25,15 @@ namespace Verlite
 			else if (lastTag.Prerelease is not null)
 				return lastTag;
 			else
-				return new SemVer(lastTag.Major, lastTag.Minor, lastTag.Patch + 1);
+				return options.AutoIncrement switch
+				{
+					VersionPart.Patch => new SemVer(lastTag.Major, lastTag.Minor, lastTag.Patch + 1),
+					VersionPart.Minor => new SemVer(lastTag.Major, lastTag.Minor + 1, 0),
+					VersionPart.Major => new SemVer(lastTag.Major + 1, 0, 0),
+					_ => throw new InvalidOperationException("NextVersion(): Can only bump by major, minor, or patch (default)."),
+				};
+
+			//return new SemVer(lastTag.Major, lastTag.Minor, lastTag.Patch + 1);
 		}
 
 		public static SemVer FromTagInfomation(SemVer? lastTag, VersionCalculationOptions options, int height)

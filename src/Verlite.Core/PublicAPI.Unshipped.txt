@@ -106,6 +106,8 @@ Verlite.VersionCalculationException.VersionCalculationException(string? message)
 Verlite.VersionCalculationException.VersionCalculationException(string? message, System.Exception? innerException) -> void
 Verlite.VersionCalculationException.VersionCalculationException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
 Verlite.VersionCalculationOptions
+Verlite.VersionCalculationOptions.AutoIncrement.get -> Verlite.VersionPart
+Verlite.VersionCalculationOptions.AutoIncrement.set -> void
 Verlite.VersionCalculationOptions.BuildMetadata.get -> string?
 Verlite.VersionCalculationOptions.BuildMetadata.set -> void
 Verlite.VersionCalculationOptions.DefaultPrereleasePhase.get -> string!
@@ -122,3 +124,8 @@ Verlite.VersionCalculationOptions.VersionCalculationOptions() -> void
 Verlite.VersionCalculationOptions.VersionOverride.get -> Verlite.SemVer?
 Verlite.VersionCalculationOptions.VersionOverride.set -> void
 Verlite.VersionCalculator
+Verlite.VersionPart
+Verlite.VersionPart.Major = 1 -> Verlite.VersionPart
+Verlite.VersionPart.Minor = 2 -> Verlite.VersionPart
+Verlite.VersionPart.None = 0 -> Verlite.VersionPart
+Verlite.VersionPart.Patch = 3 -> Verlite.VersionPart

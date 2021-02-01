@@ -12,5 +12,6 @@ namespace Verlite
 		public SemVer? VersionOverride { get; set; }
 		public string? BuildMetadata { get; set; }
 		public bool QueryRemoteTags { get; set; }
+		public VersionPart AutoIncrement { get; set; } = VersionPart.Patch;
 	}
 }
