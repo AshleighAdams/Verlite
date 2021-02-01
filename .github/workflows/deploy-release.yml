@@ -64,9 +64,9 @@ jobs:
         tag="${GITHUB_REF#refs/*/}"
         options=()
 
-        git tag -v --format='%(subject)' "$tag" > msg.txt
+        git tag -v --format='%(contents:subject)' "$tag" > msg.txt
         echo >> msg.txt
-        git tag -v --format='%(body)' "$tag" >> msg.txt
+        git tag -v --format='%(contents:body)' "$tag" >> msg.txt
         options+=("-F" "msg.txt")
 
         if [[ "$(minver --tag-prefix=v --verbosity=e)" == *"-"* ]]; then
