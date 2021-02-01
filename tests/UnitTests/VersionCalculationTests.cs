@@ -4,6 +4,7 @@ using FluentAssertions;
 
 using Xunit;
 using System;
+using System.Threading.Tasks;
 
 namespace UnitTests
 {
@@ -11,9 +12,8 @@ namespace UnitTests
 	{
 		[Theory]
 		//               lastTag   minVersion, height,          result
-		[InlineData(        null,        null,      0, "0.1.0-alpha.1")]
-		[InlineData(        null,        null,      1, "0.1.0-alpha.2")]
-		[InlineData(        null,        null,     10, "0.1.0-alpha.11")]
+		[InlineData(        null,        null,      1, "0.1.0-alpha.1")]
+		[InlineData(        null,        null,     10, "0.1.0-alpha.10")]
 		[InlineData("0.1.0-rc.1",        null,      0, "0.1.0-rc.1")]
 		[InlineData("0.1.0-rc.1",        null,      1, "0.1.0-rc.1.1")]
 		[InlineData("0.1.0-rc.1",        null,      2, "0.1.0-rc.1.2")]
@@ -62,6 +62,100 @@ namespace UnitTests
 					lastTag: new(1, 0, 0),
 					options: new() { MinimiumVersion = new(2, 0, 0) },
 					height: 0));
+		}
+
+		[Fact]
+		public async Task NoCommitHasMinVersionAlpha1()
+		{
+			var repo = new MockRepoInspector(Array.Empty<MockRepoCommit>());
+
+			var semver = await VersionCalculator.FromRepository(repo, new() { QueryRemoteTags = true });
+
+			semver.Should().Be(new SemVer(0, 1, 0, "alpha.1"));
+		}
+
+		[Fact]
+		public async Task FirstCommitNoTagHasMinVersionAlpha1()
+		{
+			var repo = new MockRepoInspector(new MockRepoCommit[]
+			{
+				new("commit_a"),
+			});
+
+			var semver = await VersionCalculator.FromRepository(repo, new() { QueryRemoteTags = true });
+
+			semver.Should().Be(new SemVer(0, 1, 0, "alpha.1"));
+		}
+
+		[Fact]
+		public async Task FirstCommitTaggedHasExactVersion()
+		{
+			var repo = new MockRepoInspector(new MockRepoCommit[]
+			{
+				new("commit_a", "v5.4.3-rc.2.1"),
+			});
+
+			var semver = await VersionCalculator.FromRepository(repo, new() { QueryRemoteTags = true });
+
+			semver.Should().Be(new SemVer(5, 4, 3, "rc.2.1"));
+		}
+
+		[Fact]
+		public async Task CommitAfterPrereleaseTagAppendsHeight()
+		{
+			var repo = new MockRepoInspector(new MockRepoCommit[]
+			{
+				new("commit_b"),
+				new("commit_a", "v4.3.2-rc.1"),
+			});
+
+			var semver = await VersionCalculator.FromRepository(repo, new() { QueryRemoteTags = true });
+
+			semver.Should().Be(new SemVer(4, 3, 2, "rc.1.1"));
+		}
+
+		[Fact]
+		public async Task CommitAfterRtmTagAppendsHeightAndBumpsMinor()
+		{
+			var repo = new MockRepoInspector(new MockRepoCommit[]
+			{
+				new("commit_b"),
+				new("commit_a", "v3.2.1"),
+			});
+
+			var semver = await VersionCalculator.FromRepository(repo, new() { QueryRemoteTags = true });
+
+			semver.Should().Be(new SemVer(3, 2, 2, "alpha.1"));
+		}
+
+		[Fact]
+		public async Task LatestTagIsFetchedWithQueryRemoteTags()
+		{
+			var repo = new MockRepoInspector(new MockRepoCommit[]
+			{
+				new("commit_c"),
+				new("commit_b", "v3.2.1"),
+				new("commit_a", "v3.2.0"),
+			});
+
+			_ = await VersionCalculator.FromRepository(repo, new() { QueryRemoteTags = true });
+
+			repo.LocalTags.Should().Contain(new Tag[] { new Tag("v3.2.1", new Commit("commit_b")) });
+		}
+
+		[Fact]
+		public async Task LatestTagIsNotFetchedWithoutQueryRemoteTags()
+		{
+			var repo = new MockRepoInspector(new MockRepoCommit[]
+			{
+				new("commit_c"),
+				new("commit_b", "v3.2.1"),
+				new("commit_a", "v3.2.0"),
+			});
+
+			_ = await VersionCalculator.FromRepository(repo, new() { QueryRemoteTags = false });
+
+			repo.LocalTags.Should().BeEmpty();
 		}
 	}
 }

@@ -36,8 +36,8 @@ namespace UnitTests
 			public Commit? ParentId { get; set; }
 		}
 		private List<InternalCommit> Commits { get; } = new();
-		private List<Tag> LocalTags { get; } = new();
-		private List<Tag> RemoteTags { get; } = new();
+		internal List<Tag> LocalTags { get; } = new();
+		internal List<Tag> RemoteTags { get; } = new();
 
 		public MockRepoInspector(IReadOnlyList<MockRepoCommit> commits)
 		{
