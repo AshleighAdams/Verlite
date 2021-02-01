@@ -1,5 +1,7 @@
 
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Verlite
 {
@@ -26,7 +28,7 @@ namespace Verlite
 				return new SemVer(lastTag.Major, lastTag.Minor, lastTag.Patch + 1);
 		}
 
-		public static SemVer CalculateVersion(SemVer? lastTag, VersionCalculationOptions options, int height)
+		public static SemVer FromTagInfomation(SemVer? lastTag, VersionCalculationOptions options, int height)
 		{
 			// if there has never been a tag, pretend the next version is minimum version and that there was a tag before the first commit
 			if (lastTag is null)
@@ -45,6 +47,26 @@ namespace Verlite
 			var bumpedVersion = Bump(nextVersion, options, height);
 
 			return bumpedVersion;
+		}
+
+		public static async Task<SemVer> FromRepository(IRepoInspector repo, VersionCalculationOptions options)
+		{
+			var (height, lastTagVer) = await HeightCalculator.FromRepository(repo, options.TagPrefix, options.QueryRemoteTags);
+			var version = FromTagInfomation(lastTagVer?.Version, options, height);
+			version.BuildMetadata = options.BuildMetadata;
+
+			if (lastTagVer is not null && options.QueryRemoteTags)
+			{
+				var localTag = (await repo.GetTags(QueryTarget.Local))
+					.Where(x => x == lastTagVer.Tag);
+				if (!localTag.Any())
+				{
+					Console.Error.WriteLine("Local repo missing version tag, fetching.");
+					await repo.FetchTag(lastTagVer.Tag, "origin");
+				}
+			}
+
+			return version;
 		}
 	}
 }

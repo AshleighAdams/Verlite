@@ -38,7 +38,7 @@ namespace UnitTests
 			var version = versionStr is null ? (SemVer?)null: SemVer.Parse(versionStr);
 			var result = SemVer.Parse(resultStr);
 
-			var gotVersion = VersionCalculator.CalculateVersion(version, options, height);
+			var gotVersion = VersionCalculator.FromTagInfomation(version, options, height);
 
 			gotVersion.Should().Be(result);
 			gotVersion.ToString().Should().Be(resultStr);
@@ -58,7 +58,7 @@ namespace UnitTests
 		public void TagBelowMinimumVersionThrows()
 		{
 			Assert.Throws<VersionCalculationException>(
-				() => VersionCalculator.CalculateVersion(
+				() => VersionCalculator.FromTagInfomation(
 					lastTag: new(1, 0, 0),
 					options: new() { MinimiumVersion = new(2, 0, 0) },
 					height: 0));

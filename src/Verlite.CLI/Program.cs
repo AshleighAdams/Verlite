@@ -132,25 +132,13 @@ namespace Verlite.CLI
 				PrereleaseBaseHeight = prereleaseBaseHeight,
 				VersionOverride = versionOverride,
 				BuildMetadata = buildMetadata,
+				QueryRemoteTags = autoFetch,
 			};
 
 			var repo = await GitRepoInspector.FromPath(sourceDirectory);
 			repo.CanDeepen = autoFetch;
 
-			var (height, lastTagVer) = await HeightCalculator.FromRepository(repo, opts.TagPrefix, autoFetch);
-			var version = VersionCalculator.CalculateVersion(lastTagVer?.Version, opts, height);
-			version.BuildMetadata = opts.BuildMetadata;
-
-			if (lastTagVer is not null && autoFetch)
-			{
-				var localTag = (await repo.GetTags(QueryTarget.Local))
-					.Where(x => x == lastTagVer.Tag);
-				if (!localTag.Any())
-				{
-					Console.Error.WriteLine("Local repo missing version tag, fetching.");
-					await repo.FetchTag(lastTagVer.Tag, "origin");
-				}
-			}
+			var version = await VersionCalculator.FromRepository(repo, opts);
 
 			string toShow = show switch
 			{

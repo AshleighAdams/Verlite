@@ -11,5 +11,6 @@ namespace Verlite
 		public int PrereleaseBaseHeight { get; set; } = 1;
 		public SemVer? VersionOverride { get; set; }
 		public string? BuildMetadata { get; set; }
+		public bool QueryRemoteTags { get; set; }
 	}
 }

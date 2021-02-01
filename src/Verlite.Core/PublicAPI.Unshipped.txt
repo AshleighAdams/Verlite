@@ -31,7 +31,8 @@ static Verlite.Tag.operator ==(Verlite.Tag left, Verlite.Tag right) -> bool
 static Verlite.TaggedVersion.operator !=(Verlite.TaggedVersion! left, Verlite.TaggedVersion! right) -> bool
 static Verlite.TaggedVersion.operator ==(Verlite.TaggedVersion! left, Verlite.TaggedVersion! right) -> bool
 static Verlite.VersionCalculator.Bump(Verlite.SemVer version, Verlite.VersionCalculationOptions! options, int height) -> Verlite.SemVer
-static Verlite.VersionCalculator.CalculateVersion(Verlite.SemVer? lastTag, Verlite.VersionCalculationOptions! options, int height) -> Verlite.SemVer
+static Verlite.VersionCalculator.FromRepository(Verlite.IRepoInspector! repo, Verlite.VersionCalculationOptions! options) -> System.Threading.Tasks.Task<Verlite.SemVer>!
+static Verlite.VersionCalculator.FromTagInfomation(Verlite.SemVer? lastTag, Verlite.VersionCalculationOptions! options, int height) -> Verlite.SemVer
 static Verlite.VersionCalculator.NextVersion(Verlite.SemVer lastTag, Verlite.VersionCalculationOptions! options) -> Verlite.SemVer
 Verlite.AutoDeepenException
 Verlite.AutoDeepenException.AutoDeepenException() -> void
@@ -113,6 +114,8 @@ Verlite.VersionCalculationOptions.MinimiumVersion.get -> Verlite.SemVer
 Verlite.VersionCalculationOptions.MinimiumVersion.set -> void
 Verlite.VersionCalculationOptions.PrereleaseBaseHeight.get -> int
 Verlite.VersionCalculationOptions.PrereleaseBaseHeight.set -> void
+Verlite.VersionCalculationOptions.QueryRemoteTags.get -> bool
+Verlite.VersionCalculationOptions.QueryRemoteTags.set -> void
 Verlite.VersionCalculationOptions.TagPrefix.get -> string!
 Verlite.VersionCalculationOptions.TagPrefix.set -> void
 Verlite.VersionCalculationOptions.VersionCalculationOptions() -> void
