@@ -1,3 +1,5 @@
+<img src=".meta/Verlite.svg" align="right" width="20%" alt="Logo" />
+
 # Verlite
 
 [![Verlite.MsBuild][verlite-msbuild-badge]][verlite-msbuild-link] [![Verlite.CLI][verlite-cli-badge]][verlite-cli-link] [![Verlite.Core][verlite-core-badge]][verlite-core-link] [![Codecov][codecov-badge]][codecov-link]
