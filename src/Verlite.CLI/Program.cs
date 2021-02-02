@@ -75,10 +75,10 @@ namespace Verlite.CLI
 					aliases: new[] { "--auto-fetch", "-f" },
 					getDefaultValue: () => false,
 					description: "Automatically fetch commits from a shallow repository until a version tag is encountered."),
-				new Option<VersionPart>(
+				new Option<AutoIncrement>(
 					aliases: new[] { "--auto-increment", "-a" },
 					isDefault: true,
-					parseArgument: new ParseArgument<VersionPart>(Parsers.ParseAutoIncrement),
+					parseArgument: new ParseArgument<AutoIncrement>(Parsers.ParseAutoIncrement),
 					description: "Which version part should be bumped after an RTM release."),
 			};
 			rootCommand.WithHandler(nameof(RootCommandAsync));
@@ -95,7 +95,7 @@ namespace Verlite.CLI
 			string? buildMetadata,
 			Show show,
 			bool autoFetch,
-			VersionPart autoIncrement,
+			AutoIncrement autoIncrement,
 			string sourceDirectory)
 		{
 			try
@@ -109,7 +109,7 @@ namespace Verlite.CLI
 					VersionOverride = versionOverride,
 					BuildMetadata = buildMetadata,
 					QueryRemoteTags = autoFetch,
-					AutoIncrement = autoIncrement,
+					AutoIncrement = autoIncrement.Value(),
 				};
 
 				var repo = await GitRepoInspector.FromPath(sourceDirectory);
@@ -119,12 +119,12 @@ namespace Verlite.CLI
 
 				string toShow = show switch
 				{
-					Show.All => version.ToString(),
-					Show.Major => version.Major.ToString(CultureInfo.InvariantCulture),
-					Show.Minor => version.Minor.ToString(CultureInfo.InvariantCulture),
-					Show.Patch => version.Patch.ToString(CultureInfo.InvariantCulture),
-					Show.Prerelease => version.Prerelease?.ToString(CultureInfo.InvariantCulture) ?? string.Empty,
-					Show.Metadata => version.BuildMetadata?.ToString(CultureInfo.InvariantCulture) ?? string.Empty,
+					Show.all => version.ToString(),
+					Show.major => version.Major.ToString(CultureInfo.InvariantCulture),
+					Show.minor => version.Minor.ToString(CultureInfo.InvariantCulture),
+					Show.patch => version.Patch.ToString(CultureInfo.InvariantCulture),
+					Show.prerelease => version.Prerelease?.ToString(CultureInfo.InvariantCulture) ?? string.Empty,
+					Show.metadata => version.BuildMetadata?.ToString(CultureInfo.InvariantCulture) ?? string.Empty,
 					_ => throw new NotImplementedException(),
 				};
 
@@ -146,8 +146,6 @@ namespace Verlite.CLI
 				Console.Error.WriteLine("For CI/CD, use `verlite --auto-fetch`");
 				Environment.Exit(1);
 			}
-
-			
 		}
 	}
 }

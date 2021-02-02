@@ -5,9 +5,9 @@ namespace Verlite.CLI
 {
 	public enum Verbosity
 	{
-		Normal = default,
-		Verbose = 1,
-		Verbatim = 2,
+		normal = default,
+		verbose = 1,
+		verbatim = 2,
 	}
 
 	public static partial class Parsers
@@ -26,9 +26,11 @@ namespace Verlite.CLI
 
 			return tokenValue.ToUpperInvariant() switch
 			{
-				"NORMAL" => Verbosity.Normal,
-				"VERBOSE" => Verbosity.Verbose,
-				"VERBATIM" => Verbosity.Verbatim,
+				"NORMAL" => Verbosity.normal,
+				"V" => Verbosity.verbose,
+				"VERBOSE" => Verbosity.verbose,
+				"VV" => Verbosity.verbatim,
+				"VERBATIM" => Verbosity.verbatim,
 				_ => invalid(),
 			};
 		}

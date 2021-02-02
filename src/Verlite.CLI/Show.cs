@@ -5,12 +5,12 @@ namespace Verlite.CLI
 {
 	public enum Show
 	{
-		All = default,
-		Major = 1,
-		Minor = 2,
-		Patch = 3,
-		Prerelease = 4,
-		Metadata = 5,
+		all = default,
+		major = 1,
+		minor = 2,
+		patch = 3,
+		prerelease = 4,
+		metadata = 5,
 	}
 	public static partial class Parsers
 	{
@@ -28,12 +28,12 @@ namespace Verlite.CLI
 
 			return tokenValue.ToUpperInvariant() switch
 			{
-				"ALL"        => Show.All,
-				"MAJOR"      => Show.Major,
-				"MINOR"      => Show.Minor,
-				"PATCH"      => Show.Patch,
-				"PRERELEASE" => Show.Prerelease,
-				"METADATA"   => Show.Metadata,
+				"ALL"        => Show.all,
+				"MAJOR"      => Show.major,
+				"MINOR"      => Show.minor,
+				"PATCH"      => Show.patch,
+				"PRERELEASE" => Show.prerelease,
+				"METADATA"   => Show.metadata,
 				_ => invalid(),
 			};
 		}
