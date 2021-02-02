@@ -41,7 +41,14 @@ definitions:
 
   test: &test
     name: Test
-    run: dotnet test --configuration Release --no-build --logger GitHubActions
+    run: dotnet test --configuration Release --no-build --logger GitHubActions -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura
+
+  publish-codecov: &publish-codecov
+    name: Publish Codecov
+    uses: codecov/codecov-action@v1
+    with:
+      token: ${{ secrets.CODECOV_TOKEN }}
+      files: ./tests/UnitTests/coverage.cobertura.xml
 
   pack: &pack
     name: Pack

@@ -15,9 +15,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub", "GitHub", "{822C85C4-D55D-43B2-8D5D-1B05AC9A99A1}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\continuous-delivery.yml = .github\workflows\continuous-delivery.yml
-		.github\workflows\continuous-integration.yml = .github\workflows\continuous-integration.yml
-		.github\workflows\deploy-release.yml = .github\workflows\deploy-release.yml
+		.github\continuous-delivery.yml = .github\continuous-delivery.yml
+		.github\continuous-integration.yml = .github\continuous-integration.yml
+		.github\deploy-release.yml = .github\deploy-release.yml
+		.github\regenerate-actions.sh = .github\regenerate-actions.sh
+		.github\shared.yml = .github\shared.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "tests\UnitTests\UnitTests.csproj", "{B7286702-244F-49B7-9A81-19BBB2DEBF6D}"

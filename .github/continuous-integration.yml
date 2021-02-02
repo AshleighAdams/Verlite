@@ -16,12 +16,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - *checkout
-      - *setup-dotnet5
-      - *setup-nuget
-      - *setup-nuget-cache
-      - *restore
-      - *build
-      - *test
-      - *pack
-      - *upload-artifacts
+    - *checkout
+    - *setup-dotnet5
+    - *setup-nuget
+    - *setup-nuget-cache
+    - *restore
+    - *build
+    - *test
+    - *pack
+    - *publish-codecov
+    - *upload-artifacts

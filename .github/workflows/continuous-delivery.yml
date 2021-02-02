@@ -46,10 +46,17 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
     - name: Test
-      run: dotnet test --configuration Release --no-build --logger GitHubActions
+      run: dotnet test --configuration Release --no-build --logger GitHubActions -p:CollectCoverage=true
+        -p:CoverletOutputFormat=cobertura
 
     - name: Pack
       run: dotnet pack --configuration Release --no-restore
+
+    - name: Publish Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./tests/UnitTests/coverage.cobertura.xml
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2

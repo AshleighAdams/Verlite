@@ -20,5 +20,6 @@ jobs:
       - *build
       - *test
       - *pack
+      - *publish-codecov
       - *upload-artifacts
       - *publish-github

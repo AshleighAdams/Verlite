@@ -289,3 +289,4 @@ __pycache__/
 # unit test runtime artifacts
 tests/UnitTests/coverage.cobertura.xml
 msg.txt
+tests/UnitTests/coverage.json

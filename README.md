@@ -1,6 +1,6 @@
 # Verlite
 
-[![Verlite.MsBuild][verlite-msbuild-badge]][verlite-msbuild-link] [![Verlite.CLI][verlite-cli-badge]][verlite-cli-link] [![Verlite.Core][verlite-core-badge]][verlite-core-link]
+[![Verlite.MsBuild][verlite-msbuild-badge]][verlite-msbuild-link] [![Verlite.CLI][verlite-cli-badge]][verlite-cli-link] [![Verlite.Core][verlite-core-badge]][verlite-core-link] [![Codecov][codecov-badge]][codecov-link]
 
 Versioning with [SemVer 2][semver-2] Git tags. Automatically set the version for SDK projects or use the CLI tool for all others. Platform agnostic.
 
@@ -57,3 +57,5 @@ Verlite has some additional features, some of which I required, hence the creati
 [verlite-core-badge]: https://img.shields.io/nuget/vpre/Verlite.MsBuild?label=Verlite.Core
 [verlite-core-link]: https://www.nuget.org/packages/Verlite.Core
 [semver-2]: https://semver.org/spec/v2.0.0.html
+[codecov-badge]: https://codecov.io/gh/AshleighAdams/Verlite/branch/master/graph/badge.svg?token=ZE1ITHB3U3
+[codecov-link]: https://codecov.io/gh/AshleighAdams/Verlite
