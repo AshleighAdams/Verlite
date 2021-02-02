@@ -9,20 +9,20 @@ namespace Verlite
 {
 	public static partial class HeightCalculator
 	{
-		private static IEnumerable<(SemVer version, Tag tag)> SelectWhereSemver(this IEnumerable<Tag> tags, string tagPrefix)
+		private static IEnumerable<(SemVer version, Tag tag)> SelectWhereSemver(this IEnumerable<Tag> tags, string tagPrefix, ILogger? log = null)
 		{
 			foreach (var tag in tags)
 			{
 				if (!SemVer.TryParse(tag.Name.Substring(tagPrefix.Length), out var version))
 				{
-					Console.Error.WriteLineAsync($"Warning: Failed to parse SemVer from tag {tag}, ignoring.");
+					log?.Normal($"Warning: Failed to parse SemVer from tag {tag}, ignoring.");
 					continue;
 				}
 				yield return (version.Value, tag);
 			}
 		}
 
-		public static async Task<(int height, TaggedVersion?)> FromRepository(IRepoInspector repo, string tagPrefix, bool queryRemoteTags)
+		public static async Task<(int height, TaggedVersion?)> FromRepository(IRepoInspector repo, string tagPrefix, bool queryRemoteTags, ILogger? log = null)
 		{
 			QueryTarget queryTags = QueryTarget.Local;
 			if (queryRemoteTags)
@@ -31,9 +31,9 @@ namespace Verlite
 			var head = await repo.GetHead();
 			var tags = await repo.GetTags(queryTags);
 
-			Debug.WriteLine("Found the following tags:");
+			log?.Verbose("Found the following tags:");
 			foreach (var tag in tags)
-				Debug.WriteLine($"  {tag}");
+				log?.Verbose($"  {tag}");
 
 			if (head is null)
 				return (1, null);
@@ -45,20 +45,20 @@ namespace Verlite
 				var currentTags = tags.FindCommitTags(current);
 				var versions = currentTags
 					.Where(t => t.Name.StartsWith(tagPrefix, StringComparison.Ordinal))
-					.SelectWhereSemver(tagPrefix)
+					.SelectWhereSemver(tagPrefix, log)
 					.OrderByDescending(v => v.version)
 					.ToList();
 
-				Debug.WriteLine($"HEAD^{height} {current} has {currentTags.Count} total tags with {versions.Count} versions.");
+				log?.Verbatim($"HEAD^{height} {current} has {currentTags.Count} total tags with {versions.Count} versions.");
 
 				if (currentTags.Count != 0)
 					foreach (var tag in currentTags)
-						Debug.WriteLine($"  found tag: {tag.Name}");
+						log?.Verbose($"  found tag: {tag.Name}");
 
 				if (versions.Count != 0)
 				{
 					foreach (var ver in versions)
-						Debug.WriteLine($"  found version: {ver}");
+						log?.Verbose($"  found version: {ver}");
 
 					var (version, tag) = versions.First();
 					return (height, new TaggedVersion(version, tag));

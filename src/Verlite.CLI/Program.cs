@@ -100,6 +100,11 @@ namespace Verlite.CLI
 		{
 			try
 			{
+				var log = new ConsoleLogger()
+				{
+					Verbosity = verbosity,
+				};
+
 				var opts = new VersionCalculationOptions()
 				{
 					TagPrefix = tagPrefix,
@@ -112,10 +117,10 @@ namespace Verlite.CLI
 					AutoIncrement = autoIncrement.Value(),
 				};
 
-				var repo = await GitRepoInspector.FromPath(sourceDirectory);
+				var repo = await GitRepoInspector.FromPath(sourceDirectory, log);
 				repo.CanDeepen = autoFetch;
 
-				var version = await VersionCalculator.FromRepository(repo, opts);
+				var version = await VersionCalculator.FromRepository(repo, opts, log);
 
 				string toShow = show switch
 				{

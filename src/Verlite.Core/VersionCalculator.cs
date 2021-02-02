@@ -17,7 +17,6 @@ namespace Verlite
 			ret.Prerelease += $".{options.PrereleaseBaseHeight + (height - 1)}";
 			return ret;
 		}
-
 		public static SemVer NextVersion(SemVer lastTag, VersionCalculationOptions options)
 		{
 			if (options.MinimiumVersion > lastTag.DestinedVersion)
@@ -32,8 +31,6 @@ namespace Verlite
 					VersionPart.Major => new SemVer(lastTag.Major + 1, 0, 0),
 					_ => throw new InvalidOperationException("NextVersion(): Can only bump by major, minor, or patch (default)."),
 				};
-
-			//return new SemVer(lastTag.Major, lastTag.Minor, lastTag.Patch + 1);
 		}
 
 		public static SemVer FromTagInfomation(SemVer? lastTag, VersionCalculationOptions options, int height)
@@ -56,9 +53,9 @@ namespace Verlite
 			return bumpedVersion;
 		}
 
-		public static async Task<SemVer> FromRepository(IRepoInspector repo, VersionCalculationOptions options)
+		public static async Task<SemVer> FromRepository(IRepoInspector repo, VersionCalculationOptions options, ILogger? log = null)
 		{
-			var (height, lastTagVer) = await HeightCalculator.FromRepository(repo, options.TagPrefix, options.QueryRemoteTags);
+			var (height, lastTagVer) = await HeightCalculator.FromRepository(repo, options.TagPrefix, options.QueryRemoteTags, log);
 			var version = FromTagInfomation(lastTagVer?.Version, options, height);
 			version.BuildMetadata = options.BuildMetadata;
 
@@ -68,7 +65,7 @@ namespace Verlite
 					.Where(x => x == lastTagVer.Tag);
 				if (!localTag.Any())
 				{
-					Console.Error.WriteLine("Local repo missing version tag, fetching.");
+					log?.Normal("Local repo missing version tag, fetching.");
 					await repo.FetchTag(lastTagVer.Tag, "origin");
 				}
 			}

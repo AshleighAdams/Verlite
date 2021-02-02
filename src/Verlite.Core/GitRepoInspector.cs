@@ -24,12 +24,12 @@ namespace Verlite
 
 	public sealed class GitRepoInspector : IRepoInspector
 	{
-		public static async Task<GitRepoInspector> FromPath(string path)
+		public static async Task<GitRepoInspector> FromPath(string path, ILogger? log = null)
 		{
 			try
 			{
 				var (root, _) = await Command.Run(path, "git", new string[] { "rev-parse", "--show-toplevel" });
-				var ret = new GitRepoInspector(root);
+				var ret = new GitRepoInspector(root, log);
 				await ret.CacheParents();
 				return ret;
 			}
@@ -39,14 +39,16 @@ namespace Verlite
 			}
 		}
 
+		private ILogger? Log { get; }
 		public bool CanDeepen { get; set; }
 		public string Root { get; }
 		private Dictionary<Commit, Commit> CachedParents { get; } = new();
 		private (int depth, bool shallow)? FetchDepth { get; set; }
 
-		private GitRepoInspector(string root)
+		private GitRepoInspector(string root, ILogger? log)
 		{
 			Root = root;
+			Log = log;
 		}
 
 		private Task<(string stdout, string stderr)> Git(params string[] args) => Command.Run(Root, "git", args);
@@ -56,10 +58,12 @@ namespace Verlite
 			try
 			{
 				var (commit, _) = await Git("rev-parse", "HEAD");
+				Log?.Verbatim($"GetHead() -> {commit}");
 				return new Commit(commit);
 			}
 			catch (CommandException)
 			{
+				Log?.Verbatim($"GetHead() -> null");
 				return null;
 			}
 		}
@@ -82,10 +86,12 @@ namespace Verlite
 			try
 			{
 				var (contents, _) = await Git("cat-file", "commit", commit.Id);
+				Log?.Verbatim($"GetCommitObjectInternal({commit}) -> {contents.Length} chars");
 				return contents;
 			}
 			catch (CommandException ex) when (ex.StandardError.Contains($"{commit}: bad file"))
 			{
+				Log?.Verbatim($"GetCommitObjectInternal({commit}) -> null");
 				return null;
 			}
 		}
@@ -96,23 +102,30 @@ namespace Verlite
 			var current = await GetHead();
 
 			if (current is null)
-				throw new InvalidOperationException("Could not fetch head");
+				throw new InvalidOperationException("MeasureDepth(): Could not fetch head");
 
 			while (CachedParents.TryGetValue(current.Value, out Commit parent))
 			{
 				current = parent;
 				depth++;
+				Log?.Verbatim($"MeasureDepth(): Found parent {parent}, depth {depth}");
 			}
 
 			while (true)
 			{
 				string? commitObj = await GetCommitObjectInternal(current.Value);
 				if (commitObj is null)
+				{
+					Log?.Verbatim($"MeasureDepth() -> (depth: {depth}, shallow: true)");
 					return (depth, shallow: true);
+				}
 
 				Commit? parent = ParseCommitObjectParent(commitObj);
 				if (parent is null)
+				{
+					Log?.Verbatim($"MeasureDepth() -> (depth: {depth}, shallow: false)");
 					return (depth, shallow: false);
+				}
 
 				depth++;
 				current = parent;
@@ -130,7 +143,7 @@ namespace Verlite
 			int wasDepth = FetchDepth.Value.depth;
 			int newDepth = Math.Max(32, FetchDepth.Value.depth * 2);
 
-			await Console.Error.WriteLineAsync($"Fetching depth {newDepth} (was {wasDepth})");
+			Log?.Normal($"Fetching depth {newDepth} (was {wasDepth})");
 
 			try
 			{
@@ -168,6 +181,8 @@ namespace Verlite
 
 				for (int i = 0; i < lines.Length - 1; i++)
 					CachedParents[new(lines[i])] = new(lines[i + 1]);
+
+				Log?.Verbatim($"CacheParents(): Cached {CachedParents.Count} parents.");
 			}
 			catch (CommandException)
 			{
@@ -184,6 +199,8 @@ namespace Verlite
 
 			if (parent is not null)
 				CachedParents[commit] = parent.Value;
+
+			Log?.Verbatim($"GetParent() -> {parent}");
 			return parent;
 		}
 
@@ -198,15 +215,17 @@ namespace Verlite
 			{
 				try
 				{
+					Log?.Verbatim($"GetTags(): Reading remote tags.");
 					var (response, _) = await Git("ls-remote", "--tags");
 
 					var matches = RefsTagRegex.Matches(response);
 					foreach (Match match in matches)
 					{
-						tags.Add(
-							new Tag(match.Groups["tag"].Value,
-							new Commit(match.Groups["pointer"].Value)
-						));
+						var tag = new Tag(
+							match.Groups["tag"].Value,
+							new Commit(match.Groups["pointer"].Value));
+						Log?.Verbatim($"GetTags(): Remote: {tag}");
+						tags.Add(tag);
 					}
 				}
 				catch (CommandException) { }
@@ -216,26 +235,32 @@ namespace Verlite
 			{
 				try
 				{
+					Log?.Verbatim($"GetTags(): Reading local tags.");
 					var (response, _) = await Git("show-ref", "--tags", "--dereference");
 
 					var matches = RefsTagRegex.Matches(response);
 					foreach (Match match in matches)
 					{
-						tags.Add(
-							new Tag(match.Groups["tag"].Value,
-							new Commit(match.Groups["pointer"].Value)
-						));
+						var tag = new Tag(
+							match.Groups["tag"].Value,
+							new Commit(match.Groups["pointer"].Value));
+						Log?.Verbatim($"GetTags(): Local: {tag}");
+						tags.Add(tag);
 					}
 				}
 				catch (CommandException) { }
 			}
 
+			Log?.Verbatim($"GetTags({queryTarget}) -> {tags.Count} tags.");
 			return new TagContainer(tags);
 		}
 
 		public async Task FetchTag(Tag tag, string remote)
 		{
 			FetchDepth ??= await MeasureDepth();
+
+			Log?.Verbose($"FetchTag({tag}, {remote})");
+
 			if (FetchDepth.Value.shallow)
 				await Git("fetch", "--depth", "1", remote, $"refs/tags/{tag.Name}:refs/tags/{tag.Name}");
 			else

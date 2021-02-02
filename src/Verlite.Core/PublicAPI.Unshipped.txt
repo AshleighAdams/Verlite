@@ -13,8 +13,8 @@ override Verlite.TaggedVersion.GetHashCode() -> int
 static Verlite.Command.Run(string! directory, string! command, string![]! args, System.Collections.Generic.IDictionary<string!, string!>? envVars = null) -> System.Threading.Tasks.Task<(string! stdout, string! stderr)>!
 static Verlite.Commit.operator !=(Verlite.Commit left, Verlite.Commit right) -> bool
 static Verlite.Commit.operator ==(Verlite.Commit left, Verlite.Commit right) -> bool
-static Verlite.GitRepoInspector.FromPath(string! path) -> System.Threading.Tasks.Task<Verlite.GitRepoInspector!>!
-static Verlite.HeightCalculator.FromRepository(Verlite.IRepoInspector! repo, string! tagPrefix, bool queryRemoteTags) -> System.Threading.Tasks.Task<(int height, Verlite.TaggedVersion?)>!
+static Verlite.GitRepoInspector.FromPath(string! path, Verlite.ILogger? log = null) -> System.Threading.Tasks.Task<Verlite.GitRepoInspector!>!
+static Verlite.HeightCalculator.FromRepository(Verlite.IRepoInspector! repo, string! tagPrefix, bool queryRemoteTags, Verlite.ILogger? log = null) -> System.Threading.Tasks.Task<(int height, Verlite.TaggedVersion?)>!
 static Verlite.SemVer.ComparePrerelease(string! left, string! right) -> int
 static Verlite.SemVer.IsValidIdentifierCharacter(char input) -> bool
 static Verlite.SemVer.IsValidIdentifierString(string! input) -> bool
@@ -31,7 +31,7 @@ static Verlite.Tag.operator ==(Verlite.Tag left, Verlite.Tag right) -> bool
 static Verlite.TaggedVersion.operator !=(Verlite.TaggedVersion! left, Verlite.TaggedVersion! right) -> bool
 static Verlite.TaggedVersion.operator ==(Verlite.TaggedVersion! left, Verlite.TaggedVersion! right) -> bool
 static Verlite.VersionCalculator.Bump(Verlite.SemVer version, Verlite.VersionCalculationOptions! options, int height) -> Verlite.SemVer
-static Verlite.VersionCalculator.FromRepository(Verlite.IRepoInspector! repo, Verlite.VersionCalculationOptions! options) -> System.Threading.Tasks.Task<Verlite.SemVer>!
+static Verlite.VersionCalculator.FromRepository(Verlite.IRepoInspector! repo, Verlite.VersionCalculationOptions! options, Verlite.ILogger? log = null) -> System.Threading.Tasks.Task<Verlite.SemVer>!
 static Verlite.VersionCalculator.FromTagInfomation(Verlite.SemVer? lastTag, Verlite.VersionCalculationOptions! options, int height) -> Verlite.SemVer
 static Verlite.VersionCalculator.NextVersion(Verlite.SemVer lastTag, Verlite.VersionCalculationOptions! options) -> Verlite.SemVer
 Verlite.AutoDeepenException
@@ -54,6 +54,10 @@ Verlite.GitRepoInspector.GetParent(Verlite.Commit commit) -> System.Threading.Ta
 Verlite.GitRepoInspector.GetTags(Verlite.QueryTarget queryTarget) -> System.Threading.Tasks.Task<Verlite.TagContainer!>!
 Verlite.GitRepoInspector.Root.get -> string!
 Verlite.HeightCalculator
+Verlite.ILogger
+Verlite.ILogger.Normal(string! output) -> void
+Verlite.ILogger.Verbatim(string! output) -> void
+Verlite.ILogger.Verbose(string! output) -> void
 Verlite.IRepoInspector
 Verlite.IRepoInspector.FetchTag(Verlite.Tag tag, string! remote) -> System.Threading.Tasks.Task!
 Verlite.IRepoInspector.GetHead() -> System.Threading.Tasks.Task<Verlite.Commit?>!
