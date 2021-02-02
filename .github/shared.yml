@@ -1,0 +1,65 @@
+#<shared>
+
+definitions:
+  default-defaults: &default-defaults
+    run:
+      shell: bash
+
+  checkout: &checkout
+    uses: actions/checkout@v2
+    with:
+      fetch-depth: '0'
+
+  setup-dotnet5: &setup-dotnet5
+    name: Setup .NET 5
+    uses: actions/setup-dotnet@v1
+    with:
+      dotnet-version: 5.0.x
+
+  setup-nuget: &setup-nuget
+    name: Setup NuGet
+    run: |
+      dotnet nuget update source github --store-password-in-clear-text --username AshleighAdams --password ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+  setup-nuget-cache: &setup-nuget-cache
+    name: NuGet Restore Cache
+    uses: actions/cache@v2
+    with:
+      path: ~/.nuget/packages
+      key: |
+        ${{ runner.os }}-nuget-${{ hashFiles('**/Directory.Build.props') }}-${{ hashFiles('**/*.csproj') }}
+      restore-keys: |
+        ${{ runner.os }}-nuget-
+
+  restore: &restore
+    name: Restore
+    run: dotnet restore
+
+  build: &build
+    name: Build
+    run: dotnet build --configuration Release --no-restore
+
+  test: &test
+    name: Test
+    run: dotnet test --configuration Release --no-build --logger GitHubActions
+
+  pack: &pack
+    name: Pack
+    run: dotnet pack --configuration Release --no-restore
+
+  upload-artifacts: &upload-artifacts
+    name: Upload Artifacts
+    uses: actions/upload-artifact@v2
+    with:
+      name: nuget
+      path:  |
+        src/**/*.nupkg
+        src/**/*.snupkg
+
+  publish-github: &publish-github
+    name: Publish Nuget GitHub
+    run: dotnet nuget push src/**/*.nupkg -k ${GITHUB_TOKEN} -s github --skip-duplicate --no-symbols 1
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+#</shared>

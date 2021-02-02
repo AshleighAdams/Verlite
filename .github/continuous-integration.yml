@@ -1,0 +1,27 @@
+name: Continious Integration
+
+on:
+  pull_request:
+    branches:
+    - master
+    - support/*
+#   paths-ignore:
+#     - 'README.md'
+#     - 'CODEOWNERS'
+#     - 'docs/**'
+
+defaults: *default-defaults
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - *checkout
+      - *setup-dotnet5
+      - *setup-nuget
+      - *setup-nuget-cache
+      - *restore
+      - *build
+      - *test
+      - *pack
+      - *upload-artifacts
