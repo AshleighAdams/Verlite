@@ -82,6 +82,16 @@ namespace UnitTests
 		}
 
 		[Fact]
+		public void NextVersionWithInvalidAutoIncrementThrows()
+		{
+			var opts = new VersionCalculationOptions()
+			{
+				AutoIncrement = VersionPart.None,
+			};
+			Assert.Throws<InvalidOperationException>(() => VersionCalculator.NextVersion(new SemVer(1, 0, 0), opts));
+		}
+
+		[Fact]
 		public void TagBelowMinimumVersionThrows()
 		{
 			Assert.Throws<VersionCalculationException>(
