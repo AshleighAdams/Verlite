@@ -38,6 +38,11 @@ Verlite.AutoDeepenException
 Verlite.AutoDeepenException.AutoDeepenException() -> void
 Verlite.AutoDeepenException.AutoDeepenException(string! message) -> void
 Verlite.Command
+Verlite.CommandException
+Verlite.CommandException.CommandException(int exitcode, string! stdout, string! stderr) -> void
+Verlite.CommandException.ExitCode.get -> int
+Verlite.CommandException.StandardError.get -> string!
+Verlite.CommandException.StandardOut.get -> string!
 Verlite.Commit
 Verlite.Commit.Commit() -> void
 Verlite.Commit.Commit(string! id) -> void
@@ -55,9 +60,9 @@ Verlite.GitRepoInspector.GetTags(Verlite.QueryTarget queryTarget) -> System.Thre
 Verlite.GitRepoInspector.Root.get -> string!
 Verlite.HeightCalculator
 Verlite.ILogger
-Verlite.ILogger.Normal(string! output) -> void
-Verlite.ILogger.Verbatim(string! output) -> void
-Verlite.ILogger.Verbose(string! output) -> void
+Verlite.ILogger.Normal(string! message) -> void
+Verlite.ILogger.Verbatim(string! message) -> void
+Verlite.ILogger.Verbose(string! message) -> void
 Verlite.IRepoInspector
 Verlite.IRepoInspector.FetchTag(Verlite.Tag tag, string! remote) -> System.Threading.Tasks.Task!
 Verlite.IRepoInspector.GetHead() -> System.Threading.Tasks.Task<Verlite.Commit?>!

@@ -24,9 +24,15 @@ namespace Verlite.CLI
 		}
 	}
 
+	/// <summary>
+	/// The program.
+	/// </summary>
 	public static class Program
 	{
-		public static readonly VersionCalculationOptions DefaultOptions = new();
+		internal static readonly VersionCalculationOptions DefaultOptions = new();
+		/// <summary>
+		/// Run the command, parsing all options.
+		/// </summary>
 		public static async Task<int> Main(string[] args)
 		{
 			var rootCommand = new RootCommand

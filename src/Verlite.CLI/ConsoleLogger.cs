@@ -6,20 +6,20 @@ namespace Verlite.CLI
 	{
 		public Verbosity Verbosity { get; set; }
 
-		void ILogger.Normal(string output)
+		void ILogger.Normal(string message)
 		{
 			if (Verbosity >= Verbosity.normal)
-				Console.Error.WriteLine(output);
+				Console.Error.WriteLine(message);
 		}
-		void ILogger.Verbose(string output)
+		void ILogger.Verbose(string message)
 		{
 			if (Verbosity >= Verbosity.verbose)
-				Console.Error.WriteLine(output);
+				Console.Error.WriteLine(message);
 		}
-		void ILogger.Verbatim(string output)
+		void ILogger.Verbatim(string message)
 		{
 			if (Verbosity >= Verbosity.verbatim)
-				Console.Error.WriteLine(output);
+				Console.Error.WriteLine(message);
 		}
 	}
 }

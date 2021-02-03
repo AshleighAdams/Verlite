@@ -6,8 +6,20 @@ using System.Threading.Tasks;
 
 namespace Verlite
 {
+	/// <summary>
+	/// The command class
+	/// </summary>
 	public static class Command
 	{
+		/// <summary>
+		/// Asynchronously execute a command.
+		/// </summary>
+		/// <param name="directory">The working directory in which to start the executable.</param>
+		/// <param name="command">The command to execute.</param>
+		/// <param name="args">Arguments to pass to the command.</param>
+		/// <param name="envVars">The enviornment variables to start the process with.</param>
+		/// <exception cref="CommandException">Thrown if the process returns a non-zero exit code.</exception>
+		/// <returns>A task that completes upon the process exiting, containing the standard out and error streams.</returns>
 		public static async Task<(string stdout, string stderr)> Run(
 			string directory,
 			string command,

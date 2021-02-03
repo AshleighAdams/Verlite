@@ -7,8 +7,18 @@ using System.Threading.Tasks;
 
 namespace Verlite
 {
+	/// <summary>
+	/// Methods relating to calculating the height of a commit since the last tag.
+	/// </summary>
 	public static partial class HeightCalculator
 	{
+		/// <summary>
+		/// Select tags begging with <paramref name="tags"/> that can be parsed as a semantic version.
+		/// </summary>
+		/// <param name="tags">A collection of tags to search thru.</param>
+		/// <param name="tagPrefix">The tag prefix.</param>
+		/// <param name="log">A log to output warning messages to.</param>
+		/// <returns>An enumerable of semantic versions and its associated tag.</returns>
 		private static IEnumerable<(SemVer version, Tag tag)> SelectWhereSemver(this IEnumerable<Tag> tags, string tagPrefix, ILogger? log = null)
 		{
 			foreach (var tag in tags)
@@ -22,6 +32,14 @@ namespace Verlite
 			}
 		}
 
+		/// <summary>
+		/// Calculate the height from a repository by walking, from the head, the primary parents until a version tag is found.
+		/// </summary>
+		/// <param name="repo">The repo to walk.</param>
+		/// <param name="tagPrefix">What version tags are prefixed with.</param>
+		/// <param name="queryRemoteTags">Whether to query local or local and remote tags.</param>
+		/// <param name="log">The log to output verbose diagnostics to.</param>
+		/// <returns>A task containing the height and a tagged version if found.</returns>
 		public static async Task<(int height, TaggedVersion?)> FromRepository(IRepoInspector repo, string tagPrefix, bool queryRemoteTags, ILogger? log = null)
 		{
 			QueryTarget queryTags = QueryTarget.Local;

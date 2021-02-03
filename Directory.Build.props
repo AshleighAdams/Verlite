@@ -6,13 +6,13 @@
     <Nullable>enable</Nullable>
     <!-- Allow using `init` and records in .NET Core versions prior to .NET 5 -->
     <LangVersion>9.0</LangVersion>
-    <!-- 1591: Ignore missing inline documentation. -->
+    <!-- 1591: Ignore missing inline documentation. *reenabled* -->
     <!-- CA1062: Prefer T? for possible nulls. -->
     <!-- CA2225: Don't want operators to have methods.. -->
     <!-- CA1303: Don't localize internal strings. -->
     <!-- CA2007: Don't use .ConfigureAwait() -->
     <!-- CA1032: Exceptional exceptions... -->
-    <NoWarn>$(NoWarn);1591;CA1062;CA2225;CA1303;CA2007;CA1032</NoWarn>
+    <NoWarn>$(NoWarn);CA1062;CA2225;CA1303;CA2007;CA1032</NoWarn>
     <RollForward>major</RollForward>
     <!-- Generate XMLdocs -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

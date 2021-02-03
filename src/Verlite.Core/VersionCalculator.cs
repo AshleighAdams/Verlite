@@ -5,8 +5,19 @@ using System.Threading.Tasks;
 
 namespace Verlite
 {
+	/// <summary>
+	/// Functions relating to calculating a version from.
+	/// </summary>
 	public static class VersionCalculator
 	{
+		/// <summary>
+		/// Append the height to an ordinal for automatic versioning.
+		/// </summary>
+		/// <param name="version">The last version.</param>
+		/// <param name="options">The options to use.</param>
+		/// <param name="height">The height since the tag.</param>
+		/// <exception cref="ArgumentOutOfRangeException">Must be greater than zero.</exception>
+		/// <returns>The bumped version.</returns>
 		public static SemVer Bump(SemVer version, VersionCalculationOptions options, int height)
 		{
 			if (height < 1)
@@ -17,6 +28,13 @@ namespace Verlite
 			ret.Prerelease += $".{options.PrereleaseBaseHeight + (height - 1)}";
 			return ret;
 		}
+		/// <summary>
+		/// Calculate the next version from a version tag, taking into account the minimum version and auto increment.
+		/// </summary>
+		/// <param name="lastTag">The version of the last tag.</param>
+		/// <param name="options">The options.</param>
+		/// <exception cref="InvalidOperationException">Can only bump by major, minor, or patch (default).</exception>
+		/// <returns>The next version calculated from the input.</returns>
 		public static SemVer NextVersion(SemVer lastTag, VersionCalculationOptions options)
 		{
 			if (options.MinimiumVersion > lastTag.DestinedVersion)
@@ -33,6 +51,14 @@ namespace Verlite
 				};
 		}
 
+		/// <summary>
+		/// Calculate the next version from a version tag from the optional last tag and height.
+		/// </summary>
+		/// <param name="lastTag">The version of the last tag.</param>
+		/// <param name="options">The options.</param>
+		/// <param name="height">The height since the last version tag.</param>
+		/// <exception cref="VersionCalculationException">Direct tag's destined version is below the minimum version.</exception>
+		/// <returns>A version from the input parameters.</returns>
 		public static SemVer FromTagInfomation(SemVer? lastTag, VersionCalculationOptions options, int height)
 		{
 			if (lastTag is null)
@@ -53,6 +79,13 @@ namespace Verlite
 			return bumpedVersion;
 		}
 
+		/// <summary>
+		/// Calculate the next version from a repository.
+		/// </summary>
+		/// <param name="repo">The repo to use.</param>
+		/// <param name="options">The options.</param>
+		/// <param name="log">A log for diagnostics.</param>
+		/// <returns>The version for the state of the repository.</returns>
 		public static async Task<SemVer> FromRepository(IRepoInspector repo, VersionCalculationOptions options, ILogger? log = null)
 		{
 			var (height, lastTagVer) = await HeightCalculator.FromRepository(repo, options.TagPrefix, options.QueryRemoteTags, log);

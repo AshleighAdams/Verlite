@@ -7,23 +7,60 @@ using System.Threading.Tasks;
 
 namespace Verlite
 {
+	/// <summary>
+	/// An exception thrown when the repository could not be deepened.
+	/// </summary>
+	/// <seealso cref="RepoInspectionException"/>
 	[ExcludeFromCodeCoverage]
 	public class AutoDeepenException : RepoInspectionException
 	{
+		/// <summary>
+		/// Initializes a new instance of <see cref="AutoDeepenException"/> class.
+		/// </summary>
 		public AutoDeepenException() : base("Failed to automatically deepen the repository") { }
+		/// <summary>
+		/// Initializes a new instance of the <see cref="AutoDeepenException"/> class.
+		/// </summary>
+		/// <param name="message">The message that describes the error.</param>
 		public AutoDeepenException(string message) : base($"Failed to automatically deepen the repository: {message}") { }
+		/// <summary>
+		/// Initializes a new instance of the <see cref="AutoDeepenException"/> class.
+		/// </summary>
+		/// <param name="parent">An inner exception.</param>
 		internal AutoDeepenException(CommandException parent) : base("Failed to automatically deepen the repository: " + parent.Message, parent) { }
 	}
+	/// <summary>
+	/// An exception thrown when an operation could not be completed due to being too shallow.
+	/// </summary>
+	/// <seealso cref="RepoInspectionException"/>
 	public class RepoTooShallowException : RepoInspectionException
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="RepoTooShallowException"/> class.
+		/// </summary>
 		internal RepoTooShallowException() : base("No version tag found before shallow clone reached end.") { }
 	}
+	/// <summary>
+	/// An exception that gets thrown when trying to initialize a <see cref="GitRepoInspector"/> from a directory not contianing a git repository.
+	/// </summary>
+	/// <seealso cref="RepoInspectionException"/>
 	public class GitMissingOrNotGitRepoException : RepoInspectionException
 	{
 	}
 
+	/// <summary>
+	/// Support Git repositories for version calculation.
+	/// </summary>
+	/// <seealso cref="IRepoInspector"/>
 	public sealed class GitRepoInspector : IRepoInspector
 	{
+		/// <summary>
+		/// Creates an inspector from the specified path.
+		/// </summary>
+		/// <param name="path">The path of the Git repository.</param>
+		/// <param name="log">A logger for diagnostics.</param>
+		/// <exception cref="GitMissingOrNotGitRepoException">Thrown if the path is not a Git repository.</exception>
+		/// <returns>A task containing the Git repo inspector.</returns>
 		public static async Task<GitRepoInspector> FromPath(string path, ILogger? log = null)
 		{
 			try
@@ -40,7 +77,13 @@ namespace Verlite
 		}
 
 		private ILogger? Log { get; }
+		/// <summary>
+		/// Can the Git repository be deepened to fetch commits not in the local repository.
+		/// </summary>
 		public bool CanDeepen { get; set; }
+		/// <summary>
+		/// The root of the repository.
+		/// </summary>
 		public string Root { get; }
 		private Dictionary<Commit, Commit> CachedParents { get; } = new();
 		private (int depth, bool shallow)? FetchDepth { get; set; }
@@ -53,6 +96,7 @@ namespace Verlite
 
 		private Task<(string stdout, string stderr)> Git(params string[] args) => Command.Run(Root, "git", args);
 
+		/// <inheritdoc/>
 		public async Task<Commit?> GetHead()
 		{
 			try
@@ -189,6 +233,7 @@ namespace Verlite
 			}
 		}
 
+		/// <inheritdoc/>
 		public async Task<Commit?> GetParent(Commit commit)
 		{
 			if (CachedParents.TryGetValue(commit, out Commit ret))
@@ -207,6 +252,7 @@ namespace Verlite
 		private static readonly Regex RefsTagRegex = new Regex(
 			@"^(?<pointer>[a-zA-Z0-9]+)\s*refs/tags/(?<tag>.+?)(\^\{\})?$",
 			RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.ExplicitCapture);
+		/// <inheritdoc/>
 		public async Task<TagContainer> GetTags(QueryTarget queryTarget)
 		{
 			var tags = new HashSet<Tag>();
@@ -255,6 +301,7 @@ namespace Verlite
 			return new TagContainer(tags);
 		}
 
+		/// <inheritdoc/>
 		public async Task FetchTag(Tag tag, string remote)
 		{
 			FetchDepth ??= await MeasureDepth();
