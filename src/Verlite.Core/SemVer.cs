@@ -121,18 +121,16 @@ namespace Verlite
 		/// <returns>If input is valid.</returns>
 		public static bool IsValidIdentifierCharacter(char input)
 		{
-			if (input is >= '0' and <= '9')
-				return true;
-			else if (input is >= 'a' and <= 'z')
-				return true;
-			else if (input is >= 'A' and <= 'Z')
-				return true;
-			else if (input is '.')
-				return true;
-			else if (input is '-')
-				return true;
-			else
-				return false;
+			return input switch
+			{
+				>= '0' and <= '9' => true,
+				>= 'a' and <= 'z' => true,
+				>= 'A' and <= 'Z' => true,
+				'.' => true,
+				'-' => true,
+
+				_ => false,
+			};
 		}
 		/// <summary>
 		/// Describes whether a string contains only valid build/tag characters.

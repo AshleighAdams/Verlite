@@ -118,8 +118,8 @@ namespace Verlite
 			foreach (var line in lines)
 			{
 				if (string.IsNullOrEmpty(line))
-					return null;
-				else if (line.StartsWith("parent ", StringComparison.Ordinal))
+					break;
+				if (line.StartsWith("parent ", StringComparison.Ordinal))
 					return new(line.Substring("parent ".Length));
 			}
 			return null;
@@ -143,12 +143,10 @@ namespace Verlite
 		private async Task<(int depth, bool shallow)> MeasureDepth()
 		{
 			int depth = 0;
-			var current = await GetHead();
+			var current = await GetHead()
+				?? throw new InvalidOperationException("MeasureDepth(): Could not fetch head");
 
-			if (current is null)
-				throw new InvalidOperationException("MeasureDepth(): Could not fetch head");
-
-			while (CachedParents.TryGetValue(current.Value, out Commit parent))
+			while (CachedParents.TryGetValue(current, out Commit parent))
 			{
 				current = parent;
 				depth++;
@@ -157,7 +155,7 @@ namespace Verlite
 
 			while (true)
 			{
-				string? commitObj = await GetCommitObjectInternal(current.Value);
+				string? commitObj = await GetCommitObjectInternal(current);
 				if (commitObj is null)
 				{
 					Log?.Verbatim($"MeasureDepth() -> (depth: {depth}, shallow: true)");
@@ -172,7 +170,7 @@ namespace Verlite
 				}
 
 				depth++;
-				current = parent;
+				current = parent.Value;
 			}
 		}
 
