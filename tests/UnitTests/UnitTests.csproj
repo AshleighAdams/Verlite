@@ -3,8 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <IsPackable>false</IsPackable>
-    <!-- CA1014: Unit test doesn't need to be CLS comliant -->
-    <NoWarn>$(NoWarn);CA1014</NoWarn>
+    <!-- CA1014: Unit tests don't need to express thier CLS complience -->
+    <!-- CS1591: Unit tests don't need xmldoc comments. -->
+    <NoWarn>$(NoWarn);CA1014;CS1591</NoWarn>
   </PropertyGroup>
 
 

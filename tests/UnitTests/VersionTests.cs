@@ -9,20 +9,22 @@ namespace UnitTests
 {
 	public class SemVerTests
 	{
-		[Fact]
-		public void InvalidLabelThrows()
+		[Theory]
+		[InlineData("abc+def")]
+		[InlineData("abc$def")]
+		[InlineData("abc_def")]
+		public void InvalidPrereleaseThrows(string prerelease)
 		{
-			Assert.Throws<ArgumentException>(() => new SemVer(1, 2, 3, "abc+def"));
-			Assert.Throws<ArgumentException>(() => new SemVer(1, 2, 3, "abc$def"));
-			Assert.Throws<ArgumentException>(() => new SemVer(1, 2, 3, "abc_def"));
+			Assert.Throws<ArgumentException>(() => new SemVer(1, 2, 3, prerelease));
 		}
 
-		[Fact]
-		public void InvalidInfoThrows()
+		[Theory]
+		[InlineData("abc+def")]
+		[InlineData("abc$def")]
+		[InlineData("abc_def")]
+		public void InvalidMetadataThrows(string buildmeta)
 		{
-			Assert.Throws<ArgumentException>(() => new SemVer(1, 2, 3, null, "abc+def"));
-			Assert.Throws<ArgumentException>(() => new SemVer(1, 2, 3, null, "abc$def"));
-			Assert.Throws<ArgumentException>(() => new SemVer(1, 2, 3, null, "abc_def"));
+			Assert.Throws<ArgumentException>(() => new SemVer(1, 2, 3, null, buildmeta));
 		}
 
 		[Fact]
