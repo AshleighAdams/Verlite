@@ -20,7 +20,7 @@ Versioning with [SemVer 2][semver-2] Git tags. Automatically set the version for
 | Logging level.                                                      | --verbosity, VerliteVerbosity                                    | Normal  |
 | Set the build data to this value.                                   | -b, --build-metadata, VerliteBuildMetadata                       |         |
 | Part of the version to print.                                       | -s, --show                                                       | All     |
-| Automatically fetch commits and a tag for shallow clones.           | -f, --auto-fetch                                                 | false   |
+| Automatically fetch commits and a tag for shallow clones.           | --auto-fetch                                                     | false   |
 | Set which version part should be bumped after an RTM release.       | -a, --auto-increment                                             | patch   |
 
 # Comparison with GitVersion

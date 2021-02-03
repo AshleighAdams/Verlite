@@ -78,7 +78,7 @@ namespace Verlite.CLI
 					parseArgument: new System.CommandLine.Parsing.ParseArgument<Show>(Parsers.ParseShow),
 					description: "The version part which should be written to stdout."),
 				new Option<bool>(
-					aliases: new[] { "--auto-fetch", "-f" },
+					aliases: new[] { "--auto-fetch" },
 					getDefaultValue: () => false,
 					description: "Automatically fetch commits from a shallow repository until a version tag is encountered."),
 				new Option<AutoIncrement>(
