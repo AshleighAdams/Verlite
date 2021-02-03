@@ -2,10 +2,10 @@ using System;
 
 namespace Verlite.CLI
 {
-	public sealed class ConsoleLogger : ILogger
+	internal class ConsoleLogger : ILogger
 	{
 		public Verbosity Verbosity { get; set; }
-			
+
 		void ILogger.Normal(string output)
 		{
 			if (Verbosity >= Verbosity.normal)

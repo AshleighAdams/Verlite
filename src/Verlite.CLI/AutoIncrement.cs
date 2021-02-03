@@ -3,14 +3,14 @@ using System.Linq;
 
 namespace Verlite.CLI
 {
-	public enum AutoIncrement
+	internal enum AutoIncrement
 	{
 		patch = default,
 		minor = 1,
 		major = 2,
 	}
 
-	public static partial class Parsers
+	internal static partial class Parsers
 	{
 		public static VersionPart Value(this AutoIncrement self)
 		{

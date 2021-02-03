@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Verlite.CLI
 {
-	public static partial class Parsers
+	internal static partial class Parsers
 	{
 		public static SemVer ParseMinSemVer(System.CommandLine.Parsing.ArgumentResult result)
 		{

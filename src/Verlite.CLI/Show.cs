@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Verlite.CLI
 {
-	public enum Show
+	internal enum Show
 	{
 		all = default,
 		major = 1,
@@ -12,9 +12,9 @@ namespace Verlite.CLI
 		prerelease = 4,
 		metadata = 5,
 	}
-	public static partial class Parsers
+	internal static partial class Parsers
 	{
-		public static Show ParseShow(System.CommandLine.Parsing.ArgumentResult result)
+		internal static Show ParseShow(System.CommandLine.Parsing.ArgumentResult result)
 		{
 			if (result.Tokens.Count == 0)
 				return default;

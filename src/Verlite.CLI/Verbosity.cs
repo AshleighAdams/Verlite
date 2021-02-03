@@ -3,14 +3,14 @@ using System.Linq;
 
 namespace Verlite.CLI
 {
-	public enum Verbosity
+	internal enum Verbosity
 	{
 		normal = default,
 		verbose = 1,
 		verbatim = 2,
 	}
 
-	public static partial class Parsers
+	internal static partial class Parsers
 	{
 		public static Verbosity ParseVerbosity(System.CommandLine.Parsing.ArgumentResult result)
 		{
