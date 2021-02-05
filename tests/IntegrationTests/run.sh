@@ -37,5 +37,9 @@ echo "Beggining tests"
 
 test no-repo
 test no-commits
+test one-commit
+test one-commit-tagged
+test two-commits
+test two-commits-tagged
 
 echo "All complete."
