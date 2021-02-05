@@ -4,13 +4,13 @@
     <OutputType>Exe</OutputType>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>verlite</ToolCommandName>
-
-    <Description>Automatic Git versioning with a focus on tags and continuous delivery.</Description>
+    <Description>Lightweight automatic versioning via Git tags for continuous delivery for the other build systems.</Description>
     <RootNamespace>Verlite.CLI</RootNamespace>
 
     <InvariantGlobalization>true</InvariantGlobalization>
     <!-- The below will cause our exception messages to be translated. -->
     <UseSystemResourceKeys>false</UseSystemResourceKeys>
+    <PackageTags>automatic;version;versioning;git;tags;msbuild</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

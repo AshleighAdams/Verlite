@@ -123,10 +123,14 @@ namespace Verlite.CLI
 					AutoIncrement = autoIncrement.Value(),
 				};
 
-				var repo = await GitRepoInspector.FromPath(sourceDirectory, log);
-				repo.CanDeepen = autoFetch;
+				var version = opts.VersionOverride ?? new SemVer();
+				if (opts.VersionOverride is null)
+				{
+					var repo = await GitRepoInspector.FromPath(sourceDirectory, log);
+					repo.CanDeepen = autoFetch;
 
-				var version = await VersionCalculator.FromRepository(repo, opts, log);
+					version = await VersionCalculator.FromRepository(repo, opts, log);
+				}
 
 				string toShow = show switch
 				{

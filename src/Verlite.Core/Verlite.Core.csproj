@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Description>Automatic Git versioning with a focus on tags and continuous delivery.</Description>
+    <Description>Core primitives and logic for automatic versioning via Git tags.</Description>
     <RootNamespace>Verlite</RootNamespace>
   </PropertyGroup>
 </Project>
