@@ -41,5 +41,6 @@ test one-commit
 test one-commit-tagged
 test two-commits
 test two-commits-tagged
+test branch-follows-first-parent
 
 echo "All complete."
