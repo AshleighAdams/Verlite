@@ -3,11 +3,16 @@ set -euo pipefail
 
 dotnet new tool-manifest > /dev/null
 dotnet tool install Verlite.CLI --version 0.0.0 > /dev/null
+dotnet tool restore > /dev/null
 
 git init > /dev/null
 
-[[ $(dotnet verlite $VERBOSE) == "0.1.0-alpha.1" ]]
-[[ $(dotnet verlite --min-version 1.2.3 $VERBOSE) == "1.2.3-alpha.1" ]]
-[[ $(dotnet verlite --min-version 1.2.3-beta.4 $VERBOSE) == "1.2.3-beta.4.1" ]]
+assert "0.1.0-alpha.1" dotnet verlite
+assert "1.2.3-alpha.1" dotnet verlite --min-version 1.2.3
+assert "1.2.3-beta.4.1" dotnet verlite --min-version 1.2.3-beta.4
+assert "4.3.2" dotnet verlite --version-override=4.3.2
+assert "alpha.1" dotnet verlite --show prerelease
+assert "beta.4.1" dotnet verlite --min-version 1.2.3-beta.4 --show prerelease
+assert "" dotnet verlite --version-override=1.0.0 --show prerelease
 
-dotnet verlite $VERBOSE --auto-fetch > /dev/null
+dotnet verlite --auto-fetch > /dev/null
