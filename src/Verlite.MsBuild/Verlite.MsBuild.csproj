@@ -3,7 +3,7 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <OutputType>Exe</OutputType>
     <RootNamespace>Verlite.MsBuild</RootNamespace>
-    <Description>Automatic Git versioning with a focus on tags and continuous delivery.</Description>
+    <Description>Lightweight automatic versioning via Git tags for continuous delivery and SDK-style projects.</Description>
     
     <NoWarn>$(NoWarn);NU5100;NU5105</NoWarn>
     <DevelopmentDependency>true</DevelopmentDependency>
@@ -13,6 +13,7 @@
     <Authors>Ashleigh Adams, Adam Ralph</Authors>
     <Copyright>Copyright 2020 Ashleigh Adams, Adam Ralph</Copyright>
     <PackageLicenseExpression>(MIT AND Apache-2.0)</PackageLicenseExpression>
+    <PackageTags>automatic;version;versioning;git;tags;tool</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
