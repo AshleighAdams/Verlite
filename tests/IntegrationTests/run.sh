@@ -14,6 +14,7 @@ test() {
 	echo "  $1..."
 	local script="$(pwd)/tests/$1.sh"
 	local tmp="$(mktemp -d)"
+	[[ -d "tests/$1" ]] && cp -r "tests/$1/"* "${tmp}/"
 	cp -r "packages" "${tmp}/packages"
 	cp NuGet.conf.disabled "${tmp}/NuGet.config"
 	pushd "${tmp}" > /dev/null
@@ -33,14 +34,15 @@ assert() {
 }
 export -f assert
 
-echo "Beggining tests"
+echo "Running tests"
 
-test no-repo
-test no-commits
-test one-commit
-test one-commit-tagged
-test two-commits
-test two-commits-tagged
-test branch-follows-first-parent
+#test no-repo
+#test no-commits
+#test one-commit
+#test one-commit-tagged
+#test two-commits
+#test two-commits-tagged
+#test branch-follows-first-parent
+test msbuild
 
 echo "All complete."
