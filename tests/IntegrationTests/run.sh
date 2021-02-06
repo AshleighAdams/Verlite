@@ -1,6 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
+cd "$(dirname $0)"
+
 export VERBOSE=""
 
 # setup the packages as version 0.0.0
@@ -36,13 +38,13 @@ export -f assert
 
 echo "Running tests"
 
-#test no-repo
-#test no-commits
-#test one-commit
-#test one-commit-tagged
-#test two-commits
-#test two-commits-tagged
-#test branch-follows-first-parent
+test no-repo
+test no-commits
+test one-commit
+test one-commit-tagged
+test two-commits
+test two-commits-tagged
+test branch-follows-first-parent
 test msbuild
 
 echo "All complete."
