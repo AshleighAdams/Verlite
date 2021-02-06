@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - *checkout
+    - *setup-dotnet5
     - *setup-nuget
-    - *setup-nuget-cache
     - *download-artifacts
     - *publish-github
