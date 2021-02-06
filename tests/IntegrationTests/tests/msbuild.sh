@@ -8,7 +8,7 @@ git tag 2.0.0 > /dev/null
 git tag abc/3.0.0 > /dev/null
 git commit --allow-empty -m "second" > /dev/null
 
-dotnet pack -o artifacts > /dev/null
+dotnet pack -o artifacts #> /dev/null
 
 should-exist() {
 	if [[ ! -f "$1" ]]; then

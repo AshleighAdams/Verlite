@@ -13,16 +13,16 @@ jobs:
     name: Build & Test
     runs-on: ubuntu-latest
     steps:
-      - *checkout
-      - *setup-dotnet5
-      - *setup-nuget
-      - *setup-nuget-cache
-      - *restore
-      - *build
-      - *test
-      - *pack
-      - *publish-codecov
-      - *upload-artifacts
+    - *checkout
+    - *setup-dotnet5
+    - *setup-nuget
+    - *setup-nuget-cache
+    - *restore
+    - *build
+    - *test
+    - *pack
+    - *publish-codecov
+    - *upload-artifacts
   integration-tests:
     name: Integration Tests
     needs: build-and-test
@@ -31,17 +31,18 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - *checkout
-      - *setup-dotnet5
-      - *setup-nuget
-      - *setup-nuget-cache
-      - *run-integration-tests
+    - *checkout
+    - *setup-dotnet5
+    - *setup-dotnet3-1
+    - *setup-nuget
+    - *setup-nuget-cache
+    - *run-integration-tests
   publish:
     name: Publish
     needs: integration-tests
     runs-on: ubuntu-latest
     steps:
-      - *setup-nuget
-      - *setup-nuget-cache
-      - *download-artifacts
-      - *publish-github
+    - *setup-nuget
+    - *setup-nuget-cache
+    - *download-artifacts
+    - *publish-github

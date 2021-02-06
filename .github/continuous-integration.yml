@@ -36,8 +36,9 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - *checkout
-      - *setup-dotnet5
-      - *setup-nuget
-      - *setup-nuget-cache
-      - *run-integration-tests
+    - *checkout
+    - *setup-dotnet5
+    - *setup-dotnet3-1
+    - *setup-nuget
+    - *setup-nuget-cache
+    - *run-integration-tests
