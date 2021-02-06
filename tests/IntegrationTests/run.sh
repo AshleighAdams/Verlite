@@ -20,6 +20,7 @@ test() {
 	cp -r "packages" "${tmp}/packages"
 	cp NuGet.conf.disabled "${tmp}/NuGet.config"
 	pushd "${tmp}" > /dev/null
+		chmod +x "${script}"
 		"${script}"
 	popd > /dev/null
 }
