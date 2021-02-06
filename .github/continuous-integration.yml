@@ -5,15 +5,18 @@ on:
     branches:
     - master
     - support/*
-#   paths-ignore:
-#     - 'README.md'
-#     - 'CODEOWNERS'
-#     - 'docs/**'
+    paths-ignore:
+    - 'docs/**'
+    - 'README.md'
+    - '.editorconfig'
+    - '.gitattributes'
+    - '.gitignore'
 
 defaults: *default-defaults
 
 jobs:
-  build:
+  build-and-test:
+    name: Build & Test
     runs-on: ubuntu-latest
     steps:
     - *checkout
@@ -26,3 +29,17 @@ jobs:
     - *pack
     - *publish-codecov
     - *upload-artifacts
+  integration-tests:
+    name: Integration Tests
+    needs: build-and-test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+    - *checkout
+    - *setup-dotnet5
+    - *setup-dotnet3-1
+    - *setup-nuget
+    - *setup-nuget-cache
+    - *run-integration-tests

@@ -16,6 +16,12 @@ definitions:
     with:
       dotnet-version: 5.0.x
 
+  setup-dotnet3-1: &setup-dotnet3-1
+    name: Setup .NET 3.1
+    uses: actions/setup-dotnet@v1
+    with:
+      dotnet-version: 3.1.x
+
   setup-nuget: &setup-nuget
     name: Setup NuGet
     run: |
@@ -52,21 +58,30 @@ definitions:
 
   pack: &pack
     name: Pack
-    run: dotnet pack --configuration Release --no-restore
+    run: dotnet pack -o artifacts --configuration Release --no-restore
 
   upload-artifacts: &upload-artifacts
     name: Upload Artifacts
     uses: actions/upload-artifact@v2
     with:
-      name: nuget
+      name: artifacts
       path:  |
-        src/**/*.nupkg
-        src/**/*.snupkg
+        artifacts/*
+
+  download-artifacts: &download-artifacts
+    name: Download Artifacts
+    uses: actions/download-artifact@v2
 
   publish-github: &publish-github
     name: Publish Nuget GitHub
-    run: dotnet nuget push src/**/*.nupkg -k ${GITHUB_TOKEN} -s github --skip-duplicate --no-symbols 1
+    run: dotnet nuget push artifacts/*.nupkg -k ${GITHUB_TOKEN} -s github --skip-duplicate --no-symbols 1
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+  run-integration-tests: &run-integration-tests
+    name: Run Integration Tests
+    run: |
+      chmod +x ./tests/IntegrationTests/run.sh
+      ./tests/IntegrationTests/run.sh
 
 #</shared>
