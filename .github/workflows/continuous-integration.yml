@@ -101,5 +101,7 @@ jobs:
           ${{ runner.os }}-nuget-
 
     - name: Run Integration Tests
-      run: ./tests/IntegrationTests/run.sh
+      run: |
+        chmod +x ./tests/IntegrationTests/run.sh
+        ./tests/IntegrationTests/run.sh
 
