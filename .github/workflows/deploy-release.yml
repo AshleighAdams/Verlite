@@ -57,15 +57,14 @@ jobs:
         -p:CoverletOutputFormat=cobertura
 
     - name: Pack
-      run: dotnet pack --configuration Release --no-restore
+      run: dotnet pack -o artifacts --configuration Release --no-restore
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: nuget
+        name: artifacts
         path: |
-          src/**/*.nupkg
-          src/**/*.snupkg
+          artifacts/*
 
 
     - name: Create Release
@@ -94,8 +93,8 @@ jobs:
 
     - name: Publish Nuget
       run: |
-        dotnet nuget push src/**/*.nupkg -k ${NUGETORG_TOKEN} -s https://api.nuget.org/v3/index.json --skip-duplicate --no-symbols 1
-        dotnet nuget push src/**/*.nupkg -k ${GITHUB_TOKEN} -s github --skip-duplicate --no-symbols 1
+        dotnet nuget push artifacts/*.nupkg -k ${NUGETORG_TOKEN} -s https://api.nuget.org/v3/index.json --skip-duplicate --no-symbols 1
+        dotnet nuget push artifacts/*.nupkg -k ${GITHUB_TOKEN} -s github --skip-duplicate --no-symbols 1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         NUGETORG_TOKEN: ${{ secrets.NUGETORG_TOKEN }}

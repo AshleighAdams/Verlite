@@ -14,7 +14,8 @@ defaults:
 
 
 jobs:
-  build:
+  build-and-test:
+    name: Build & Test
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -50,7 +51,7 @@ jobs:
         -p:CoverletOutputFormat=cobertura
 
     - name: Pack
-      run: dotnet pack --configuration Release --no-restore
+      run: dotnet pack -o artifacts --configuration Release --no-restore
 
     - name: Publish Codecov
       uses: codecov/codecov-action@v1
@@ -61,13 +62,66 @@ jobs:
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: nuget
+        name: artifacts
         path: |
-          src/**/*.nupkg
-          src/**/*.snupkg
+          artifacts/*
+
+  integration-tests:
+    name: Integration Tests
+    needs: build-and-test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: '0'
+
+    - name: Setup .NET 5
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+
+    - name: Setup NuGet
+      run: |
+        dotnet nuget update source github --store-password-in-clear-text --username AshleighAdams --password ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+    - name: NuGet Restore Cache
+      uses: actions/cache@v2
+      with:
+        path: ~/.nuget/packages
+        key: |
+          ${{ runner.os }}-nuget-${{ hashFiles('**/Directory.Build.props') }}-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Run Integration Tests
+      run: ./tests/IntegrationTests/run.sh
+
+publish:
+    name: Publish
+    needs: integration-tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup NuGet
+      run: |
+        dotnet nuget update source github --store-password-in-clear-text --username AshleighAdams --password ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+    - name: NuGet Restore Cache
+      uses: actions/cache@v2
+      with:
+        path: ~/.nuget/packages
+        key: |
+          ${{ runner.os }}-nuget-${{ hashFiles('**/Directory.Build.props') }}-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Download Artifacts
+      uses: actions/download-artifact@v2
 
     - name: Publish Nuget GitHub
-      run: dotnet nuget push src/**/*.nupkg -k ${GITHUB_TOKEN} -s github --skip-duplicate
+      run: dotnet nuget push artifacts/*.nupkg -k ${GITHUB_TOKEN} -s github --skip-duplicate
         --no-symbols 1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

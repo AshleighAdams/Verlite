@@ -52,21 +52,28 @@ definitions:
 
   pack: &pack
     name: Pack
-    run: dotnet pack --configuration Release --no-restore
+    run: dotnet pack -o artifacts --configuration Release --no-restore
 
   upload-artifacts: &upload-artifacts
     name: Upload Artifacts
     uses: actions/upload-artifact@v2
     with:
-      name: nuget
+      name: artifacts
       path:  |
-        src/**/*.nupkg
-        src/**/*.snupkg
+        artifacts/*
+
+  download-artifacts: &download-artifacts
+    name: Download Artifacts
+    uses: actions/download-artifact@v2
 
   publish-github: &publish-github
     name: Publish Nuget GitHub
-    run: dotnet nuget push src/**/*.nupkg -k ${GITHUB_TOKEN} -s github --skip-duplicate --no-symbols 1
+    run: dotnet nuget push artifacts/*.nupkg -k ${GITHUB_TOKEN} -s github --skip-duplicate --no-symbols 1
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+  run-integration-tests: &run-integration-tests
+    name: Run Integration Tests
+    run: ./tests/IntegrationTests/run.sh
 
 #</shared>
