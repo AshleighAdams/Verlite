@@ -55,5 +55,6 @@ test two-commits
 test two-commits-tagged
 test branch-follows-first-parent
 test msbuild
+test multiple-tags-on-same-commit
 
 echo "All complete."
