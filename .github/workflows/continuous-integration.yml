@@ -87,6 +87,11 @@ jobs:
       with:
         dotnet-version: 5.0.x
 
+    - name: Setup .NET 3.1
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
+
     - name: Setup NuGet
       run: |
         dotnet nuget update source github --store-password-in-clear-text --username AshleighAdams --password ${{ secrets.PERSONAL_ACCESS_TOKEN }}
