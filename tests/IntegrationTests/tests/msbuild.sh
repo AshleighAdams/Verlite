@@ -1,8 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-git init > /dev/null > /dev/null
-git config commit.gpgsign false > /dev/null
+setup_git
 git commit --allow-empty -m "first" > /dev/null
 git tag v1.0.0 > /dev/null
 git tag 2.0.0 > /dev/null

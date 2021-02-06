@@ -5,8 +5,7 @@ dotnet new tool-manifest > /dev/null
 dotnet tool install Verlite.CLI --version 0.0.0 > /dev/null
 dotnet tool restore > /dev/null
 
-git init > /dev/null > /dev/null
-git config commit.gpgsign false > /dev/null
+setup_git
 git commit --allow-empty -m "first" > /dev/null
 git tag v2.3.4 > /dev/null
 

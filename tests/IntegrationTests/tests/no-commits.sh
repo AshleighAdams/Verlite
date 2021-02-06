@@ -5,7 +5,7 @@ dotnet new tool-manifest > /dev/null
 dotnet tool install Verlite.CLI --version 0.0.0 > /dev/null
 dotnet tool restore > /dev/null
 
-git init > /dev/null
+setup_git
 
 assert "0.1.0-alpha.1" dotnet verlite
 assert "1.2.3-alpha.1" dotnet verlite --min-version 1.2.3

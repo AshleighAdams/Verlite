@@ -37,6 +37,14 @@ assert() {
 }
 export -f assert
 
+setup_git() {
+	git init --initial-branch=master > /dev/null
+	git config user.email "integratio@test.tld"
+	git config user.name "Integration Test"
+	git config commit.gpgsign false > /dev/null
+}
+export -f setup_git
+
 echo "Running tests"
 
 test no-repo
