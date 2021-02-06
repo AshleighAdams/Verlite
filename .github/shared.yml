@@ -77,11 +77,13 @@ definitions:
     run: dotnet nuget push artifacts/*.nupkg -k ${GITHUB_TOKEN} -s github --skip-duplicate --no-symbols 1
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  
+
   run-integration-tests: &run-integration-tests
     name: Run Integration Tests
     run: |
       chmod +x ./tests/IntegrationTests/run.sh
       ./tests/IntegrationTests/run.sh
+
+  empty: "hi" # fixes the yml parser from messing the last value up
 
 #</shared>

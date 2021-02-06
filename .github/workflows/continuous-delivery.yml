@@ -112,7 +112,7 @@ jobs:
         chmod +x ./tests/IntegrationTests/run.sh
         ./tests/IntegrationTests/run.sh
 
-publish:
+  publish:
     name: Publish
     needs: integration-tests
     runs-on: ubuntu-latest
