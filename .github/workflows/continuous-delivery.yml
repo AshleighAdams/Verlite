@@ -7,6 +7,12 @@ on:
     branches:
     - master
     - support/*
+    paths-ignore:
+    - docs/**
+    - README.md
+    - .editorconfig
+    - .gitattributes
+    - .gitignore
 
 defaults:
   run:

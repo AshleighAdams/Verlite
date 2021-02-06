@@ -5,7 +5,7 @@ dotnet new tool-manifest > /dev/null
 dotnet tool install Verlite.CLI --version 0.0.0 > /dev/null
 dotnet tool restore > /dev/null
 
-clone_url="$(echo "$(pwd)/upstream" | perl -MURI::file -e 'print URI::file->new(<STDIN>)."\n"')"
+clone_url="file://$(pwd)/upstream"
 
 mkdir upstream > /dev/null
 pushd upstream > /dev/null
