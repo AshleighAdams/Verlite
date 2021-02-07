@@ -4,7 +4,40 @@
 
 [![Verlite.MsBuild][verlite-msbuild-badge]][verlite-msbuild-link] [![Verlite.CLI][verlite-cli-badge]][verlite-cli-link] [![Verlite.Core][verlite-core-badge]][verlite-core-link] [![Codecov][codecov-badge]][codecov-link]
 
-Versioning with [SemVer 2][semver-2] Git tags. Automatically set the version for SDK projects or use the CLI tool for all others. Platform agnostic.
+Versioning with [SemVer 2][semver-2] Git tags. Automatically set the version for SDK-style projects or use the CLI tool for all others. Platform agnostic.
+
+## Usage
+
+Add the following to your `Directory.Build.props` or csproj:
+
+```xml
+<ItemGroup>
+  <PackageReference Include="Verlite.MsBuild" Version="x.y.z" PrivateAssets="All" />
+</ItemGroup>
+```
+
+Optionally if your CI/CD pipelines use shallow clones, add this to your build steps to deepen the repository to&mdash;and fetch&mdash;the nearest tag:
+
+```sh
+dotnet tool install --global Verlite.CLI --version "x.y.z"
+verlite --auto-fetch
+```
+
+## Goals and Scope
+
+Verlite falls falls between MinVer and GitVersion&mdash;using the same versioning scheme as MinVer with more flexibility, and providing some of the more crucial features of GitVersion.
+
+Verlite is aimed at  continuous delivery workflows, not continuous deployment workflows&mdash;where versions are denoted from branching model or commit messages. Instead with Verlite, tags are the source of truth for versions. Any versions with height attached (see [version calculation](#version-calculation)) are intended only for development purposes and to not be released to the primary feed.
+
+Versioning based upon commit messages or branches is out of scope. Such can be done via passing different [options](#options) into Verlite by your build process, but keep in mind this is not a supported workflow of Verlite, so shouldn't be done for release critical aspects.
+
+## Version Calculation
+
+Take the head commit, if one or more version tags exist, use the highest version, otherwise, keep following the first parent of each commit until a version tag is found, taking the highest version tag, then bumping the version and appending the "commit height" onto the end.
+
+To bump the version, the patch is by default incremented by 1. The version part to bump can be configured via `<VerliteAutoIncrement>`/`--auto-increment` option.
+
+The commit height is applied by concatenating the prerelease tag, a separator ("."), and the height together, where the prerelease tag is either the last tagged version's prerelease, or if not found/was not a prerelease, using the `<VerliteDefaultPrereleasePhase>`/`--default-prerelease-phase `option.
 
 ## Options
 
