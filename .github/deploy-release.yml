@@ -45,7 +45,7 @@ jobs:
         fi
 
         IFS=$'\n';
-        for asset in $(find ./src -name "*.nupkg"); do
+        for asset in $(find ./artifacts -name "*.nupkg"); do
           options+=("-a" "$asset")
         done
 
