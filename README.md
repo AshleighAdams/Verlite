@@ -4,11 +4,11 @@
 
 [![Verlite.MsBuild][verlite-msbuild-badge]][verlite-msbuild-link] [![Verlite.CLI][verlite-cli-badge]][verlite-cli-link] [![Verlite.Core][verlite-core-badge]][verlite-core-link] [![Codecov][codecov-badge]][codecov-link]
 
-Versioning with [SemVer 2][semver-2] Git tags. Automatically set the version for SDK-style projects or use the CLI tool for all others. Platform agnostic.
+Versioning with [SemVer 2][semver-2] Git tags. Automatically set the version from Git tags for .NET Core SDK-style projects, or use the CLI tool for all others. Platform agnostic.
 
 ## Usage
 
-Add the following to your `Directory.Build.props` or csproj:
+Add the following to your `Directory.Build.props` or `csproj`:
 
 ```xml
 <ItemGroup>
@@ -16,7 +16,7 @@ Add the following to your `Directory.Build.props` or csproj:
 </ItemGroup>
 ```
 
-Optionally if your CI/CD pipelines use shallow clones, add this to your build steps to deepen the repository to&mdash;and fetch&mdash;the nearest tag:
+Optionally, if your CI/CD pipelines use shallow clones (such as GitHub Actions by default), add build steps to automatically deepen the repository to&mdash;and fetch&mdash;the nearest tag:
 
 ```sh
 dotnet tool install --global Verlite.CLI --version "x.y.z"
@@ -25,7 +25,7 @@ verlite --auto-fetch
 
 ## Goals and Scope
 
-Verlite falls falls between MinVer and GitVersion&mdash;using the same versioning scheme as MinVer with more flexibility, and providing some of the more crucial features of GitVersion.
+Verlite aims to fall somewhere between MinVer and GitVersion&mdash;using the same versioning scheme as MinVer, with a slightly richer and more flexible feature set.
 
 Verlite is aimed at  continuous delivery workflows, not continuous deployment workflows&mdash;where versions are denoted from branching model or commit messages. Instead with Verlite, tags are the source of truth for versions. Any versions with height attached (see [version calculation](#version-calculation)) are intended only for development purposes and to not be released to the primary feed.
 
