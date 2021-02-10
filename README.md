@@ -54,7 +54,7 @@ The commit height is applied by concatenating the prerelease tag, a separator ("
 | Set the build data to this value.                                   | -b, --build-metadata, VerliteBuildMetadata                       |         |
 | Part of the version to print.                                       | -s, --show                                                       | All     |
 | Automatically fetch commits and a tag for shallow clones.           | --auto-fetch                                                     | false   |
-| Set which version part should be bumped after an RTM release.       | -a, --auto-increment                                             | patch   |
+| Set which version part should be bumped after an RTM release.       | -a, --auto-increment, VerliteAutoIncrement                       | patch   |
 
 # Comparison with GitVersion
 
