@@ -77,7 +77,7 @@ Verlite has some additional features, some of which I required, hence the creati
 
  - Shallow repositories are fully supported.
 	- Fetch tags and commits needed for calculating the version with `verlite --auto-fetch`.
-	- Error out if the repository is too shallow instead of silently returning an invalid version.
+	- Error out if the repository is too shallow instead of silently returning an incorrect version.
  - Continuous Delivery versions can start at the first prelease ordinal to reduce long version fatigue.
    That is to say, after tagging `1.0.0`, the next CD version by default is `1.0.1-alpha.1` instead of `1.0.1-alpha.0.1`.
 	- CD releases after a tagged prerelease behave identical to MinVer, for example, the commit after `1.0.0-rc.1` becomes `1.0.0-rc.1.1` and not `1.0.0-rc.2`.
