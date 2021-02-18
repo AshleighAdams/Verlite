@@ -39,6 +39,8 @@ To bump the version, the patch is by default incremented by 1. The version part 
 
 The commit height is applied by concatenating the prerelease tag, a separator ("."), and the height together, where the prerelease tag is either the last tagged version's prerelease, or if not found/was not a prerelease, using the `<VerliteDefaultPrereleasePhase>`/`--default-prerelease-phase `option.
 
+Further reading can be read in [docs/VersionCalculation.md](docs/VersionCalculation.md).
+
 ## Options
 
 | Description                                                         | CLI Short, CLI Long, MsBuild Property                            | Default |
