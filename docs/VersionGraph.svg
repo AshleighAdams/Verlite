@@ -1,0 +1,290 @@
+<svg width="1029.6875" height="1093.5" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<g transform="translate(10, 10)">
+		<g>
+			<path d="M 0 1040 C 0 1000 0 1000 0 960 L 0 880 L 0 800 L 0 720 L 0 640 C 0 600 50 600 50 560 M 0 880 C 0 840 0 840 0 800 L 0 720 L 0 640 L 0 560 L 0 480 L 0 400 L 0 320 L 0 240 L 0 160 L 0 80 C 0 40 0 40 0 0" fill="transparent" stroke="#979797" stroke-width="10" transform="translate(14, 14)"></path>
+			<path d="M 0 1040 C 0 1000 50 1000 50 960 L 50 880 L 50 800 L 50 720 L 50 640 L 50 560 L 50 480 C 50 440 0 440 0 400" fill="transparent" stroke="#008fb5" stroke-width="10" transform="translate(14, 14)"></path>
+			<path d="M 0 880 C 0 840 100 840 100 800 L 100 720 L 100 640 L 100 560 L 100 480 L 100 400 C 100 360 0 360 0 320" fill="transparent" stroke="#f1c109" stroke-width="10" transform="translate(14, 14)"></path>
+			<path d="M 0 880 C 0 840 150 840 150 800 L 150 720 L 150 640 L 150 560 L 150 480 L 150 400 L 150 320 C 150 280 0 280 0 240" fill="transparent" stroke="#979797" stroke-width="10" transform="translate(14, 14)"></path>
+		</g>
+		<g>
+			<g transform="translate(0, 1040)">
+				<g>
+					<defs>
+						<circle cx="14" cy="14" r="14" id="5f9f92499dd8e9be65a7d91291e7344f8d3111c1" fill="#979797"></circle>
+						<clipPath id="clip-5f9f92499dd8e9be65a7d91291e7344f8d3111c1">
+							<use href="#5f9f92499dd8e9be65a7d91291e7344f8d3111c1" xlink:href="#5f9f92499dd8e9be65a7d91291e7344f8d3111c1"></use>
+						</clipPath>
+					</defs>
+					<use href="#5f9f92499dd8e9be65a7d91291e7344f8d3111c1" xlink:href="#5f9f92499dd8e9be65a7d91291e7344f8d3111c1" clip-path="url(#clip-5f9f92499dd8e9be65a7d91291e7344f8d3111c1)" stroke="" stroke-width="0"></use>
+				</g>
+				<g transform="translate(0, 0)">
+					<g transform="translate(293.84375, 14)">
+						<text alignment-baseline="central" dominant-baseline="central" fill="#979797" style="font: normal 14pt Arial">Versioned as: 0.1.0</text>
+					</g>
+					<g transform="translate(200, 14)" data-offset="12">
+						<g>
+							<path d="M 0,0 L 12,15.5 V 15.5 Q 12,15.5 22,15.5 H 73.84375 Q 83.84375,15.5 83.84375,5.5 V -5.5 Q 83.84375,-15.5 73.84375,-15.5 H 22 Q 12,-15.5 12,-15.5 V -15.5 z" fill="#979797" stroke="#979797"></path>
+							<text alignment-baseline="central" dominant-baseline="central" fill="white" style="font: normal 14pt Arial" x="22" y="0">v0.1.0</text>
+						</g>
+					</g>
+				</g>
+			</g>
+			<g transform="translate(50, 960)">
+				<g>
+					<defs>
+						<circle cx="14" cy="14" r="14" id="6e542bdce43b9bf605c8c9a87c7b2e4c3cad5e42" fill="#008fb5"></circle>
+						<clipPath id="clip-6e542bdce43b9bf605c8c9a87c7b2e4c3cad5e42">
+							<use href="#6e542bdce43b9bf605c8c9a87c7b2e4c3cad5e42" xlink:href="#6e542bdce43b9bf605c8c9a87c7b2e4c3cad5e42"></use>
+						</clipPath>
+					</defs>
+					<use href="#6e542bdce43b9bf605c8c9a87c7b2e4c3cad5e42" xlink:href="#6e542bdce43b9bf605c8c9a87c7b2e4c3cad5e42" clip-path="url(#clip-6e542bdce43b9bf605c8c9a87c7b2e4c3cad5e42)" stroke="" stroke-width="0"></use>
+				</g>
+				<g transform="translate(-50, 0)">
+					<g transform="translate(200, 14)">
+						<text alignment-baseline="central" dominant-baseline="central" fill="#008fb5" style="font: normal 14pt Arial">Versioned as: 0.1.1-alpha.1</text>
+					</g>
+				</g>
+			</g>
+			<g transform="translate(0, 880)">
+				<g>
+					<defs>
+						<circle cx="14" cy="14" r="14" id="0b35e4b226a4a8d7ccec0fd580108847e8e1833c" fill="#979797"></circle>
+						<clipPath id="clip-0b35e4b226a4a8d7ccec0fd580108847e8e1833c">
+							<use href="#0b35e4b226a4a8d7ccec0fd580108847e8e1833c" xlink:href="#0b35e4b226a4a8d7ccec0fd580108847e8e1833c"></use>
+						</clipPath>
+					</defs>
+					<use href="#0b35e4b226a4a8d7ccec0fd580108847e8e1833c" xlink:href="#0b35e4b226a4a8d7ccec0fd580108847e8e1833c" clip-path="url(#clip-0b35e4b226a4a8d7ccec0fd580108847e8e1833c)" stroke="" stroke-width="0"></use>
+				</g>
+				<g transform="translate(0, 0)">
+					<g transform="translate(293.84375, 14)">
+						<text alignment-baseline="central" dominant-baseline="central" fill="#979797" style="font: normal 14pt Arial">Versioned as: 1.0.0 (before tag: 0.1.1-alpha.1)</text>
+					</g>
+					<g transform="translate(200, 14)" data-offset="12">
+						<g>
+							<path d="M 0,0 L 12,15.5 V 15.5 Q 12,15.5 22,15.5 H 73.84375 Q 83.84375,15.5 83.84375,5.5 V -5.5 Q 83.84375,-15.5 73.84375,-15.5 H 22 Q 12,-15.5 12,-15.5 V -15.5 z" fill="#979797" stroke="#979797"></path>
+							<text alignment-baseline="central" dominant-baseline="central" fill="white" style="font: normal 14pt Arial" x="22" y="0">v1.0.0</text>
+						</g>
+					</g>
+				</g>
+			</g>
+			<g transform="translate(100, 800)">
+				<g>
+					<defs>
+						<circle cx="14" cy="14" r="14" id="ce12dd9a704c30246efa12cced411c26eda51f35" fill="#f1c109"></circle>
+						<clipPath id="clip-ce12dd9a704c30246efa12cced411c26eda51f35">
+							<use href="#ce12dd9a704c30246efa12cced411c26eda51f35" xlink:href="#ce12dd9a704c30246efa12cced411c26eda51f35"></use>
+						</clipPath>
+					</defs>
+					<use href="#ce12dd9a704c30246efa12cced411c26eda51f35" xlink:href="#ce12dd9a704c30246efa12cced411c26eda51f35" clip-path="url(#clip-ce12dd9a704c30246efa12cced411c26eda51f35)" stroke="" stroke-width="0"></use>
+				</g>
+				<g transform="translate(-100, 0)">
+					<g transform="translate(200, 14)">
+						<text alignment-baseline="central" dominant-baseline="central" fill="#f1c109" style="font: normal 14pt Arial">Versioned as: 1.0.1-alpha.1</text>
+					</g>
+				</g>
+			</g>
+			<g transform="translate(100, 720)">
+				<g>
+					<defs>
+						<circle cx="14" cy="14" r="14" id="b54e0a13f72f2432cd8116d4a1b93b6cb3efc23e" fill="#f1c109"></circle>
+						<clipPath id="clip-b54e0a13f72f2432cd8116d4a1b93b6cb3efc23e">
+							<use href="#b54e0a13f72f2432cd8116d4a1b93b6cb3efc23e" xlink:href="#b54e0a13f72f2432cd8116d4a1b93b6cb3efc23e"></use>
+						</clipPath>
+					</defs>
+					<use href="#b54e0a13f72f2432cd8116d4a1b93b6cb3efc23e" xlink:href="#b54e0a13f72f2432cd8116d4a1b93b6cb3efc23e" clip-path="url(#clip-b54e0a13f72f2432cd8116d4a1b93b6cb3efc23e)" stroke="" stroke-width="0"></use>
+				</g>
+				<g transform="translate(-100, 0)">
+					<g transform="translate(200, 14)">
+						<text alignment-baseline="central" dominant-baseline="central" fill="#f1c109" style="font: normal 14pt Arial">Versioned as: 1.0.1-alpha.2</text>
+					</g>
+				</g>
+			</g>
+			<g transform="translate(100, 640)">
+				<g>
+					<defs>
+						<circle cx="14" cy="14" r="14" id="76db0d81c84db56b967f2c7f35f583ec83f32ee6" fill="#f1c109"></circle>
+						<clipPath id="clip-76db0d81c84db56b967f2c7f35f583ec83f32ee6">
+							<use href="#76db0d81c84db56b967f2c7f35f583ec83f32ee6" xlink:href="#76db0d81c84db56b967f2c7f35f583ec83f32ee6"></use>
+						</clipPath>
+					</defs>
+					<use href="#76db0d81c84db56b967f2c7f35f583ec83f32ee6" xlink:href="#76db0d81c84db56b967f2c7f35f583ec83f32ee6" clip-path="url(#clip-76db0d81c84db56b967f2c7f35f583ec83f32ee6)" stroke="" stroke-width="0"></use>
+				</g>
+				<g transform="translate(-100, 0)">
+					<g transform="translate(301.1875, 14)">
+						<text alignment-baseline="central" dominant-baseline="central" fill="#f1c109" style="font: normal 14pt Arial">Versioned as: 1.0.1-alpha.3</text>
+					</g>
+					<g transform="translate(200, 0)">
+						<g>
+							<rect width="91.1875" height="31" rx="10" fill="white" stroke="#f1c109"></rect>
+							<text alignment-baseline="central" dominant-baseline="central" fill="#f1c109" style="font: normal 14pt Arial" x="10" y="15.5">some-fix</text>
+						</g>
+					</g>
+				</g>
+			</g>
+			<g transform="translate(50, 560)">
+				<g>
+					<defs>
+						<circle cx="14" cy="14" r="14" id="3e5d164a969bdf6c779fad799975b2f081433b50" fill="#008fb5"></circle>
+						<clipPath id="clip-3e5d164a969bdf6c779fad799975b2f081433b50">
+							<use href="#3e5d164a969bdf6c779fad799975b2f081433b50" xlink:href="#3e5d164a969bdf6c779fad799975b2f081433b50"></use>
+						</clipPath>
+					</defs>
+					<use href="#3e5d164a969bdf6c779fad799975b2f081433b50" xlink:href="#3e5d164a969bdf6c779fad799975b2f081433b50" clip-path="url(#clip-3e5d164a969bdf6c779fad799975b2f081433b50)" stroke="" stroke-width="0"></use>
+				</g>
+				<g transform="translate(-50, 0)">
+					<g transform="translate(319.84375, 14)">
+						<text alignment-baseline="central" dominant-baseline="central" fill="#008fb5" style="font: normal 14pt Arial">Versioned as: 0.1.1-alpha.2</text>
+					</g>
+					<g transform="translate(200, 0)">
+						<g>
+							<rect width="109.84375" height="31" rx="10" fill="white" stroke="#008fb5"></rect>
+							<text alignment-baseline="central" dominant-baseline="central" fill="#008fb5" style="font: normal 14pt Arial" x="10" y="15.5">old-feature</text>
+						</g>
+					</g>
+				</g>
+			</g>
+			<g transform="translate(150, 480)">
+				<g>
+					<defs>
+						<circle cx="14" cy="14" r="14" id="0eb21b59216fb7b0f704a975dbd2eec5a4bf4f93" fill="#979797"></circle>
+						<clipPath id="clip-0eb21b59216fb7b0f704a975dbd2eec5a4bf4f93">
+							<use href="#0eb21b59216fb7b0f704a975dbd2eec5a4bf4f93" xlink:href="#0eb21b59216fb7b0f704a975dbd2eec5a4bf4f93"></use>
+						</clipPath>
+					</defs>
+					<use href="#0eb21b59216fb7b0f704a975dbd2eec5a4bf4f93" xlink:href="#0eb21b59216fb7b0f704a975dbd2eec5a4bf4f93" clip-path="url(#clip-0eb21b59216fb7b0f704a975dbd2eec5a4bf4f93)" stroke="" stroke-width="0"></use>
+				</g>
+				<g transform="translate(-150, 0)">
+					<g transform="translate(289.78125, 14)">
+						<text alignment-baseline="central" dominant-baseline="central" fill="#979797" style="font: normal 14pt Arial">Versioned as: 1.0.1-alpha.1</text>
+					</g>
+					<g transform="translate(200, 0)">
+						<g>
+							<rect width="79.78125" height="31" rx="10" fill="white" stroke="#979797"></rect>
+							<text alignment-baseline="central" dominant-baseline="central" fill="#979797" style="font: normal 14pt Arial" x="10" y="15.5">new-fix</text>
+						</g>
+					</g>
+				</g>
+			</g>
+			<g transform="translate(0, 400)">
+				<g>
+					<defs>
+						<circle cx="14" cy="14" r="14" id="5818e198be21d57a8985e16df3b88efdbe432216" fill="#979797"></circle>
+						<clipPath id="clip-5818e198be21d57a8985e16df3b88efdbe432216">
+							<use href="#5818e198be21d57a8985e16df3b88efdbe432216" xlink:href="#5818e198be21d57a8985e16df3b88efdbe432216"></use>
+						</clipPath>
+					</defs>
+					<use href="#5818e198be21d57a8985e16df3b88efdbe432216" xlink:href="#5818e198be21d57a8985e16df3b88efdbe432216" clip-path="url(#clip-5818e198be21d57a8985e16df3b88efdbe432216)" stroke="" stroke-width="0"></use>
+				</g>
+				<g transform="translate(0, 0)">
+					<g transform="translate(200, 14)">
+						<text alignment-baseline="central" dominant-baseline="central" fill="#979797" style="font: normal 14pt Arial">Versioned as: 1.0.1-alpha.1</text>
+					</g>
+				</g>
+			</g>
+			<g transform="translate(0, 320)">
+				<g>
+					<defs>
+						<circle cx="14" cy="14" r="14" id="c918f031669fa0a210975c9bde59c36fc9286df4" fill="#979797"></circle>
+						<clipPath id="clip-c918f031669fa0a210975c9bde59c36fc9286df4">
+							<use href="#c918f031669fa0a210975c9bde59c36fc9286df4" xlink:href="#c918f031669fa0a210975c9bde59c36fc9286df4"></use>
+						</clipPath>
+					</defs>
+					<use href="#c918f031669fa0a210975c9bde59c36fc9286df4" xlink:href="#c918f031669fa0a210975c9bde59c36fc9286df4" clip-path="url(#clip-c918f031669fa0a210975c9bde59c36fc9286df4)" stroke="" stroke-width="0"></use>
+				</g>
+				<g transform="translate(0, 0)">
+					<g transform="translate(200, 14)">
+						<text alignment-baseline="central" dominant-baseline="central" fill="#979797" style="font: normal 14pt Arial">Versioned as: 1.0.1-alpha.2</text>
+					</g>
+				</g>
+			</g>
+			<g transform="translate(0, 240)">
+				<g>
+					<defs>
+						<circle cx="14" cy="14" r="14" id="cf69e8f9846107bf214a4eb14c867508a2b41672" fill="#979797"></circle>
+						<clipPath id="clip-cf69e8f9846107bf214a4eb14c867508a2b41672">
+							<use href="#cf69e8f9846107bf214a4eb14c867508a2b41672" xlink:href="#cf69e8f9846107bf214a4eb14c867508a2b41672"></use>
+						</clipPath>
+					</defs>
+					<use href="#cf69e8f9846107bf214a4eb14c867508a2b41672" xlink:href="#cf69e8f9846107bf214a4eb14c867508a2b41672" clip-path="url(#clip-cf69e8f9846107bf214a4eb14c867508a2b41672)" stroke="" stroke-width="0"></use>
+				</g>
+				<g transform="translate(0, 0)">
+					<g transform="translate(331.15625, 14)">
+						<text alignment-baseline="central" dominant-baseline="central" fill="#979797" style="font: normal 14pt Arial">Versioned as: 1.0.1-rc.1 (before tag: 1.0.1-alpha.3)</text>
+					</g>
+					<g transform="translate(200, 14)" data-offset="12">
+						<g>
+							<path d="M 0,0 L 12,15.5 V 15.5 Q 12,15.5 22,15.5 H 111.15625 Q 121.15625,15.5 121.15625,5.5 V -5.5 Q 121.15625,-15.5 111.15625,-15.5 H 22 Q 12,-15.5 12,-15.5 V -15.5 z" fill="#979797" stroke="#979797"></path>
+							<text alignment-baseline="central" dominant-baseline="central" fill="white" style="font: normal 14pt Arial" x="22" y="0">v1.0.1-rc.1</text>
+						</g>
+					</g>
+				</g>
+			</g>
+			<g transform="translate(0, 160)">
+				<g>
+					<defs>
+						<circle cx="14" cy="14" r="14" id="79024a47e99b34944cb7c5db75d7a6708809c598" fill="#979797"></circle>
+						<clipPath id="clip-79024a47e99b34944cb7c5db75d7a6708809c598">
+							<use href="#79024a47e99b34944cb7c5db75d7a6708809c598" xlink:href="#79024a47e99b34944cb7c5db75d7a6708809c598"></use>
+						</clipPath>
+					</defs>
+					<use href="#79024a47e99b34944cb7c5db75d7a6708809c598" xlink:href="#79024a47e99b34944cb7c5db75d7a6708809c598" clip-path="url(#clip-79024a47e99b34944cb7c5db75d7a6708809c598)" stroke="" stroke-width="0"></use>
+				</g>
+				<g transform="translate(0, 0)">
+					<g transform="translate(200, 14)">
+						<text alignment-baseline="central" dominant-baseline="central" fill="#979797" style="font: normal 14pt Arial">Versioned as: 1.0.1-rc.1.1</text>
+					</g>
+				</g>
+			</g>
+			<g transform="translate(0, 80)">
+				<g>
+					<defs>
+						<circle cx="14" cy="14" r="14" id="0d80817b906bb8e164e1fa92c4890ce3d4626043" fill="#979797"></circle>
+						<clipPath id="clip-0d80817b906bb8e164e1fa92c4890ce3d4626043">
+							<use href="#0d80817b906bb8e164e1fa92c4890ce3d4626043" xlink:href="#0d80817b906bb8e164e1fa92c4890ce3d4626043"></use>
+						</clipPath>
+					</defs>
+					<use href="#0d80817b906bb8e164e1fa92c4890ce3d4626043" xlink:href="#0d80817b906bb8e164e1fa92c4890ce3d4626043" clip-path="url(#clip-0d80817b906bb8e164e1fa92c4890ce3d4626043)" stroke="" stroke-width="0"></use>
+				</g>
+				<g transform="translate(0, 0)">
+					<g transform="translate(200, 14)">
+						<text alignment-baseline="central" dominant-baseline="central" fill="#979797" style="font: normal 14pt Arial">Versioned as: 1.0.1-rc.1.2</text>
+					</g>
+				</g>
+			</g>
+			<g transform="translate(0, 0)">
+				<g>
+					<defs>
+						<circle cx="14" cy="14" r="14" id="e45516813befede896d3f5ffe66c03dfae0f7deb" fill="#979797"></circle>
+						<clipPath id="clip-e45516813befede896d3f5ffe66c03dfae0f7deb">
+							<use href="#e45516813befede896d3f5ffe66c03dfae0f7deb" xlink:href="#e45516813befede896d3f5ffe66c03dfae0f7deb"></use>
+						</clipPath>
+					</defs>
+					<use href="#e45516813befede896d3f5ffe66c03dfae0f7deb" xlink:href="#e45516813befede896d3f5ffe66c03dfae0f7deb" clip-path="url(#clip-e45516813befede896d3f5ffe66c03dfae0f7deb)" stroke="" stroke-width="0"></use>
+				</g>
+				<g transform="translate(0, 0)">
+					<g transform="translate(512.828125, 14)">
+						<text alignment-baseline="central" dominant-baseline="central" fill="#979797" style="font: normal 14pt Arial">Versioned as: 1.0.1 (before tag: 1.0.1-rc.1.3, then 1.0.1-rc.2)</text>
+					</g>
+					<g transform="translate(200, 0)">
+						<g>
+							<rect width="77.828125" height="31" rx="10" fill="white" stroke="#979797"></rect>
+							<text alignment-baseline="central" dominant-baseline="central" fill="#979797" style="font: normal 14pt Arial" x="10" y="15.5">master</text>
+						</g>
+					</g>
+					<g transform="translate(287.828125, 14)" data-offset="12">
+						<g>
+							<path d="M 0,0 L 12,15.5 V 15.5 Q 12,15.5 22,15.5 H 111.15625 Q 121.15625,15.5 121.15625,5.5 V -5.5 Q 121.15625,-15.5 111.15625,-15.5 H 22 Q 12,-15.5 12,-15.5 V -15.5 z" fill="#979797" stroke="#979797"></path>
+							<text alignment-baseline="central" dominant-baseline="central" fill="white" style="font: normal 14pt Arial" x="22" y="0">v1.0.1-rc.2</text>
+						</g>
+					</g>
+					<g transform="translate(418.984375, 14)" data-offset="12">
+						<g>
+							<path d="M 0,0 L 12,15.5 V 15.5 Q 12,15.5 22,15.5 H 73.84375 Q 83.84375,15.5 83.84375,5.5 V -5.5 Q 83.84375,-15.5 73.84375,-15.5 H 22 Q 12,-15.5 12,-15.5 V -15.5 z" fill="#979797" stroke="#979797"></path>
+							<text alignment-baseline="central" dominant-baseline="central" fill="white" style="font: normal 14pt Arial" x="22" y="0">v1.0.1</text>
+						</g>
+					</g>
+				</g>
+			</g>
+		</g>
+	</g>
+</svg>
