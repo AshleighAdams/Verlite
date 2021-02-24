@@ -1,1 +1,140 @@
 #nullable enable
+override Verlite.Commit.Equals(object? obj) -> bool
+override Verlite.Commit.GetHashCode() -> int
+override Verlite.Commit.ToString() -> string!
+override Verlite.SemVer.Equals(object? obj) -> bool
+override Verlite.SemVer.GetHashCode() -> int
+override Verlite.SemVer.ToString() -> string!
+override Verlite.Tag.Equals(object? obj) -> bool
+override Verlite.Tag.GetHashCode() -> int
+override Verlite.Tag.ToString() -> string!
+override Verlite.TaggedVersion.Equals(object? obj) -> bool
+override Verlite.TaggedVersion.GetHashCode() -> int
+static Verlite.Command.Run(string! directory, string! command, string![]! args, System.Collections.Generic.IDictionary<string!, string!>? envVars = null) -> System.Threading.Tasks.Task<(string! stdout, string! stderr)>!
+static Verlite.Commit.operator !=(Verlite.Commit left, Verlite.Commit right) -> bool
+static Verlite.Commit.operator ==(Verlite.Commit left, Verlite.Commit right) -> bool
+static Verlite.GitRepoInspector.FromPath(string! path, Verlite.ILogger? log = null) -> System.Threading.Tasks.Task<Verlite.GitRepoInspector!>!
+static Verlite.HeightCalculator.FromRepository(Verlite.IRepoInspector! repo, string! tagPrefix, bool queryRemoteTags, Verlite.ILogger? log = null) -> System.Threading.Tasks.Task<(int height, Verlite.TaggedVersion?)>!
+static Verlite.SemVer.ComparePrerelease(string! left, string! right) -> int
+static Verlite.SemVer.IsValidIdentifierCharacter(char input) -> bool
+static Verlite.SemVer.IsValidIdentifierString(string! input) -> bool
+static Verlite.SemVer.operator !=(Verlite.SemVer left, Verlite.SemVer right) -> bool
+static Verlite.SemVer.operator <(Verlite.SemVer left, Verlite.SemVer right) -> bool
+static Verlite.SemVer.operator <=(Verlite.SemVer left, Verlite.SemVer right) -> bool
+static Verlite.SemVer.operator ==(Verlite.SemVer left, Verlite.SemVer right) -> bool
+static Verlite.SemVer.operator >(Verlite.SemVer left, Verlite.SemVer right) -> bool
+static Verlite.SemVer.operator >=(Verlite.SemVer left, Verlite.SemVer right) -> bool
+static Verlite.SemVer.Parse(string! input) -> Verlite.SemVer
+static Verlite.SemVer.TryParse(string! input, out Verlite.SemVer? version) -> bool
+static Verlite.Tag.operator !=(Verlite.Tag left, Verlite.Tag right) -> bool
+static Verlite.Tag.operator ==(Verlite.Tag left, Verlite.Tag right) -> bool
+static Verlite.TaggedVersion.operator !=(Verlite.TaggedVersion! left, Verlite.TaggedVersion! right) -> bool
+static Verlite.TaggedVersion.operator ==(Verlite.TaggedVersion! left, Verlite.TaggedVersion! right) -> bool
+static Verlite.VersionCalculator.Bump(Verlite.SemVer version, Verlite.VersionCalculationOptions! options, int height) -> Verlite.SemVer
+static Verlite.VersionCalculator.FromRepository(Verlite.IRepoInspector! repo, Verlite.VersionCalculationOptions! options, Verlite.ILogger? log = null) -> System.Threading.Tasks.Task<Verlite.SemVer>!
+static Verlite.VersionCalculator.FromTagInfomation(Verlite.SemVer? lastTag, Verlite.VersionCalculationOptions! options, int height) -> Verlite.SemVer
+static Verlite.VersionCalculator.NextVersion(Verlite.SemVer lastTag, Verlite.VersionCalculationOptions! options) -> Verlite.SemVer
+Verlite.AutoDeepenException
+Verlite.AutoDeepenException.AutoDeepenException() -> void
+Verlite.AutoDeepenException.AutoDeepenException(string! message) -> void
+Verlite.Command
+Verlite.CommandException
+Verlite.CommandException.CommandException(int exitcode, string! stdout, string! stderr) -> void
+Verlite.CommandException.ExitCode.get -> int
+Verlite.CommandException.StandardError.get -> string!
+Verlite.CommandException.StandardOut.get -> string!
+Verlite.Commit
+Verlite.Commit.Commit() -> void
+Verlite.Commit.Commit(string! id) -> void
+Verlite.Commit.Equals(Verlite.Commit other) -> bool
+Verlite.Commit.Id.get -> string!
+Verlite.GitMissingOrNotGitRepoException
+Verlite.GitMissingOrNotGitRepoException.GitMissingOrNotGitRepoException() -> void
+Verlite.GitRepoInspector
+Verlite.GitRepoInspector.CanDeepen.get -> bool
+Verlite.GitRepoInspector.CanDeepen.set -> void
+Verlite.GitRepoInspector.FetchTag(Verlite.Tag tag, string! remote) -> System.Threading.Tasks.Task!
+Verlite.GitRepoInspector.GetHead() -> System.Threading.Tasks.Task<Verlite.Commit?>!
+Verlite.GitRepoInspector.GetParent(Verlite.Commit commit) -> System.Threading.Tasks.Task<Verlite.Commit?>!
+Verlite.GitRepoInspector.GetTags(Verlite.QueryTarget queryTarget) -> System.Threading.Tasks.Task<Verlite.TagContainer!>!
+Verlite.GitRepoInspector.Root.get -> string!
+Verlite.HeightCalculator
+Verlite.ILogger
+Verlite.ILogger.Normal(string! message) -> void
+Verlite.ILogger.Verbatim(string! message) -> void
+Verlite.ILogger.Verbose(string! message) -> void
+Verlite.IRepoInspector
+Verlite.IRepoInspector.FetchTag(Verlite.Tag tag, string! remote) -> System.Threading.Tasks.Task!
+Verlite.IRepoInspector.GetHead() -> System.Threading.Tasks.Task<Verlite.Commit?>!
+Verlite.IRepoInspector.GetParent(Verlite.Commit commit) -> System.Threading.Tasks.Task<Verlite.Commit?>!
+Verlite.IRepoInspector.GetTags(Verlite.QueryTarget queryTarget) -> System.Threading.Tasks.Task<Verlite.TagContainer!>!
+Verlite.QueryTarget
+Verlite.QueryTarget.Local = 1 -> Verlite.QueryTarget
+Verlite.QueryTarget.None = 0 -> Verlite.QueryTarget
+Verlite.QueryTarget.Remote = 2 -> Verlite.QueryTarget
+Verlite.RepoInspectionException
+Verlite.RepoInspectionException.RepoInspectionException() -> void
+Verlite.RepoInspectionException.RepoInspectionException(string! message) -> void
+Verlite.RepoInspectionException.RepoInspectionException(string! message, System.Exception! innerException) -> void
+Verlite.RepoInspectionException.RepoInspectionException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
+Verlite.RepoTooShallowException
+Verlite.SemVer
+Verlite.SemVer.BuildMetadata.get -> string?
+Verlite.SemVer.BuildMetadata.set -> void
+Verlite.SemVer.CompareTo(Verlite.SemVer other) -> int
+Verlite.SemVer.DestinedVersion.get -> Verlite.SemVer
+Verlite.SemVer.Equals(Verlite.SemVer other) -> bool
+Verlite.SemVer.Major.get -> int
+Verlite.SemVer.Major.set -> void
+Verlite.SemVer.Minor.get -> int
+Verlite.SemVer.Minor.set -> void
+Verlite.SemVer.Patch.get -> int
+Verlite.SemVer.Patch.set -> void
+Verlite.SemVer.Prerelease.get -> string?
+Verlite.SemVer.Prerelease.set -> void
+Verlite.SemVer.SemVer() -> void
+Verlite.SemVer.SemVer(int major, int minor, int patch, string? prerelease = null, string? buildMetadata = null) -> void
+Verlite.Tag
+Verlite.Tag.Equals(Verlite.Tag other) -> bool
+Verlite.Tag.Name.get -> string!
+Verlite.Tag.PointsTo.get -> Verlite.Commit
+Verlite.Tag.Tag() -> void
+Verlite.Tag.Tag(string! name, Verlite.Commit pointsTo) -> void
+Verlite.TagContainer
+Verlite.TagContainer.FindCommitTags(Verlite.Commit commit) -> System.Collections.Generic.IList<Verlite.Tag>!
+Verlite.TagContainer.GetEnumerator() -> System.Collections.Generic.IEnumerator<Verlite.Tag>!
+Verlite.TagContainer.TagContainer(System.Collections.Generic.ISet<Verlite.Tag>! tags) -> void
+Verlite.TaggedVersion
+Verlite.TaggedVersion.Equals(Verlite.TaggedVersion? other) -> bool
+Verlite.TaggedVersion.Tag.get -> Verlite.Tag
+Verlite.TaggedVersion.TaggedVersion(Verlite.SemVer version, Verlite.Tag tag) -> void
+Verlite.TaggedVersion.Version.get -> Verlite.SemVer
+Verlite.VersionCalculationException
+Verlite.VersionCalculationException.VersionCalculationException() -> void
+Verlite.VersionCalculationException.VersionCalculationException(string? message) -> void
+Verlite.VersionCalculationException.VersionCalculationException(string? message, System.Exception? innerException) -> void
+Verlite.VersionCalculationException.VersionCalculationException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
+Verlite.VersionCalculationOptions
+Verlite.VersionCalculationOptions.AutoIncrement.get -> Verlite.VersionPart
+Verlite.VersionCalculationOptions.AutoIncrement.set -> void
+Verlite.VersionCalculationOptions.BuildMetadata.get -> string?
+Verlite.VersionCalculationOptions.BuildMetadata.set -> void
+Verlite.VersionCalculationOptions.DefaultPrereleasePhase.get -> string!
+Verlite.VersionCalculationOptions.DefaultPrereleasePhase.set -> void
+Verlite.VersionCalculationOptions.MinimiumVersion.get -> Verlite.SemVer
+Verlite.VersionCalculationOptions.MinimiumVersion.set -> void
+Verlite.VersionCalculationOptions.PrereleaseBaseHeight.get -> int
+Verlite.VersionCalculationOptions.PrereleaseBaseHeight.set -> void
+Verlite.VersionCalculationOptions.QueryRemoteTags.get -> bool
+Verlite.VersionCalculationOptions.QueryRemoteTags.set -> void
+Verlite.VersionCalculationOptions.TagPrefix.get -> string!
+Verlite.VersionCalculationOptions.TagPrefix.set -> void
+Verlite.VersionCalculationOptions.VersionCalculationOptions() -> void
+Verlite.VersionCalculationOptions.VersionOverride.get -> Verlite.SemVer?
+Verlite.VersionCalculationOptions.VersionOverride.set -> void
+Verlite.VersionCalculator
+Verlite.VersionPart
+Verlite.VersionPart.Major = 1 -> Verlite.VersionPart
+Verlite.VersionPart.Minor = 2 -> Verlite.VersionPart
+Verlite.VersionPart.None = 0 -> Verlite.VersionPart
+Verlite.VersionPart.Patch = 3 -> Verlite.VersionPart
