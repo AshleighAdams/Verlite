@@ -88,6 +88,18 @@ Additionally, Verlite has some extra features, some of which I required or desir
 
 ## FAQ
 
+ - [Why Verlite?](#why-verlite) *(simple and feature complete)*
+ - [Can I bump the major or minor parts after an RTM tag?](#can-i-bump-the-major-or-minor-parts-after-an-rtm-tag) *(yes)*
+ - [Can I change the default phase?](#can-i-change-the-default-phase) *(yes)*
+ - [Why is the default phase "alpha" and not "alpha.0"?](#why-is-the-default-phase-alpha-and-not-alpha0) *(reduce fatigue)*
+ - [Can prereleases be tagged?](#can-prereleases-be-tagged) *(yes, must be)*
+ - [Can I use a branching strategy?](#can-i-use-a-branching-strategy) *(sort of)*
+ - [Can Verlite be used elsewhere?](#can-verlite-be-used-elsewhere) *(yes)*
+ - [What is the default tag prefix?](#what-is-the-default-tag-prefix) *("v")*
+ - [Can multiple versions be nested?](#can-multiple-versions-be-nested) *(yes)*
+ - [Can shallow clones be used?](#can-shallow-clones-be-used) *(yes)*
+ - [What happens if auto fetch isn't used?](#what-happens-if-auto-fetch-isnt-used) *(nothing unsafe)*
+
 ### Why Verlite?
 
 For if you find GitVersion too complex and MinVer too minimal for your needs. Verlite is a superset of MinVer, but takes on a small amount of complexity to provide a simpler to use tool.
@@ -100,7 +112,7 @@ Yes, the `VerliteAutoIncrement` option will specify which version part should be
 
 Yes, the the default phase of `alpha` can be changed using the `VerliteDefaultPrereleasePhase` option.
 
-### Why is the default phase `alpha` and not `alpha.0`?
+### Why is the default phase "alpha" and not "alpha.0"?
 
 In short, to reduce fatigue. The first commits after an RTM tag are more likely to be hotfixes bumping the patch instead of something to undergo various prerelease phases, and so to make Continuous Delivery builds less fatigue to use, the default phase omits a number, seeing such builds be versioned as `1.0.1-alpha.42` instead of `1.0.1-alpha.0.42`. Then upon early prereleases, it is recommended to tag with a `beta` `prerelease` phase, such as `1.0.1-beta.1`, in which the next CD deliverables are versioned like `1.0.1-beta.1.42`.
 
@@ -108,11 +120,12 @@ Should the you prefer `alpha.0` be used instead, such can be done by changing th
 
 ### Can prereleases be tagged?
 
-Yes, it is strongly recommended you release only tagged prereleases. Then for subsequent untagged commits, they will be versioned with the tagged version with the height appended. For example, the next commit after `2.0.0-rc.1` may be versioned as `2.0.0-rc.1.1`.
+You should only release tagged prereleases. Then for subsequent untagged commits, they will be versioned with the tagged version with the height appended. For example, the next commit after `2.0.0-rc.1` may be versioned as `2.0.0-rc.1.1`.
 
 ### Can I use a branching strategy?
 
-Verlite itself is not aware of named branches, taking only the commit graph and tags into account for version calculation.
+Sort of. Verlite is intended for tags to be the cause of a release, not an effect of a release.
+Verlite is not aware of named branches, and will not natively take them into account for version calculation, instead using only the commit graph and tags for version calculation.
 
 Should you chose to, Verlite can be configured to produce different versions using MsBuild's `Condition` attribute under CI pipelines, for example:
 
@@ -165,7 +178,6 @@ Yes, with a caveat—for performance reasons `verlite --auto-fetch` must be invo
 Nothing bad. In the event a clone is not deep enough, an exception will be thrown and the build will fail, instead of calculating an incorrect version number silently.
 
 Footguns not included.
-
 
 
 [verlite-msbuild-badge]: https://img.shields.io/nuget/vpre/Verlite.MsBuild?label=Verlite.MsBuild
