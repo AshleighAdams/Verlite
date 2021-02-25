@@ -39,13 +39,13 @@ To bump the version, the patch is by default incremented by 1. The version part 
 
 The commit height is applied by concatenating the prerelease tag, a separator ("."), and the height together, where the prerelease tag is either the last tagged version's prerelease, or if not found/was not a prerelease, using the `<VerliteDefaultPrereleasePhase>`/`--default-prerelease-phase `option.
 
-Further reading can be read in [docs/VersionCalculation.md](docs/VersionCalculation.md).
+Further explanations are available in [docs/VersionCalculation.md](docs/VersionCalculation.md).
 
 ## Options
 
 | Description                                                         | CLI Short, CLI Long, MsBuild Property                            | Default |
 | :------------------------------------------------------------------ | :--------------------------------------------------------------- | :------ |
-| Disable invoking Verlite.                                           | VerliteDisabled, --tag-prefix ""                                 | false   |
+| Disable invoking Verlite.                                           | VerliteDisabled                                                  | false   |
 | Tags starting with this represent versions.                         | -t, --tag-prefix, VerliteTagPrefix                               | v       |
 | Disable the version prefix.                                         | VerliteDisableTagPrefix                                          | false   |
 | The default phase for the prerelease label                          | -d, --default-prerelease-phase, VerliteDefaultPrereleasePhase    | alpha   |
@@ -66,7 +66,7 @@ Verlite only cares about tags, particularly the tags on the chain of first paren
 
 # Comparison with MinVer
 
-MinVer's default behavior can be considered a subset of Verlite, and so we can configured Verlite to behave the same with the following properties set:
+MinVer's behavior is a subset of Verlite, and so we can configured Verlite to behave the same with the following properties set:
 
 ```xml
 <PropertyGroup>
@@ -75,7 +75,7 @@ MinVer's default behavior can be considered a subset of Verlite, and so we can c
 <PropertyGroup>
 ```
 
-Verlite has some additional features, some of which I required, hence the creation of this project. These are:
+Additionally, Verlite has some extra features, some of which I required or desired, hence the creation of this project. These are:
 
  - Shallow repositories are fully supported.
 	- Fetch tags and commits needed for calculating the version with `verlite --auto-fetch`.
@@ -85,6 +85,87 @@ Verlite has some additional features, some of which I required, hence the creati
 	- CD releases after a tagged prerelease behave identical to MinVer, for example, the commit after `1.0.0-rc.1` becomes `1.0.0-rc.1.1` and not `1.0.0-rc.2`.
  - The default base height after a tag can be set, such as `1.0.0` -> `1.0.1-alpha.0`.
  - Scripts can query Verlite for a specific version part.
+
+## FAQ
+
+### Why Verlite?
+
+For if you find GitVersion too complex and MinVer too minimal for your needs. Verlite is a superset of MinVer, but takes on a small amount of complexity to provide a simpler to use tool.
+
+### Can I bump the major or minor parts after an RTM tag?
+
+Yes, the `VerliteAutoIncrement` option will specify which version part should be bumped after an RTM tag.
+
+### Can I change the default phase?
+
+Yes, the the default phase of `alpha` can be changed using the `VerliteDefaultPrereleasePhase` option.
+
+### Why is the default phase `alpha` and not `alpha.0`?
+
+In short, to reduce fatigue. The first commits after an RTM tag are more likely to be hotfixes bumping the patch instead of something to undergo various prerelease phases, and so to make Continuous Delivery builds less fatigue to use, the default phase omits a number, seeing such builds be versioned as `1.0.1-alpha.42` instead of `1.0.1-alpha.0.42`. Then upon early prereleases, it is recommended to tag with a `beta` `prerelease` phase, such as `1.0.1-beta.1`, in which the next CD deliverables are versioned like `1.0.1-beta.1.42`.
+
+Should the you prefer `alpha.0` be used instead, such can be done by changing the default phase.
+
+### Can prereleases be tagged?
+
+Yes, it is strongly recommended you release only tagged prereleases. Then for subsequent untagged commits, they will be versioned with the tagged version with the height appended. For example, the next commit after `2.0.0-rc.1` may be versioned as `2.0.0-rc.1.1`.
+
+### Can I use a branching strategy?
+
+Verlite itself is not aware of named branches, taking only the commit graph and tags into account for version calculation.
+
+Should you chose to, Verlite can be configured to produce different versions using MsBuild's `Condition` attribute under CI pipelines, for example:
+
+```xml
+<!-- apply the PR number for PR builds -->
+<PropertyGroup Condition="$(GITHUB_ACTIONS.StartsWith('refs/pull/'))">
+  <VerliteBuildMetadata>pr.$(GITHUB_REF.Substring(10))</VerliteBuildMetadata>
+</PropertyGroup>
+<!-- apply the branch name for branch builds -->
+<PropertyGroup Condition="$(GITHUB_ACTIONS.StartsWith('refs/heads/'))">
+  <VerliteBuildMetadata>branch.$(GITHUB_REF.Substring(11))</VerliteBuildMetadata>
+</PropertyGroup>
+<!-- mark locally build builds with +local -->
+<PropertyGroup Condition="'$(GITHUB_ACTIONS)' == ''">
+  <VerliteBuildMetadata>local</VerliteBuildMetadata>
+</PropertyGroup>
+```
+
+### Can Verlite be used elsewhere?
+
+Yes, the command line tool can be used elsewhere, for example, in Conan packages:
+
+```python
+from six import StringIO
+
+def Project(ConanFile):
+    # ...
+    def set_version(self):
+        buf = StringIO()
+        self.run(f"verlite --auto-fetch {self.recipe_folder}", output=buf)
+        self.version = buf.getvalue()
+```
+
+### What is the default tag prefix?
+
+The default tag prefix is `v`, so a tag of `v1.2.3` is interpreted as SemVer `1.2.3`.
+
+The default prefix can be set to nothing by setting `VerliteDisableTagPrefix` to `true` for MsBuild, or `--tag-prefix=""` for the CLI. It can be changed to an arbitrary value setting `VerliteTagPrefix` or `--tag-prefix`.
+
+### Can multiple versions be nested?
+
+Yes, by setting a unique `VerliteTagPrefix` for each project.
+
+### Can shallow clones be used?
+
+Yes, with a caveat—for performance reasons `verlite --auto-fetch` must be invoked to deepen the repository prior to building. To avoid footguns, auto-fetching is not exposed under MsBuild due to needing to querying the remote for each project in the solution.
+
+### What happens if auto fetch isn't used?
+
+Nothing bad. In the event a clone is not deep enough, an exception will be thrown and the build will fail, instead of calculating an incorrect version number silently.
+
+Footguns not included.
+
 
 
 [verlite-msbuild-badge]: https://img.shields.io/nuget/vpre/Verlite.MsBuild?label=Verlite.MsBuild
