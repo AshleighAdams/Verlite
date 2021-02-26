@@ -53,9 +53,12 @@ namespace UnitTests
 			Directory.CreateDirectory(RootPath);
 		}
 
-		public Task<GitRepoInspector> MakeInspector()
+		public Task<GitRepoInspector> MakeInspector(ICommandRunner? commandRunner = null)
 		{
-			return GitRepoInspector.FromPath(RootPath);
+			return GitRepoInspector.FromPath(
+				path: RootPath,
+				log: null,
+				commandRunner);
 		}
 
 		public void Dispose()
@@ -390,6 +393,31 @@ namespace UnitTests
 
 			var deeperParent = await repo.GetParent(deeperTag.PointsTo);
 			deeperParent.Should().Be(new Commit("b2000fc1f1d2e5f816cfa51a4ad8764048f22f0a"));
+		}
+
+		[Fact]
+		public async Task ShallowGitFetchFromCommitCanFallBack()
+		{
+			await TestRepo.Git("init");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "first");
+			await TestRepo.Git("tag", "tag-one");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "second");
+			await TestRepo.Git("tag", "tag-two");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "third");
+
+			using var clone = new GitTestDirectory();
+			await clone.Git("clone", TestRepo.RootUri, ".", "--branch", "master", "--depth", "1");
+
+			var repo = await clone.MakeInspector(
+				new MockCommandRunnerWithOldRemoteGitVersion(
+					new SystemCommandRunner()));
+
+			repo.CanDeepen = true;
+			var head = await repo.GetHead();
+			var parent = await repo.GetParent(head.Value);
+			var parentsParent = await repo.GetParent(parent.Value);
+
+			parentsParent.Should().Be(new Commit("b2000fc1f1d2e5f816cfa51a4ad8764048f22f0a"));
 		}
 	}
 }

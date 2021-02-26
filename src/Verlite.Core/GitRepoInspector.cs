@@ -59,14 +59,20 @@ namespace Verlite
 		/// </summary>
 		/// <param name="path">The path of the Git repository.</param>
 		/// <param name="log">A logger for diagnostics.</param>
+		/// <param name="commandRunner">A command runner to use. Defaults to <see cref="SystemCommandRunner"/> if null is given.</param>
 		/// <exception cref="GitMissingOrNotGitRepoException">Thrown if the path is not a Git repository.</exception>
 		/// <returns>A task containing the Git repo inspector.</returns>
-		public static async Task<GitRepoInspector> FromPath(string path, ILogger? log = null)
+		public static async Task<GitRepoInspector> FromPath(string path, ILogger? log = null, ICommandRunner? commandRunner = null)
 		{
+			commandRunner ??= new SystemCommandRunner();
+
 			try
 			{
-				var (root, _) = await Command.Run(path, "git", new string[] { "rev-parse", "--show-toplevel" });
-				var ret = new GitRepoInspector(root, log);
+				var (root, _) = await commandRunner.Run(path, "git", new string[] { "rev-parse", "--show-toplevel" });
+				var ret = new GitRepoInspector(
+					root,
+					log,
+					commandRunner);
 				await ret.CacheParents();
 				return ret;
 			}
@@ -77,6 +83,7 @@ namespace Verlite
 		}
 
 		private ILogger? Log { get; }
+		private ICommandRunner CommandRunner { get; }
 		/// <summary>
 		/// Can the Git repository be deepened to fetch commits not in the local repository.
 		/// </summary>
@@ -88,13 +95,14 @@ namespace Verlite
 		private Dictionary<Commit, Commit> CachedParents { get; } = new();
 		private (int depth, bool shallow, Commit deepest)? FetchDepth { get; set; }
 
-		private GitRepoInspector(string root, ILogger? log)
+		private GitRepoInspector(string root, ILogger? log, ICommandRunner commandRunner)
 		{
 			Root = root;
 			Log = log;
+			CommandRunner = commandRunner;
 		}
 
-		private Task<(string stdout, string stderr)> Git(params string[] args) => Command.Run(Root, "git", args);
+		private Task<(string stdout, string stderr)> Git(params string[] args) => CommandRunner.Run(Root, "git", args);
 
 		/// <inheritdoc/>
 		public async Task<Commit?> GetHead()
@@ -161,14 +169,14 @@ namespace Verlite
 				if (commitObj is null)
 				{
 					Log?.Verbatim($"MeasureDepth() -> (depth: {depth}, shallow: true)");
-					return (depth: depth, shallow: true, deepestCommit: deepest);
+					return (depth, shallow: true, deepestCommit: deepest);
 				}
 
 				Commit? parent = ParseCommitObjectParent(commitObj);
 				if (parent is null)
 				{
 					Log?.Verbatim($"MeasureDepth() -> (depth: {depth}, shallow: false)");
-					return (depth: depth, shallow: false, deepestCommit: current);
+					return (depth, shallow: false, deepestCommit: current);
 				}
 
 				depth++;

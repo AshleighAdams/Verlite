@@ -13,7 +13,7 @@ override Verlite.TaggedVersion.GetHashCode() -> int
 static Verlite.Command.Run(string! directory, string! command, string![]! args, System.Collections.Generic.IDictionary<string!, string!>? envVars = null) -> System.Threading.Tasks.Task<(string! stdout, string! stderr)>!
 static Verlite.Commit.operator !=(Verlite.Commit left, Verlite.Commit right) -> bool
 static Verlite.Commit.operator ==(Verlite.Commit left, Verlite.Commit right) -> bool
-static Verlite.GitRepoInspector.FromPath(string! path, Verlite.ILogger? log = null) -> System.Threading.Tasks.Task<Verlite.GitRepoInspector!>!
+static Verlite.GitRepoInspector.FromPath(string! path, Verlite.ILogger? log = null, Verlite.ICommandRunner? commandRunner = null) -> System.Threading.Tasks.Task<Verlite.GitRepoInspector!>!
 static Verlite.HeightCalculator.FromRepository(Verlite.IRepoInspector! repo, string! tagPrefix, bool queryRemoteTags, Verlite.ILogger? log = null) -> System.Threading.Tasks.Task<(int height, Verlite.TaggedVersion?)>!
 static Verlite.SemVer.ComparePrerelease(string! left, string! right) -> int
 static Verlite.SemVer.IsValidIdentifierCharacter(char input) -> bool
@@ -59,6 +59,8 @@ Verlite.GitRepoInspector.GetParent(Verlite.Commit commit) -> System.Threading.Ta
 Verlite.GitRepoInspector.GetTags(Verlite.QueryTarget queryTarget) -> System.Threading.Tasks.Task<Verlite.TagContainer!>!
 Verlite.GitRepoInspector.Root.get -> string!
 Verlite.HeightCalculator
+Verlite.ICommandRunner
+Verlite.ICommandRunner.Run(string! directory, string! command, string![]! args, System.Collections.Generic.IDictionary<string!, string!>? envVars = null) -> System.Threading.Tasks.Task<(string! stdout, string! stderr)>!
 Verlite.ILogger
 Verlite.ILogger.Normal(string! message) -> void
 Verlite.ILogger.Verbatim(string! message) -> void
@@ -94,6 +96,9 @@ Verlite.SemVer.Prerelease.get -> string?
 Verlite.SemVer.Prerelease.set -> void
 Verlite.SemVer.SemVer() -> void
 Verlite.SemVer.SemVer(int major, int minor, int patch, string? prerelease = null, string? buildMetadata = null) -> void
+Verlite.SystemCommandRunner
+Verlite.SystemCommandRunner.Run(string! directory, string! command, string![]! args, System.Collections.Generic.IDictionary<string!, string!>? envVars = null) -> System.Threading.Tasks.Task<(string! stdout, string! stderr)>!
+Verlite.SystemCommandRunner.SystemCommandRunner() -> void
 Verlite.Tag
 Verlite.Tag.Equals(Verlite.Tag other) -> bool
 Verlite.Tag.Name.get -> string!
