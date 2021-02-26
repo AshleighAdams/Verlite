@@ -86,7 +86,7 @@ namespace Verlite
 		/// </summary>
 		public string Root { get; }
 		private Dictionary<Commit, Commit> CachedParents { get; } = new();
-		private (int depth, bool shallow)? FetchDepth { get; set; }
+		private (int depth, bool shallow, Commit deepest)? FetchDepth { get; set; }
 
 		private GitRepoInspector(string root, ILogger? log)
 		{
@@ -140,14 +140,16 @@ namespace Verlite
 			}
 		}
 
-		private async Task<(int depth, bool shallow)> MeasureDepth()
+		private async Task<(int depth, bool shallow, Commit deepestCommit)> MeasureDepth()
 		{
 			int depth = 0;
 			var current = await GetHead()
 				?? throw new InvalidOperationException("MeasureDepth(): Could not fetch head");
+			Commit deepest = current;
 
 			while (CachedParents.TryGetValue(current, out Commit parent))
 			{
+				deepest = current;
 				current = parent;
 				depth++;
 				Log?.Verbatim($"MeasureDepth(): Found parent {parent}, depth {depth}");
@@ -159,21 +161,23 @@ namespace Verlite
 				if (commitObj is null)
 				{
 					Log?.Verbatim($"MeasureDepth() -> (depth: {depth}, shallow: true)");
-					return (depth, shallow: true);
+					return (depth: depth, shallow: true, deepestCommit: deepest);
 				}
 
 				Commit? parent = ParseCommitObjectParent(commitObj);
 				if (parent is null)
 				{
 					Log?.Verbatim($"MeasureDepth() -> (depth: {depth}, shallow: false)");
-					return (depth, shallow: false);
+					return (depth: depth, shallow: false, deepestCommit: current);
 				}
 
 				depth++;
+				deepest = current;
 				current = parent.Value;
 			}
 		}
 
+		private bool DeepenFromCommitSupported { get; set; } = true;
 		private async Task Deepen()
 		{
 			Debug.Assert(FetchDepth is null || FetchDepth.Value.shallow == true);
@@ -184,13 +188,27 @@ namespace Verlite
 
 			int wasDepth = FetchDepth.Value.depth;
 			int newDepth = Math.Max(32, FetchDepth.Value.depth * 2);
+			int deltaDepth = newDepth - wasDepth;
 
-			Log?.Normal($"Fetching depth {newDepth} (was {wasDepth})");
+			Log?.Normal($"Deepen(): Deepening to depth {newDepth} (+{deltaDepth} commits, was {wasDepth})");
 
 			try
 			{
-				_ = await Git("fetch", $"--depth={newDepth}");
+				if (DeepenFromCommitSupported)
+					_ = await Git("fetch", "origin", FetchDepth.Value.deepest.Id, $"--depth={deltaDepth}");
+				else
+					_ = await Git("fetch", $"--depth={newDepth}");
+
 				await CacheParents();
+			}
+			catch (CommandException ex)
+				when (
+					DeepenFromCommitSupported &&
+					ex.StandardError.Contains("error: Server does not allow request for unadvertised object"))
+			{
+				Log?.Normal($"Deepen(): From commit not supported, falling back to old method.");
+				DeepenFromCommitSupported = false;
+				await Deepen();
 			}
 			catch (CommandException ex)
 			{
