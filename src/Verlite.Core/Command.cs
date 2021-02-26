@@ -7,7 +7,44 @@ using System.Threading.Tasks;
 namespace Verlite
 {
 	/// <summary>
-	/// The command class
+	/// An interface to run commands.
+	/// </summary>
+	public interface ICommandRunner
+	{
+		/// <summary>
+		/// Asynchronously execute a command.
+		/// </summary>
+		/// <param name="directory">The working directory in which to start the executable.</param>
+		/// <param name="command">The command to execute.</param>
+		/// <param name="args">Arguments to pass to the command.</param>
+		/// <param name="envVars">The enviornment variables to start the process with.</param>
+		/// <exception cref="CommandException">Thrown if the process returns a non-zero exit code.</exception>
+		/// <returns>A task that completes upon the process exiting, containing the standard out and error streams.</returns>
+		Task<(string stdout, string stderr)> Run(
+			string directory,
+			string command,
+			string[] args,
+			IDictionary<string, string>? envVars = null);
+	}
+
+	/// <summary>
+	/// Run commands using <see cref="Command.Run(string, string, string[], IDictionary{string, string}?)"/>
+	/// </summary>
+	public class SystemCommandRunner : ICommandRunner
+	{
+		/// <inheritdoc/>
+		public async Task<(string stdout, string stderr)> Run(
+			string directory,
+			string command,
+			string[] args,
+			IDictionary<string, string>? envVars = null)
+		{
+			return await Command.Run(directory, command, args, envVars);
+		}
+	}
+
+	/// <summary>
+	/// A class for executing commands.
 	/// </summary>
 	public static class Command
 	{
