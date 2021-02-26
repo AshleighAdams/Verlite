@@ -27,7 +27,7 @@ verlite --auto-fetch
 
 Verlite aims to fall somewhere between MinVer and GitVersion&mdash;using the same versioning scheme as MinVer, with a slightly richer and more flexible feature set.
 
-Verlite is aimed at  continuous delivery workflows, not continuous deployment workflows&mdash;where versions are denoted from branching model or commit messages. Instead with Verlite, tags are the source of truth for versions. Any versions with height attached (see [version calculation](#version-calculation)) are intended only for development purposes and to not be released to the primary feed.
+Verlite is aimed at  continuous delivery workflows, not continuous deployment workflows&mdash;where versions are denoted from a branching model or commit messages. Instead with Verlite, tags are the source of truth for versions. Any versions with height attached (see [version calculation](#version-calculation)) are intended only for development purposes and to not be released to the primary feed.
 
 Versioning based upon commit messages or branches is out of scope. Such can be done via passing different [options](#options) into Verlite by your build process, but keep in mind this is not a supported workflow of Verlite, so shouldn't be done for release critical aspects.
 
@@ -35,11 +35,11 @@ Versioning based upon commit messages or branches is out of scope. Such can be d
 
 Take the head commit, if one or more version tags exist, use the highest version, otherwise, keep following the first parent of each commit until a version tag is found, taking the highest version tag, then bumping the version and appending the "commit height" onto the end.
 
-To bump the version, the patch is by default incremented by 1. The version part to bump can be configured via `<VerliteAutoIncrement>`/`--auto-increment` option.
+To bump the version, the patch is by default incremented by 1. The version part to bump can be configured via `VerliteAutoIncrement`/`--auto-increment` option.
 
-The commit height is applied by concatenating the prerelease tag, a separator ("."), and the height together, where the prerelease tag is either the last tagged version's prerelease, or if not found/was not a prerelease, using the `<VerliteDefaultPrereleasePhase>`/`--default-prerelease-phase `option.
+The commit height is applied by concatenating the prerelease tag, a separator ("."), and the height together, where the prerelease tag is either the last tagged version's prerelease, or if not found/was not a prerelease, using the `VerliteDefaultPrereleasePhase`/`--default-prerelease-phase `option.
 
-Further explanations are available in [docs/VersionCalculation.md](docs/VersionCalculation.md).
+See [docs/VersionCalculation.md](docs/VersionCalculation.md) for further reading.
 
 ## Options
 
@@ -60,9 +60,9 @@ Further explanations are available in [docs/VersionCalculation.md](docs/VersionC
 
 # Comparison with GitVersion
 
-GitVersion has a focus on branches, and is well suited for a Continuous Deploy workflow, where releases happen based upon branches. Shallow repositories are not supported.
+GitVersion has a focus on branches, and is well suited for a Continuous Deployment workflow, where releases are triggered based upon branches or commit messages. Shallow repositories are not supported.
 
-Verlite only cares about tags, particularly the tags on the chain of first parents, and is well suited for Continuous Delivery, where official releases happen by pushing tags.
+Verlite cares only about tags—more specifically, the tags on the chain of first parents—and is well suited for Continuous Delivery workflows, where official releases happen by tagging.
 
 # Comparison with MinVer
 
@@ -114,7 +114,7 @@ Yes, the the default phase of `alpha` can be changed using the `VerliteDefaultPr
 
 ### Why is the default phase "alpha" and not "alpha.0"?
 
-In short, to reduce fatigue. The first commits after an RTM tag are more likely to be hotfixes bumping the patch instead of something to undergo various prerelease phases, and so to make Continuous Delivery builds less fatigue to use, the default phase omits a number, seeing such builds be versioned as `1.0.1-alpha.42` instead of `1.0.1-alpha.0.42`. Then upon early prereleases, it is recommended to tag with a `beta` `prerelease` phase, such as `1.0.1-beta.1`, in which the next CD deliverables are versioned like `1.0.1-beta.1.42`.
+In short, to reduce fatigue. The first commits after an RTM tag are more likely to be hotfixes bumping the patch instead of something to undergo various prerelease phases, and so to make Continuous Delivery builds less fatiguing to use, the default phase omits a number, seeing such builds be versioned as `1.0.1-alpha.42` instead of `1.0.1-alpha.0.42`. Then upon early prereleases, it is recommended to tag with a `beta` `prerelease` phase, such as `1.0.1-beta.1`, in which the next CD deliverables are versioned like `1.0.1-beta.1.42`.
 
 Should the you prefer `alpha.0` be used instead, such can be done by changing the default phase.
 
@@ -171,11 +171,11 @@ Yes, by setting a unique `VerliteTagPrefix` for each project.
 
 ### Can shallow clones be used?
 
-Yes, with a caveat—for performance reasons `verlite --auto-fetch` must be invoked to deepen the repository prior to building. To avoid footguns, auto-fetching is not exposed under MsBuild due to needing to querying the remote for each project in the solution.
+Yes, with a caveat—for performance reasons `verlite --auto-fetch` must be invoked to deepen the repository prior to building. To avoid footguns, auto-fetching is not exposed under MsBuild due to needing to querying the remote for each project in the solution with auto-fetching enabled.
 
 ### What happens if auto fetch isn't used?
 
-Nothing bad. In the event a clone is not deep enough, an exception will be thrown and the build will fail, instead of calculating an incorrect version number silently.
+Nothing unsafe. In the event a clone is not deep enough, an exception will be thrown and the build will fail, instead of calculating an incorrect version number silently.
 
 Footguns not included.
 
