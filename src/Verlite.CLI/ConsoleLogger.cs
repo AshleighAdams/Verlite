@@ -13,17 +13,17 @@ namespace Verlite.CLI
 		void ILogger.Normal(string message)
 		{
 			if (Verbosity >= Verbosity.normal)
-				Console.Error.WriteLine($"Verlite: {SanitizeMessage(message)}");
+				Console.Error.WriteLine(SanitizeMessage(message));
 		}
 		void ILogger.Verbose(string message)
 		{
 			if (Verbosity >= Verbosity.verbose)
-				Console.Error.WriteLine($"Verlite: {SanitizeMessage(message)}");
+				Console.Error.WriteLine(SanitizeMessage(message));
 		}
 		void ILogger.Verbatim(string message)
 		{
 			if (Verbosity >= Verbosity.verbatim)
-				Console.Error.WriteLine($"Verlite: {SanitizeMessage(message)}");
+				Console.Error.WriteLine(SanitizeMessage(message));
 		}
 	}
 }
