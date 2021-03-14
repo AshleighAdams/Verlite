@@ -18,7 +18,7 @@ test() {
 	local tmp="$(mktemp -d)"
 	[[ -d "tests/$1" ]] && cp -r "tests/$1/"* "${tmp}/"
 	cp -r "packages" "${tmp}/packages"
-	cp NuGet.conf.disabled "${tmp}/NuGet.config"
+	cp NuGet.conf.disabled "${tmp}/NuGet.Config"
 	pushd "${tmp}" > /dev/null
 		chmod +x "${script}"
 		"${script}"
@@ -42,11 +42,13 @@ setup_git() {
 	git config user.email "integratio@test.tld"
 	git config user.name "Integration Test"
 	git config commit.gpgsign false > /dev/null
+	git config tag.gpgSign false > /dev/null
 }
 export -f setup_git
 
 echo "Running tests"
 
+test arg-escaping
 test no-repo
 test no-commits
 test one-commit

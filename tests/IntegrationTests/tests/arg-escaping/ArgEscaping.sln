@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
+MinimumVisualStudioVersion = 15.0.26124.0
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestEscaping", "src\TestEscaping\TestEscaping.csproj", "{EE86008C-AC63-4E28-B3DD-4803546F3865}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EE86008C-AC63-4E28-B3DD-4803546F3865}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE86008C-AC63-4E28-B3DD-4803546F3865}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE86008C-AC63-4E28-B3DD-4803546F3865}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE86008C-AC63-4E28-B3DD-4803546F3865}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A647AD48-67FB-4B04-8910-E281EA721A4C}
+	EndGlobalSection
+EndGlobal
