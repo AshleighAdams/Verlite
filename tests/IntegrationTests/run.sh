@@ -18,7 +18,7 @@ test() {
 	local tmp="$(mktemp -d)"
 	[[ -d "tests/$1" ]] && cp -r "tests/$1/"* "${tmp}/"
 	cp -r "packages" "${tmp}/packages"
-	cp NuGet.conf.disabled "${tmp}/NuGet.config"
+	cp NuGet.conf.disabled "${tmp}/NuGet.Config"
 	pushd "${tmp}" > /dev/null
 		chmod +x "${script}"
 		"${script}"
