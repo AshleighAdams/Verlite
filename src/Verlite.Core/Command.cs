@@ -144,7 +144,7 @@ namespace Verlite
 				int backslashCount = escape ?
 					uncommittedBackslashes * 2 :
 					uncommittedBackslashes;
-				sb.Append(new string('\\', backslashCount));
+				sb.Append('\\', backslashCount);
 				uncommittedBackslashes = 0;
 			}
 
