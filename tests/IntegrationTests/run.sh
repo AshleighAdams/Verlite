@@ -42,11 +42,13 @@ setup_git() {
 	git config user.email "integratio@test.tld"
 	git config user.name "Integration Test"
 	git config commit.gpgsign false > /dev/null
+	git config tag.gpgSign false > /dev/null
 }
 export -f setup_git
 
 echo "Running tests"
 
+test arg-escaping
 test no-repo
 test no-commits
 test one-commit
