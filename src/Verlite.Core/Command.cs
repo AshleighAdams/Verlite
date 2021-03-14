@@ -1,5 +1,5 @@
+using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
@@ -67,10 +67,9 @@ namespace Verlite
 			var pre = "";
 			foreach (string arg in args)
 			{
-				string escaped = arg.Replace(@"\", @"\\");
-				escaped = escaped.Replace(@"""", @"\""");
+				string escaped = EscapeArgument(arg);
 
-				sb.Append($"{pre}\"{escaped}\"");
+				sb.Append($"{pre}{escaped}");
 				pre = " ";
 			}
 
@@ -111,5 +110,66 @@ namespace Verlite
 			return (stdout.Trim(), stderr.Trim());
 		}
 
+		// on Windows, this will compete with the child process executing `CommandLineToArgvW`
+		// and on Unix platforms, this behavior is emulated via
+		// dotnet/runtime/src/libraries/System.Diagnostics.Process/src/System/Diagnostics/Process.Unix.cs's ParseArgumentsIntoList()
+		internal static string EscapeArgument(string arg)
+		{
+			if (arg.Length == 0)
+				return "\"\"";
+
+			bool needsQuotes = false;
+			foreach (char c in arg)
+			{
+				if (c == '\0')
+					throw new ArgumentOutOfRangeException(nameof(arg), "Argument contains an invalid char that can't be escaped.");
+
+				needsQuotes |=
+					char.IsWhiteSpace(c) ||
+					c == '"' ||
+					c == '\'';
+			}
+
+			if (!needsQuotes)
+				return arg;
+
+			var sb = new StringBuilder(arg.Length + 2);
+
+			int uncommittedBackslashes = 0;
+			void commitBackslashes(bool escape)
+			{
+				if (uncommittedBackslashes == 0)
+					return;
+
+				int backslashCount = escape ?
+					uncommittedBackslashes * 2 :
+					uncommittedBackslashes;
+				sb.Append(new string('\\', backslashCount));
+				uncommittedBackslashes = 0;
+			}
+
+			sb.Append('"');
+			foreach (char c in arg)
+			{
+				switch (c)
+				{
+					case '\\':
+						uncommittedBackslashes++;
+						break;
+					case '"':
+						commitBackslashes(escape: true);
+						sb.Append("\\\"");
+						break;
+					default:
+						commitBackslashes(escape: false);
+						sb.Append(c);
+						break;
+				}
+			}
+			commitBackslashes(escape: true);
+			sb.Append('"');
+
+			return sb.ToString();
+		}
 	}
 }
