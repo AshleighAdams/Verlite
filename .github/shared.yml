@@ -26,6 +26,7 @@ definitions:
     name: Setup NuGet
     run: |
       dotnet nuget update source github --store-password-in-clear-text --username AshleighAdams --password ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      dotnet nuget enable source github
 
   setup-nuget-cache: &setup-nuget-cache
     name: NuGet Restore Cache
