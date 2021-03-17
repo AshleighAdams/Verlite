@@ -1,4 +1,4 @@
-----
+---
 name: Bug Report
 about: Report a bug, where something isn't working as expected.
 title: Short description
