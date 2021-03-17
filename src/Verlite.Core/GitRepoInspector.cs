@@ -276,6 +276,18 @@ namespace Verlite
 		private static readonly Regex RefsTagRegex = new Regex(
 			@"^(?<pointer>[a-zA-Z0-9]+)\s*refs/tags/(?<tag>.+?)(\^\{\})?$",
 			RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.ExplicitCapture);
+		private static IEnumerable<Tag> MatchTags(string commandOutput)
+		{
+			var matches = RefsTagRegex.Matches(commandOutput);
+			foreach (Match match in matches)
+			{
+				var tag = new Tag(
+					match.Groups["tag"].Value,
+					new Commit(match.Groups["pointer"].Value));
+				yield return tag;
+			}
+		}
+
 		/// <inheritdoc/>
 		public async Task<TagContainer> GetTags(QueryTarget queryTarget)
 		{
@@ -288,12 +300,8 @@ namespace Verlite
 					Log?.Verbatim($"GetTags(): Reading remote tags.");
 					var (response, _) = await Git("ls-remote", "--tags");
 
-					var matches = RefsTagRegex.Matches(response);
-					foreach (Match match in matches)
+					foreach (Tag tag in MatchTags(response))
 					{
-						var tag = new Tag(
-							match.Groups["tag"].Value,
-							new Commit(match.Groups["pointer"].Value));
 						Log?.Verbatim($"GetTags(): Remote: {tag}");
 						tags.Add(tag);
 					}
@@ -308,12 +316,8 @@ namespace Verlite
 					Log?.Verbatim($"GetTags(): Reading local tags.");
 					var (response, _) = await Git("show-ref", "--tags", "--dereference");
 
-					var matches = RefsTagRegex.Matches(response);
-					foreach (Match match in matches)
+					foreach (Tag tag in MatchTags(response))
 					{
-						var tag = new Tag(
-							match.Groups["tag"].Value,
-							new Commit(match.Groups["pointer"].Value));
 						Log?.Verbatim($"GetTags(): Local: {tag}");
 						tags.Add(tag);
 					}

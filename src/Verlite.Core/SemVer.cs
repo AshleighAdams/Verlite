@@ -5,7 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-[assembly: CLSCompliant(true)]
 namespace Verlite
 {
 	/// <summary>
@@ -37,7 +36,7 @@ namespace Verlite
 		/// <summary>
 		/// The version without any prerelease or metadata, for which a prerelease would be working toward.
 		/// </summary>
-		public SemVer DestinedVersion => new SemVer(Major, Minor, Patch);
+		public SemVer DestinedVersion => new(Major, Minor, Patch);
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SemVer"/> class.
@@ -63,7 +62,7 @@ namespace Verlite
 			BuildMetadata = buildMetadata;
 		}
 
-		private static readonly Regex VersionRegex = new Regex(
+		private static readonly Regex VersionRegex = new(
 			@"^(?<major>0|[1-9]\d*)\.(?<minor>0|[1-9]\d*)\.(?<patch>0|[1-9]\d*)(?:-(?<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$",
 			RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.Multiline);
 		/// <summary>
@@ -147,7 +146,7 @@ namespace Verlite
 			return true;
 		}
 
-		private static string SelectOrdinals(string input)
+		private static (int value, int charCount) SelectOrdinals(string input)
 		{
 			int got = 0;
 			for (int i = 0; i < input.Length; i++)
@@ -157,7 +156,8 @@ namespace Verlite
 				got++;
 			}
 
-			return input.Substring(0, got);
+			int value = int.Parse(input.Substring(0, got), NumberStyles.Integer, CultureInfo.InvariantCulture);
+			return (value, got);
 		}
 
 		private static bool TryParseInt(string input, out int ret)
@@ -180,23 +180,15 @@ namespace Verlite
 
 				if (char.IsDigit(l) && char.IsDigit(r))
 				{
-					var leftOrdinalStr = SelectOrdinals(left.Substring(i));
-					var rightOrdinalStr = SelectOrdinals(right.Substring(i));
-
-					Debug.Assert(leftOrdinalStr.Length > 0 && rightOrdinalStr.Length > 0);
-
-					bool parsedInts = true;
-					parsedInts &= TryParseInt(leftOrdinalStr, out int leftOrdinal);
-					parsedInts &= TryParseInt(rightOrdinalStr, out int rightOrdinal);
-
-					Debug.Assert(parsedInts);
+					var (leftOrdinal, leftOrdinalLength) = SelectOrdinals(left.Substring(i));
+					var (rightOrdinal, rightOrdinalLength) = SelectOrdinals(right.Substring(i));
 
 					int cmpOrdinal = leftOrdinal.CompareTo(rightOrdinal);
 					if (cmpOrdinal != 0)
 						return cmpOrdinal;
 
-					Debug.Assert(leftOrdinalStr.Length == rightOrdinalStr.Length);
-					i += leftOrdinalStr.Length - 1;
+					Debug.Assert(leftOrdinalLength == rightOrdinalLength);
+					i += leftOrdinalLength - 1;
 				}
 
 				if (l != r)
@@ -254,18 +246,18 @@ namespace Verlite
 		/// </summary>
 		public int CompareTo(SemVer other)
 		{
-			static bool compare(int left, int right, out int result)
+			static bool areDifferent(int left, int right, out int result)
 			{
 				result = left.CompareTo(right);
 				return result != 0;
 			}
 
-			if (compare(Major, other.Major, out int ret))
-				return ret;
-			if (compare(Minor, other.Minor, out ret))
-				return ret;
-			if (compare(Patch, other.Patch, out ret))
-				return ret;
+			if (areDifferent(Major, other.Major, out int compareResult))
+				return compareResult;
+			if (areDifferent(Minor, other.Minor, out compareResult))
+				return compareResult;
+			if (areDifferent(Patch, other.Patch, out compareResult))
+				return compareResult;
 
 			if (Prerelease is null && other.Prerelease is null)
 				return 0;
