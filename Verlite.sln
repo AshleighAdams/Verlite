@@ -17,7 +17,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub", "GitHub", "{822C85
 	ProjectSection(SolutionItems) = preProject
 		.github\continuous-delivery.yml = .github\continuous-delivery.yml
 		.github\continuous-integration.yml = .github\continuous-integration.yml
+		.github\dependabot.yml = .github\dependabot.yml
 		.github\deploy-release.yml = .github\deploy-release.yml
+		.github\pull_request_template.md = .github\pull_request_template.md
 		.github\regenerate-actions.sh = .github\regenerate-actions.sh
 		.github\shared.yml = .github\shared.yml
 	EndProjectSection
@@ -29,6 +31,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Verlite.CLI", "src\Verlite.CLI\Verlite.CLI.csproj", "{1505DCF8-176D-4EF2-BFF1-64A740D5E5AE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Verlite.MsBuild", "src\Verlite.MsBuild\Verlite.MsBuild.csproj", "{9E3D4CF9-815D-416A-8362-4499301E7D1F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Issue Templates", "Issue Templates", "{C07DC731-56D6-4FD5-89C4-C9DCF9B00749}"
+	ProjectSection(SolutionItems) = preProject
+		.github\ISSUE_TEMPLATE\Bug.md = .github\ISSUE_TEMPLATE\Bug.md
+		.github\ISSUE_TEMPLATE\Feature.md = .github\ISSUE_TEMPLATE\Feature.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +63,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C07DC731-56D6-4FD5-89C4-C9DCF9B00749} = {822C85C4-D55D-43B2-8D5D-1B05AC9A99A1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {35E5E150-27F7-4F1B-9ABD-BFA9D2B62698}
