@@ -16,13 +16,11 @@ defaults: *default-defaults
 
 jobs:
   build-and-test:
-    name: Build & Test
+    name: 'Build & Test'
     runs-on: ubuntu-latest
     steps:
     - *checkout
     - *setup-dotnet5
-    - *setup-nuget
-    - *setup-nuget-cache
     - *restore
     - *build
     - *test
@@ -30,7 +28,7 @@ jobs:
     - *publish-codecov
     - *upload-artifacts
   integration-tests:
-    name: Integration Tests
+    name: 'Integration Tests'
     needs: build-and-test
     runs-on: ${{ matrix.os }}
     strategy:
@@ -41,6 +39,4 @@ jobs:
     - *checkout
     - *setup-dotnet5
     - *setup-dotnet3-1
-    - *setup-nuget
-    - *setup-nuget-cache
     - *run-integration-tests
