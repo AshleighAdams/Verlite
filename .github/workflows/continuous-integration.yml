@@ -33,20 +33,6 @@ jobs:
       with:
         dotnet-version: 5.0.x
 
-    - name: Setup NuGet
-      run: |
-        dotnet nuget update source github --store-password-in-clear-text --username AshleighAdams --password ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-        dotnet nuget enable source github
-
-    - name: NuGet Restore Cache
-      uses: actions/cache@v2
-      with:
-        path: ~/.nuget/packages
-        key: |
-          ${{ runner.os }}-nuget-${{ hashFiles('**/Directory.Build.props') }}-${{ hashFiles('**/*.csproj') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
-
     - name: Restore
       run: dotnet restore
 
@@ -95,20 +81,6 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.x
-
-    - name: Setup NuGet
-      run: |
-        dotnet nuget update source github --store-password-in-clear-text --username AshleighAdams --password ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-        dotnet nuget enable source github
-
-    - name: NuGet Restore Cache
-      uses: actions/cache@v2
-      with:
-        path: ~/.nuget/packages
-        key: |
-          ${{ runner.os }}-nuget-${{ hashFiles('**/Directory.Build.props') }}-${{ hashFiles('**/*.csproj') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
 
     - name: Run Integration Tests
       run: |

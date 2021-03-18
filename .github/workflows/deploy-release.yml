@@ -14,6 +14,7 @@ defaults:
 
 jobs:
   build:
+    name: Build & Release
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -30,21 +31,12 @@ jobs:
         dotnet nuget update source github --store-password-in-clear-text --username AshleighAdams --password ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         dotnet nuget enable source github
 
-    - name: NuGet Restore Cache
-      uses: actions/cache@v2
-      with:
-        path: ~/.nuget/packages
-        key: |
-          ${{ runner.os }}-nuget-${{ hashFiles('**/Directory.Build.props') }}-${{ hashFiles('**/*.csproj') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
-
 
     - name: Setup MinVer for release
       run: |
         git fetch --tags --force
         git checkout "${GITHUB_REF#refs/*/}"
-        dotnet tool install --global minver-cli --version 2.4.0
+        dotnet tool install --global minver-cli --version 2.5.0
         curl https://github.com/AshleighAdams.gpg | gpg --import
 
     - name: Restore

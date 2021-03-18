@@ -9,18 +9,18 @@ defaults: *default-defaults
 
 jobs:
   build:
+    name: 'Build & Release'
     runs-on: ubuntu-latest
     steps:
     - *checkout
     - *setup-dotnet5
     - *setup-nuget
-    - *setup-nuget-cache
 
     - name: Setup MinVer for release
       run: |
         git fetch --tags --force
         git checkout "${GITHUB_REF#refs/*/}"
-        dotnet tool install --global minver-cli --version 2.4.0
+        dotnet tool install --global minver-cli --version 2.5.0
         curl https://github.com/AshleighAdams.gpg | gpg --import
 
     - *restore
@@ -29,7 +29,7 @@ jobs:
     - *pack
     - *upload-artifacts
 
-    - name: Create Release
+    - name: 'Create Release'
       run: |
         set -x
         tag="${GITHUB_REF#refs/*/}"
@@ -53,7 +53,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Publish Nuget
+    - name: 'Publish Nuget'
       run: |
         dotnet nuget push 'artifacts/*.nupkg' -k ${NUGETORG_TOKEN} -s https://api.nuget.org/v3/index.json --skip-duplicate --no-symbols 1
         dotnet nuget push 'artifacts/*.nupkg' -k ${GITHUB_TOKEN} -s github --skip-duplicate --no-symbols 1
