@@ -1,10 +1,12 @@
-using Xunit;
-
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Verlite;
+
 using FluentAssertions;
+
+using Verlite;
+
+using Xunit;
 
 namespace UnitTests
 {
@@ -68,7 +70,7 @@ namespace UnitTests
 		{
 			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				return;
-		
+
 			string[] originalArgs = new string[]
 			{
 				"hello", // plain argument
@@ -81,7 +83,7 @@ namespace UnitTests
 
 			string escaped = EscapeArguments(originalArgs);
 			var split = Win32.SplitArgs(escaped);
-		
+
 			split.Should().BeEquivalentTo(originalArgs);
 		}
 
@@ -126,6 +128,57 @@ namespace UnitTests
 		public static void InvalidCharsWithEscapeArgThrows(string arg)
 		{
 			Assert.Throws<ArgumentOutOfRangeException>(() => Command.EscapeArgument(arg));
+		}
+
+		[Theory]
+		[InlineData(@"", new string[] { })]
+		[InlineData(@"test", new[] { @"test" })]
+		[InlineData(@"test\\", new[] { @"test\" })]
+		[InlineData(@"test space", new[] { @"test", @"space" })]
+		[InlineData(@"test ""space""", new[] { @"test", @"space" })]
+		[InlineData(@"test 'space'", new[] { @"test", @"space" })]
+		[InlineData(@"test \""space\""", new[] { @"test", @"""space""" })]
+		[InlineData(@"one\ arg", new[] { @"one arg" })]
+		[InlineData(@"one"" ""arg", new[] { @"one arg" })]
+		[InlineData(@"one' 'arg", new[] { @"one arg" })]
+		[InlineData(@"empty '' arg", new[] { @"empty", "", "arg" })]
+		[InlineData(@"empty """" arg", new[] { @"empty", "", "arg" })]
+		[InlineData(@"empty  """"  arg", new[] { @"empty", "", "arg" })]
+		[InlineData(@"empty  """"""""  arg", new[] { @"empty", "", "arg" })]
+		[InlineData(@"empty  ''  arg", new[] { @"empty", "", "arg" })]
+		[InlineData(@"empty  ''''  arg", new[] { @"empty", "", "arg" })]
+		[InlineData(@"two args", new[] { "two", "args" })]
+		[InlineData(@"two  args", new[] { "two", "args" })]
+		[InlineData(@"two   args", new[] { "two", "args" })]
+		[InlineData(@"not\nline\nfeed", new[] { "notnlinenfeed" })]
+		[InlineData(@"some\\backslash", new[] { @"some\backslash" })]
+		[InlineData(@"some\\\\backslash", new[] { @"some\\backslash" })]
+		[InlineData(@"some\\\backslash", new[] { @"some\backslash" })]
+		[InlineData(@"""can't touch me""", new[] { @"can't touch me" })]
+		[InlineData(@"can't touch my stuffs's stuff", new[] { @"cant touch my stuffss", "stuff" })]
+		[InlineData(@"""'still quoted""", new[] { @"'still quoted" })]
+		[InlineData(@"'""still quoted'", new[] { @"""still quoted" })]
+		public static void ParsesShellArguments(string cmdLine, string[] expected)
+		{
+			var parsed = Command.ParseCommandLine(cmdLine);
+
+			parsed.Should().BeEquivalentTo(expected);
+		}
+
+		[Fact]
+		public static void EndingEscapeThrows()
+		{
+			Assert.Throws<ParseCommandLineException>(() => Command.ParseCommandLine("Hello, world\\"));
+			Assert.Throws<ParseCommandLineException>(() => Command.ParseCommandLine("Hello, world\\\\\\"));
+		}
+
+		[Fact]
+		public static void UnfinishedQuoteThrows()
+		{
+			Assert.Throws<ParseCommandLineException>(() => Command.ParseCommandLine("\"Hello, world"));
+			Assert.Throws<ParseCommandLineException>(() => Command.ParseCommandLine("\'Hello, world"));
+			Assert.Throws<ParseCommandLineException>(() => Command.ParseCommandLine("\"\'Hello, world"));
+			Assert.Throws<ParseCommandLineException>(() => Command.ParseCommandLine("\"\'Hello, world"));
 		}
 	}
 }

@@ -1,1 +1,4 @@
 #nullable enable
+static Verlite.Command.ParseCommandLine(string! cmdLine) -> System.Collections.Generic.IReadOnlyList<string!>!
+Verlite.ParseCommandLineException
+Verlite.ParseCommandLineException.ParseCommandLineException(string! message, string! paramName) -> void
