@@ -14,6 +14,9 @@ namespace UnitTests
 			BaseRunner = baseRunner;
 		}
 
+		private readonly List<string> commandHistory = new List<string>();
+		public IReadOnlyList<string> CommandHistory => commandHistory;
+
 		Task<(string stdout, string stderr)> ICommandRunner.Run(
 			string directory,
 			string command,
@@ -21,6 +24,11 @@ namespace UnitTests
 			IDictionary<string, string>? envVars)
 		{
 			string? firstArg = args.Length > 0 ? args[0] : null;
+
+			if (firstArg is null)
+				commandHistory.Add(command);
+			else
+				commandHistory.Add($"{command} {string.Join(' ', args)}");
 
 			return (command, firstArg, args) switch
 			{

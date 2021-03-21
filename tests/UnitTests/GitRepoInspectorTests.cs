@@ -408,9 +408,9 @@ namespace UnitTests
 			using var clone = new GitTestDirectory();
 			await clone.Git("clone", TestRepo.RootUri, ".", "--branch", "master", "--depth", "1");
 
+			var mockCommandRunner = new MockCommandRunnerWithOldRemoteGitVersion(new SystemCommandRunner());
 			var repo = await clone.MakeInspector(
-				new MockCommandRunnerWithOldRemoteGitVersion(
-					new SystemCommandRunner()));
+				mockCommandRunner);
 
 			repo.CanDeepen = true;
 			var head = await repo.GetHead();
@@ -418,6 +418,17 @@ namespace UnitTests
 			var parentsParent = await repo.GetParent(parent.Value);
 
 			parentsParent.Should().Be(new Commit("b2000fc1f1d2e5f816cfa51a4ad8764048f22f0a"));
+
+			var filteredHistory = mockCommandRunner.CommandHistory
+				.Where(cmd => cmd.Contains("git fetch", StringComparison.Ordinal))
+				.Select(cmd =>
+					cmd.Contains("origin", StringComparison.Ordinal) ?
+						"normal fetch" :
+						"legacy fetch");
+
+			filteredHistory.Should().ContainInOrder(
+				"normal fetch",
+				"legacy fetch");
 		}
 	}
 }

@@ -35,10 +35,25 @@ definitions:
   build: &build
     name: Build
     run: dotnet build --configuration Release --no-restore
-
+    
   test: &test
     name: Test
     run: dotnet test --configuration Release --no-build --logger GitHubActions -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura
+
+  mutation-test: &mutation-test
+    name: Mutation Test
+    run: |
+      dotnet tool install --global dotnet-stryker --version 0.22.0
+      cd tests/UnitTests
+      if [[ "$GITHUB_REF" == "refs/heads/master" ]]; then
+        dotnet stryker --reporters "['dashboard', 'progress']" --dashboard-project "github.com/$(GITHUB_REPOSITORY)" --dashboard-version "master"
+      else
+        dotnet stryker --reporters "['html', 'progress']"
+        mkdir -p ../../artifacts
+        find StrykerOutput -name mutation-report.html -exec cp {} ../../artifacts/ \;
+      fi
+    env:
+      STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
 
   publish-codecov: &publish-codecov
     name: Publish Codecov

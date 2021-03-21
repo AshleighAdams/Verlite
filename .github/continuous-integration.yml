@@ -27,6 +27,15 @@ jobs:
     - *pack
     - *publish-codecov
     - *upload-artifacts
+  mutation-tests:
+    name: 'Mutation Test'
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+    - *checkout
+    - *setup-dotnet5
+    - *mutation-test
+    - *upload-artifacts
   integration-tests:
     name: 'Integration Tests'
     needs: build-and-test

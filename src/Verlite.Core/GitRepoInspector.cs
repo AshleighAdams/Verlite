@@ -218,7 +218,8 @@ namespace Verlite
 
 				Log?.Verbatim($"CacheParents(): Cached {CachedParents.Count} parents.");
 			}
-			catch (CommandException)
+			catch (CommandException ex)
+				when (ex.StandardError.StartsWith("fatal: ambiguous argument 'HEAD'", StringComparison.Ordinal))
 			{
 			}
 		}

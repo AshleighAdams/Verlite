@@ -59,6 +59,41 @@ jobs:
         path: |
           artifacts/*
 
+  mutation-tests:
+    name: Mutation Test
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: '0'
+
+    - name: Setup .NET 5
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+
+    - name: Mutation Test
+      run: |
+        dotnet tool install --global dotnet-stryker --version 0.22.0
+        cd tests/UnitTests
+        if [[ "$GITHUB_REF" == "refs/heads/master" ]]; then
+          dotnet stryker --reporters "['dashboard', 'progress']" --dashboard-project "github.com/$(GITHUB_REPOSITORY)" --dashboard-version "master"
+        else
+          dotnet stryker --reporters "['html', 'progress']"
+          mkdir -p ../../artifacts
+          find StrykerOutput -name mutation-report.html -exec cp {} ../../artifacts/ \;
+        fi
+      env:
+        STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: artifacts
+        path: |
+          artifacts/*
+
   integration-tests:
     name: Integration Tests
     needs: build-and-test

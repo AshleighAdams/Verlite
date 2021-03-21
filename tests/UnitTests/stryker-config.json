@@ -1,0 +1,21 @@
+{
+	"stryker-config": {
+		"reporters": [
+			"progress",
+			"html"
+		],
+		"mutate": [
+			"!*Exception.cs"
+		],
+		"ignore-methods": [
+			"ILogger.*",
+			"Normal",
+			"Verbose",
+			"Verbatim",
+			"Debug.Assert",
+			"*HashCode",
+			"*Exception.ctor",
+			"First"
+		]
+	}
+}
