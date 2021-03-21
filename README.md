@@ -2,7 +2,8 @@
 
 # Verlite
 
-[![Verlite.MsBuild][verlite-msbuild-badge]][verlite-msbuild-link] [![Verlite.CLI][verlite-cli-badge]][verlite-cli-link] [![Verlite.Core][verlite-core-badge]][verlite-core-link] [![Codecov][codecov-badge]][codecov-link]
+[![Verlite.MsBuild][verlite-msbuild-badge]][verlite-msbuild-link] [![Verlite.CLI][verlite-cli-badge]][verlite-cli-link] [![Verlite.Core][verlite-core-badge]][verlite-core-link]  
+[![Codecov][codecov-badge]][codecov-link] [![Mutation testing score][mutation-testing-badge]][mutation-testing-link]
 
 Versioning with [SemVer 2][semver-2] Git tags. Automatically set the version from Git tags for .NET Core SDK-style projects, or use the CLI tool for all others. Platform agnostic.
 
@@ -189,3 +190,5 @@ Footguns not included.
 [semver-2]: https://semver.org/spec/v2.0.0.html
 [codecov-badge]: https://codecov.io/gh/AshleighAdams/Verlite/branch/master/graph/badge.svg?token=ZE1ITHB3U3
 [codecov-link]: https://codecov.io/gh/AshleighAdams/Verlite
+[mutation-testing-badge]: https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FAshleighAdams%2FVerlite%2Fmaster
+[mutation-testing-link]: https://dashboard.stryker-mutator.io/reports/github.com/AshleighAdams/Verlite/master

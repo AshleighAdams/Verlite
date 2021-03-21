@@ -16,6 +16,7 @@
 			"*HashCode",
 			"*Exception.ctor",
 			"First"
-		]
+		],
+		"threshold-break": 0
 	}
 }

@@ -46,7 +46,7 @@ definitions:
       dotnet tool install --global dotnet-stryker --version 0.22.0
       cd tests/UnitTests
       if [[ "$GITHUB_REF" == "refs/heads/master" ]]; then
-        dotnet stryker --reporters "['dashboard', 'progress']" --dashboard-project "github.com/$(GITHUB_REPOSITORY)" --dashboard-version "master"
+        dotnet stryker --reporters "['dashboard', 'progress']"
       else
         dotnet stryker --reporters "['html', 'progress']"
         mkdir -p ../../artifacts
