@@ -1,4 +1,4 @@
-name: Continious Delivery
+name: CD
 
 on:
   push:
