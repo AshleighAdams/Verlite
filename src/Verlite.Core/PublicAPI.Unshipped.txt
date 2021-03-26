@@ -1,4 +1,11 @@
 #nullable enable
 static Verlite.Command.ParseCommandLine(string! cmdLine) -> System.Collections.Generic.IReadOnlyList<string!>!
+static Verlite.HeightCalculator.FromRepository(Verlite.IRepoInspector! repo, string! tagPrefix, bool queryRemoteTags, Verlite.ILogger? log = null, Verlite.ITagFilter? tagFilter = null) -> System.Threading.Tasks.Task<(int height, Verlite.TaggedVersion?)>!
+static Verlite.VersionCalculator.FromRepository(Verlite.IRepoInspector! repo, Verlite.VersionCalculationOptions! options, Verlite.ILogger? log = null, Verlite.ITagFilter? tagFilter = null) -> System.Threading.Tasks.Task<Verlite.SemVer>!
+Verlite.CommandTagFilter
+Verlite.CommandTagFilter.CommandTagFilter(Verlite.ICommandRunner! runner, Verlite.ILogger? log, string! commandLine, string! repoPath) -> void
+Verlite.CommandTagFilter.PassesFilter(Verlite.TaggedVersion! taggedVersion) -> System.Threading.Tasks.Task<bool>!
+Verlite.ITagFilter
+Verlite.ITagFilter.PassesFilter(Verlite.TaggedVersion! taggedVersion) -> System.Threading.Tasks.Task<bool>!
 Verlite.ParseCommandLineException
 Verlite.ParseCommandLineException.ParseCommandLineException(string! message, string! paramName) -> void

@@ -85,10 +85,20 @@ namespace Verlite
 		/// <param name="repo">The repo to use.</param>
 		/// <param name="options">The options.</param>
 		/// <param name="log">A log for diagnostics.</param>
+		/// <param name="tagFilter">A filter to ignore tags. When <c>null</c> no filter is used.</param>
 		/// <returns>The version for the state of the repository.</returns>
-		public static async Task<SemVer> FromRepository(IRepoInspector repo, VersionCalculationOptions options, ILogger? log = null)
+		public static async Task<SemVer> FromRepository(
+			IRepoInspector repo,
+			VersionCalculationOptions options,
+			ILogger? log = null,
+			ITagFilter? tagFilter = null)
 		{
-			var (height, lastTagVer) = await HeightCalculator.FromRepository(repo, options.TagPrefix, options.QueryRemoteTags, log);
+			var (height, lastTagVer) = await HeightCalculator.FromRepository(
+				repo: repo,
+				tagPrefix: options.TagPrefix,
+				queryRemoteTags: options.QueryRemoteTags,
+				log: log,
+				tagFilter: tagFilter);
 			var version = FromTagInfomation(lastTagVer?.Version, options, height);
 			version.BuildMetadata = options.BuildMetadata;
 

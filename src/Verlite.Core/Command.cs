@@ -178,7 +178,7 @@ namespace Verlite
 		/// </summary>
 		/// <param name="cmdLine">The command line input to parse.</param>
 		/// <returns>A list of parsed arguments.</returns>
-		/// <exception cref="ParseCommandLineException">When the <paramref name="cmdLine"/> has an unterminated quote escape or escape.</exception>
+		/// <exception cref="ParseCommandLineException">When the <paramref name="cmdLine"/> has an unterminated quote or literal.</exception>
 		public static IReadOnlyList<string> ParseCommandLine(string cmdLine)
 		{
 			// parsing state
@@ -235,7 +235,7 @@ namespace Verlite
 						append(c);
 						break;
 				}
-				
+
 			}
 
 			if (isLiteral)

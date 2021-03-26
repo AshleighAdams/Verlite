@@ -1,7 +1,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,16 +9,12 @@ namespace Verlite
 	/// <summary>
 	/// Methods relating to calculating the height of a commit since the last tag.
 	/// </summary>
-	public static partial class HeightCalculator
+	public static class HeightCalculator
 	{
-		/// <summary>
-		/// Select tags begging with <paramref name="tags"/> that can be parsed as a semantic version.
-		/// </summary>
-		/// <param name="tags">A collection of tags to search thru.</param>
-		/// <param name="tagPrefix">The tag prefix.</param>
-		/// <param name="log">A log to output warning messages to.</param>
-		/// <returns>An enumerable of semantic versions and its associated tag.</returns>
-		private static IEnumerable<(SemVer version, Tag tag)> SelectWhereSemver(this IEnumerable<Tag> tags, string tagPrefix, ILogger? log = null)
+		private static IEnumerable<TaggedVersion> SelectWhereSemver(
+			this IEnumerable<Tag> tags,
+			string tagPrefix,
+			ILogger? log = null)
 		{
 			foreach (var tag in tags)
 			{
@@ -28,7 +23,7 @@ namespace Verlite
 					log?.Normal($"Warning: Failed to parse SemVer from tag {tag}, ignoring.");
 					continue;
 				}
-				yield return (version.Value, tag);
+				yield return new(version.Value, tag);
 			}
 		}
 
@@ -39,8 +34,14 @@ namespace Verlite
 		/// <param name="tagPrefix">What version tags are prefixed with.</param>
 		/// <param name="queryRemoteTags">Whether to query local or local and remote tags.</param>
 		/// <param name="log">The log to output verbose diagnostics to.</param>
-		/// <returns>A task containing the height and a tagged version if found.</returns>
-		public static async Task<(int height, TaggedVersion?)> FromRepository(IRepoInspector repo, string tagPrefix, bool queryRemoteTags, ILogger? log = null)
+		/// <param name="tagFilter">A filter to test tags against. A value of <c>null</c> means do not filter.</param>
+		/// <returns>A task containing the height, and, if found, the tagged version.</returns>
+		public static async Task<(int height, TaggedVersion?)> FromRepository(
+			IRepoInspector repo,
+			string tagPrefix,
+			bool queryRemoteTags,
+			ILogger? log = null,
+			ITagFilter? tagFilter = null)
 		{
 			QueryTarget queryTags = QueryTarget.Local;
 			if (queryRemoteTags)
@@ -64,23 +65,31 @@ namespace Verlite
 				var versions = currentTags
 					.Where(t => t.Name.StartsWith(tagPrefix, StringComparison.Ordinal))
 					.SelectWhereSemver(tagPrefix, log)
-					.OrderByDescending(v => v.version)
+					.OrderByDescending(v => v.Version)
 					.ToList();
 
 				log?.Verbatim($"HEAD^{height} {current} has {currentTags.Count} total tags with {versions.Count} versions.");
 
-				if (currentTags.Count != 0)
-					foreach (var tag in currentTags)
-						log?.Verbose($"  found tag: {tag.Name}");
+				foreach (var tag in currentTags)
+					log?.Verbatim($"  found tag: {tag.Name}");
 
-				if (versions.Count != 0)
+				List<TaggedVersion>? filteredVersions = null;
+				foreach (var version in versions)
 				{
-					foreach (var ver in versions)
-						log?.Verbose($"  found version: {ver}");
+					bool passesFilter = tagFilter is null || await tagFilter.PassesFilter(version);
 
-					var (version, tag) = versions.First();
-					return (height, new TaggedVersion(version, tag));
+					if (passesFilter)
+					{
+						log?.Verbatim($"  version candidate: {version.Version}");
+						filteredVersions ??= new();
+						filteredVersions.Add(version);
+					}
+					else
+						log?.Verbatim($"  version filtered: {version.Version} (from tag {version.Tag.Name})");
 				}
+
+				if (filteredVersions is not null)
+					return (height, filteredVersions.First());
 
 				height++;
 				var parent = await repo.GetParent(current);

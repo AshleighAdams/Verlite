@@ -86,6 +86,10 @@ namespace Verlite.CLI
 					isDefault: true,
 					parseArgument: new ParseArgument<AutoIncrement>(Parsers.ParseAutoIncrement),
 					description: "Which version part should be bumped after an RTM release."),
+				new Option<string>(
+					aliases: new[] { "--filter-tags", "-f" },
+					getDefaultValue: () => string.Empty,
+					description: "Specify a command to execute, an exit code of 0 will not filter the tag."),
 			};
 			rootCommand.WithHandler(nameof(RootCommandAsync));
 			return await rootCommand.InvokeAsync(args);
@@ -102,6 +106,7 @@ namespace Verlite.CLI
 			Show show,
 			bool autoFetch,
 			AutoIncrement autoIncrement,
+			string filterTags,
 			string sourceDirectory)
 		{
 			try
@@ -110,6 +115,7 @@ namespace Verlite.CLI
 				{
 					Verbosity = verbosity,
 				};
+				var commandRunner = new SystemCommandRunner();
 
 				var opts = new VersionCalculationOptions()
 				{
@@ -126,10 +132,14 @@ namespace Verlite.CLI
 				var version = opts.VersionOverride ?? new SemVer();
 				if (opts.VersionOverride is null)
 				{
-					var repo = await GitRepoInspector.FromPath(sourceDirectory, log);
+					var repo = await GitRepoInspector.FromPath(sourceDirectory, log, commandRunner);
 					repo.CanDeepen = autoFetch;
 
-					version = await VersionCalculator.FromRepository(repo, opts, log);
+					ITagFilter? tagFilter = null;
+					if (!string.IsNullOrWhiteSpace(filterTags))
+						tagFilter = new CommandTagFilter(commandRunner, log, filterTags, sourceDirectory);
+
+					version = await VersionCalculator.FromRepository(repo, opts, log, tagFilter);
 				}
 
 				string toShow = show switch
