@@ -226,8 +226,11 @@ namespace Verlite
 							isLiteral = true;
 						break;
 					case ' ':
+					case '\t':
+					case '\r':
+					case '\n':
 						if (isLiteral || isQuoted)
-							append(' ');
+							append(c);
 						else
 							flushArgument();
 						break;
