@@ -30,8 +30,6 @@ static Verlite.Tag.operator ==(Verlite.Tag left, Verlite.Tag right) -> bool
 static Verlite.TaggedVersion.operator !=(Verlite.TaggedVersion! left, Verlite.TaggedVersion! right) -> bool
 static Verlite.TaggedVersion.operator ==(Verlite.TaggedVersion! left, Verlite.TaggedVersion! right) -> bool
 static Verlite.VersionCalculator.Bump(Verlite.SemVer version, Verlite.VersionCalculationOptions! options, int height) -> Verlite.SemVer
-static Verlite.VersionCalculator.FromRepository(Verlite.IRepoInspector! repo, Verlite.VersionCalculationOptions! options, Verlite.ILogger? log = null) -> System.Threading.Tasks.Task<Verlite.SemVer>!
-static Verlite.VersionCalculator.NextVersion(Verlite.SemVer lastTag, Verlite.VersionCalculationOptions! options) -> Verlite.SemVer
 Verlite.AutoDeepenException
 Verlite.AutoDeepenException.AutoDeepenException() -> void
 Verlite.AutoDeepenException.AutoDeepenException(string! message) -> void

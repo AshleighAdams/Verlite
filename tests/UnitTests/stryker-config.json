@@ -15,7 +15,8 @@
 			"*.Assert",
 			"*HashCode",
 			"*Exception.ctor",
-			"First"
+			"First",
+			"System.Text.Regex.RegexOptions.op_BitwiseOr"
 		],
 		"threshold-break": 0
 	}

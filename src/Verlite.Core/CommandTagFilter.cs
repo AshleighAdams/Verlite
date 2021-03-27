@@ -78,7 +78,7 @@ namespace Verlite
 			}
 		}
 
-		private static readonly Regex RxReplacer = new(@"({{|}}|{})", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+		private static readonly Regex RxReplacer = new(@"([{}].?)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 		private static string ReplaceTagPlaceholder(string input, string version)
 		{
 			return RxReplacer.Replace(input, m => m.Value switch
@@ -86,7 +86,7 @@ namespace Verlite
 				"{{" => "{",
 				"}}" => "}",
 				"{}" => version,
-				_ => throw new InvalidOperationException("Unreachable code reached."),
+				_ => throw new ParseCommandLineException($"Braces must be escpaed by doubling. Parse error in: {input}"),
 			});
 		}
 
