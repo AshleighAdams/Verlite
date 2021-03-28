@@ -32,6 +32,18 @@ This file has been modified by Ashleigh Adams and adapted for Verlite -->
     <Error Code="VERLITE0001" Condition="'$(UsingMicrosoftNETSdk)' != 'true'" Text="Verlite.MsBuild only works in SDK-style projects." />
     <Error Code="VERLITE0002" Condition="'$(VerliteDisableTagPrefix)' == 'true' And '$(VerliteTagPrefix)' != ''" Text="Attempted to disable version prefix with a version prefix set." />
 
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] MSBuildProjectDirectory=$(MSBuildProjectDirectory)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteBuildMetadata=$(VerliteBuildMetadata)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteDefaultPrereleasePhase=$(VerliteDefaultPrereleasePhase)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteMinimumVersion=$(VerliteMinimumVersion)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteDisableTagPrefix=$(VerliteDisableTagPrefix)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteTagPrefix=$(VerliteTagPrefix)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteVerbosity=$(VerliteVerbosity)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteVersionOverride=$(VerliteVersionOverride)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerlitePrereleaseBaseHeight=$(VerlitePrereleaseBaseHeight)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteAutoIncrement=$(VerliteAutoIncrement)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteFilterTags=$(VerliteFilterTags)" />
+
     <Verlite.MsBuild.GetVersionTask ProjectDirectory="$(MSBuildProjectDirectory)"
                                     BuildMetadata="$(VerliteBuildMetadata)"
                                     DefaultPrereleasePhase="$(VerliteDefaultPrereleasePhase)"

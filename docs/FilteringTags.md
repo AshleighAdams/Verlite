@@ -35,23 +35,20 @@ This example is simple, the functionality is built right into Git, so we can inv
 
 Advanced scripts can be invoked. It is safe to assume `bash` is in the path with Git installs, so we can invoke a shell script with these more advanced behaviors. For this example, if we assume build server tags contain "#auto-tag" in the annotation message, we can then filter them out for the purposes of version calculation.
 
-As we're using a script on disk, we should also fully encode the path to it. That includes escaping the path too. This example will use `tag-filter.sh` next to the `Directory.Build.props`.
+As we're using a script on disk, we should also fully encode the path to it. That includes escaping the path too. This example will use `tag-filter.sh` next to the `Directory.Build.props`. On Unix OSes, `$(VerliteBashPath)` will expand to `bash`, and on Windows, it will attempt to locate and escape the path to Git's Bash.
 
 ```xml
 <!-- Directory.Build.props -->
 <PropertyGroup>
-  <VerliteFilterTags Condition="'$(OS)' != 'Windows_NT'">
-    "$(MSBuildThisFileDirectory.Replace('\', '\\').Replace('"', '\\"'))tag-filter.sh"
-  </VerliteFilterTags>
-  <VerliteFilterTags Condition="'$(OS)' == 'Windows_NT'">
-    "$(MSBuildThisFileDirectory.Replace('\', '\\').Replace('"', '\\"'))tag-filter.bat"
+  <VerliteFilterTags>
+    $(VerliteBashPath) "$(MSBuildThisFileDirectory.Replace('\', '\\').Replace('"', '\\"'))tag-filter.sh"
   </VerliteFilterTags>
 </PropertyGroup>
 ```
 
 ```bash
-#!/bin/bash
 # tag-filter.sh
+#!/bin/bash
 body="$(git tag -n999 --format='%(contents:body)' "$VERLITE_TAG")"
 if [[ "$body" == *"#auto-tag"* ]]; then
 	echo tag contains keyword
@@ -61,13 +58,3 @@ else
 	exit 0
 fi
 ```
-
-```bat
-@echo off
-rem tag-filter.bat
-rem run tag-filter.sh with git bash
-for /f "tokens=*" %%A in ('where git') do (set gitpath=%%~dpA)
-set gitpath=%gitpath:~0,-5%
-"%gitpath%\bin\bash.exe" "%~dp0%tag-filter.sh"
-```
-
