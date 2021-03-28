@@ -10,11 +10,12 @@ override Verlite.Tag.GetHashCode() -> int
 override Verlite.Tag.ToString() -> string!
 override Verlite.TaggedVersion.Equals(object? obj) -> bool
 override Verlite.TaggedVersion.GetHashCode() -> int
+static Verlite.Command.ParseCommandLine(string! cmdLine) -> System.Collections.Generic.IReadOnlyList<string!>!
 static Verlite.Command.Run(string! directory, string! command, string![]! args, System.Collections.Generic.IDictionary<string!, string!>? envVars = null) -> System.Threading.Tasks.Task<(string! stdout, string! stderr)>!
 static Verlite.Commit.operator !=(Verlite.Commit left, Verlite.Commit right) -> bool
 static Verlite.Commit.operator ==(Verlite.Commit left, Verlite.Commit right) -> bool
 static Verlite.GitRepoInspector.FromPath(string! path, Verlite.ILogger? log = null, Verlite.ICommandRunner? commandRunner = null) -> System.Threading.Tasks.Task<Verlite.GitRepoInspector!>!
-static Verlite.HeightCalculator.FromRepository(Verlite.IRepoInspector! repo, string! tagPrefix, bool queryRemoteTags, Verlite.ILogger? log = null) -> System.Threading.Tasks.Task<(int height, Verlite.TaggedVersion?)>!
+static Verlite.HeightCalculator.FromRepository(Verlite.IRepoInspector! repo, string! tagPrefix, bool queryRemoteTags, Verlite.ILogger? log = null, Verlite.ITagFilter? tagFilter = null) -> System.Threading.Tasks.Task<(int height, Verlite.TaggedVersion?)>!
 static Verlite.SemVer.ComparePrerelease(string! left, string! right) -> int
 static Verlite.SemVer.IsValidIdentifierCharacter(char input) -> bool
 static Verlite.SemVer.IsValidIdentifierString(string! input) -> bool
@@ -31,7 +32,7 @@ static Verlite.Tag.operator ==(Verlite.Tag left, Verlite.Tag right) -> bool
 static Verlite.TaggedVersion.operator !=(Verlite.TaggedVersion! left, Verlite.TaggedVersion! right) -> bool
 static Verlite.TaggedVersion.operator ==(Verlite.TaggedVersion! left, Verlite.TaggedVersion! right) -> bool
 static Verlite.VersionCalculator.Bump(Verlite.SemVer version, Verlite.VersionCalculationOptions! options, int height) -> Verlite.SemVer
-static Verlite.VersionCalculator.FromRepository(Verlite.IRepoInspector! repo, Verlite.VersionCalculationOptions! options, Verlite.ILogger? log = null) -> System.Threading.Tasks.Task<Verlite.SemVer>!
+static Verlite.VersionCalculator.FromRepository(Verlite.IRepoInspector! repo, Verlite.VersionCalculationOptions! options, Verlite.ILogger? log = null, Verlite.ITagFilter? tagFilter = null) -> System.Threading.Tasks.Task<Verlite.SemVer>!
 static Verlite.VersionCalculator.FromTagInfomation(Verlite.SemVer? lastTag, Verlite.VersionCalculationOptions! options, int height) -> Verlite.SemVer
 static Verlite.VersionCalculator.NextVersion(Verlite.SemVer lastTag, Verlite.VersionCalculationOptions! options) -> Verlite.SemVer
 Verlite.AutoDeepenException
@@ -43,6 +44,9 @@ Verlite.CommandException.CommandException(int exitcode, string! stdout, string! 
 Verlite.CommandException.ExitCode.get -> int
 Verlite.CommandException.StandardError.get -> string!
 Verlite.CommandException.StandardOut.get -> string!
+Verlite.CommandTagFilter
+Verlite.CommandTagFilter.CommandTagFilter(Verlite.ICommandRunner! runner, Verlite.ILogger? log, string! commandLine, string! repoPath) -> void
+Verlite.CommandTagFilter.PassesFilter(Verlite.TaggedVersion! taggedVersion) -> System.Threading.Tasks.Task<bool>!
 Verlite.Commit
 Verlite.Commit.Commit() -> void
 Verlite.Commit.Commit(string! id) -> void
@@ -70,6 +74,11 @@ Verlite.IRepoInspector.FetchTag(Verlite.Tag tag, string! remote) -> System.Threa
 Verlite.IRepoInspector.GetHead() -> System.Threading.Tasks.Task<Verlite.Commit?>!
 Verlite.IRepoInspector.GetParent(Verlite.Commit commit) -> System.Threading.Tasks.Task<Verlite.Commit?>!
 Verlite.IRepoInspector.GetTags(Verlite.QueryTarget queryTarget) -> System.Threading.Tasks.Task<Verlite.TagContainer!>!
+Verlite.ITagFilter
+Verlite.ITagFilter.PassesFilter(Verlite.TaggedVersion! taggedVersion) -> System.Threading.Tasks.Task<bool>!
+Verlite.ParseCommandLineException
+Verlite.ParseCommandLineException.ParseCommandLineException(string! message) -> void
+Verlite.ParseCommandLineException.ParseCommandLineException(string! message, string! paramName) -> void
 Verlite.QueryTarget
 Verlite.QueryTarget.Local = 1 -> Verlite.QueryTarget
 Verlite.QueryTarget.None = 0 -> Verlite.QueryTarget

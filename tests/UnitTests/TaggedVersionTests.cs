@@ -9,16 +9,16 @@ namespace UnitTests
 {
 	public class TaggedVersionTests
 	{
-		private static readonly Commit CommitA = new Commit("def");
-		private static readonly Commit CommitB = new Commit("123");
+		private static readonly Commit CommitA = new("def");
+		private static readonly Commit CommitB = new("123");
 
-		private static readonly Tag TagVersion1A = new Tag("v1.0.0", CommitA);
-		private static readonly Tag TagVersion1B = new Tag("v1.0.0", CommitB);
-		private static readonly Tag TagVersion2A = new Tag("v2.0.0", CommitA);
-		private static readonly Tag TagVersion2B = new Tag("v2.0.0", CommitB);
+		private static readonly Tag TagVersion1A = new("v1.0.0", CommitA);
+		private static readonly Tag TagVersion1B = new("v1.0.0", CommitB);
+		private static readonly Tag TagVersion2A = new("v2.0.0", CommitA);
+		private static readonly Tag TagVersion2B = new("v2.0.0", CommitB);
 
-		private static readonly SemVer Version1 = new SemVer(1, 0, 0);
-		private static readonly SemVer Version2 = new SemVer(2, 0, 0);
+		private static readonly SemVer Version1 = new(1, 0, 0);
+		private static readonly SemVer Version2 = new(2, 0, 0);
 
 		[Fact]
 		public void ReturnsSetTag()

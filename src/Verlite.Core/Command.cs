@@ -171,5 +171,84 @@ namespace Verlite
 
 			return sb.ToString();
 		}
+
+		/// <summary>
+		/// Parse a command line into seperate arguments, taking into account quotes and backslashes.
+		/// Returned value is expected to be passed into <see cref="Command.Run(string, string, string[], IDictionary{string, string}?)"/>
+		/// </summary>
+		/// <param name="cmdLine">The command line input to parse.</param>
+		/// <returns>A list of parsed arguments.</returns>
+		/// <exception cref="ParseCommandLineException">When the <paramref name="cmdLine"/> has an unterminated quote or literal.</exception>
+		public static IReadOnlyList<string> ParseCommandLine(string cmdLine)
+		{
+			// parsing state
+			StringBuilder? currentArg = null;
+			bool isQuoted = false;
+			char quotedWith = '\0';
+			bool isLiteral = false;
+
+			List<string> ret = new();
+
+			void flushArgument()
+			{
+				if (currentArg is null)
+					return;
+				ret.Add(currentArg.ToString());
+				currentArg = null;
+			}
+			void appendEmpty() => currentArg ??= new StringBuilder();
+			void append(char @char)
+			{
+				isLiteral = false;
+				currentArg ??= new StringBuilder();
+				currentArg.Append(@char);
+			}
+
+			foreach (char c in cmdLine)
+			{
+				switch (c)
+				{
+					case '"':
+					case '\'':
+						if (isLiteral || (isQuoted && quotedWith != c))
+							append(c);
+						else
+						{
+							appendEmpty();
+							isQuoted = !isQuoted;
+							quotedWith = c;
+						}
+						break;
+					case '\\':
+						if (isLiteral)
+							append('\\');
+						else
+							isLiteral = true;
+						break;
+					case ' ':
+					case '\t':
+					case '\r':
+					case '\n':
+						if (isLiteral || isQuoted)
+							append(c);
+						else
+							flushArgument();
+						break;
+					default:
+						append(c);
+						break;
+				}
+
+			}
+
+			if (isLiteral)
+				throw new ParseCommandLineException("Expected literal character at end", nameof(cmdLine));
+			if (isQuoted)
+				throw new ParseCommandLineException("Quote is unfinished at end", nameof(cmdLine));
+
+			flushArgument();
+
+			return ret;
+		}
 	}
 }

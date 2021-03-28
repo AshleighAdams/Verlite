@@ -58,6 +58,7 @@ See [docs/VersionCalculation.md](docs/VersionCalculation.md) for further reading
 | Part of the version to print.                                       | -s, --show                                                       | All     |
 | Automatically fetch commits and a tag for shallow clones.           | --auto-fetch                                                     | false   |
 | Set which version part should be bumped after an RTM release.       | -a, --auto-increment, VerliteAutoIncrement                       | patch   |
+| A command to test whether a tag should be ignored via exit code.    | -f, --filter-tags, VerliteFilterTags                             |         |
 
 # Comparison with GitVersion
 
@@ -100,6 +101,7 @@ Additionally, Verlite has some extra features, some of which I required or desir
  - [Can multiple versions be nested?](#can-multiple-versions-be-nested) *(yes)*
  - [Can shallow clones be used?](#can-shallow-clones-be-used) *(yes)*
  - [What happens if auto fetch isn't used?](#what-happens-if-auto-fetch-isnt-used) *(nothing unsafe)*
+ - [Can I use only signed/specific/arbitrary tags?](#filtering-tags) *(yes)*
 
 ### Why Verlite?
 
@@ -179,6 +181,18 @@ Yes, with a caveat—for performance reasons `verlite --auto-fetch` must be invo
 Nothing unsafe. In the event a clone is not deep enough, an exception will be thrown and the build will fail, instead of calculating an incorrect version number silently.
 
 Footguns not included.
+
+<h3 id="filtering-tags">Can I use only signed/specific/arbitrary tags?</h3>
+
+Yes, this can be done by supplying a command in `--filter-tags`/`VerliteFilterTags` that Verlite will execute and then read the exit code. In the supplied command `{}` will be substituded with the tag under question, along with a number of environment variables set. As an example, the following will only take into account tags signed with a trusted private key, ignoring all others:
+
+```xml
+<PropertyGroup>
+	<VerliteFilterTags>git tag --verify {}</VerliteFilterTags>
+</PropertyGroup>
+```
+
+See [docs/FilteringTags.md](docs/FilteringTags.md) for further reading.
 
 
 [verlite-msbuild-badge]: https://img.shields.io/nuget/vpre/Verlite.MsBuild?label=Verlite.MsBuild

@@ -203,5 +203,51 @@ namespace UnitTests
 				tag.Should().BeNull();
 			}
 		}
+
+		[Fact]
+		public async Task FilterCanIgnoreTags()
+		{
+			var repo = new MockRepoInspector(new MockRepoCommit[]
+			{
+				new("commit_a", "v1.0.0"),
+				new("commit_b", "v1.0.0-alpha.1"),
+				new("commit_c"),
+			});
+
+			var filter = new MockTagFilter();
+			filter.BlockTags.Add("v1.0.0");
+
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true, null, filter);
+
+			tag.Should().NotBeNull();
+			SDebug.Assert(tag is not null);
+
+			height.Should().Be(1);
+			tag.Tag.Name.Should().Be("v1.0.0-alpha.1");
+			tag.Tag.PointsTo.Id.Should().Be("commit_b");
+		}
+
+		[Fact]
+		public async Task FilterDoesntIgnoreOtherTagsOnSameCommit()
+		{
+			var repo = new MockRepoInspector(new MockRepoCommit[]
+			{
+				new("commit_a", "v1.0.0", "v1.0.1"),
+				new("commit_b", "v1.0.0-alpha.1"),
+				new("commit_c"),
+			});
+
+			var filter = new MockTagFilter();
+			filter.BlockTags.Add("v1.0.0");
+
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true, null, filter);
+
+			tag.Should().NotBeNull();
+			SDebug.Assert(tag is not null);
+
+			height.Should().Be(0);
+			tag.Tag.Name.Should().Be("v1.0.1");
+			tag.Tag.PointsTo.Id.Should().Be("commit_a");
+		}
 	}
 }

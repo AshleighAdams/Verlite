@@ -1,0 +1,24 @@
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildAssemblyVersion)' == '' Or '$(MSBuildAssemblyVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(OS)' != 'Windows_NT'">
+    <VerliteBashPath>bash</VerliteBashPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
+    <VerliteBashPath>$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\GitForWindows@InstallPath)\bin\bash.exe</VerliteBashPath>
+    <VerliteBashPath Condition="'$(VerliteBashPath)' == '\bin\bash.exe'">$([MSBuild]::GetRegistryValueFromView('HKEY_LOCAL_MACHINE\SOFTWARE\GitForWindows', 'InstallPath', null, RegistryView.Default, RegistryView.Registry64, RegistryView.Registry32))\bin\bash.exe</VerliteBashPath>
+    <VerliteBashPath Condition="'$(VerliteBashPath)' == '\bin\bash.exe' And Exists('$(ProgramFiles)\Git\bin\bash.exe')">$(ProgramFiles)\Git\bin\bash.exe</VerliteBashPath>
+    <VerliteBashPath Condition="'$(VerliteBashPath)' == '\bin\bash.exe' And Exists('$(MSBuildProgramFiles32)\Git\bin\bash.exe')">$(MSBuildProgramFiles32)\Git\bin\bash.exe</VerliteBashPath>
+    <VerliteBashPath Condition="'$(VerliteBashPath)' == '\bin\bash.exe' And Exists('$(LocalAppData)\Programs\Git\bin\bash.exe')">$(LocalAppData)\Programs\Git\bin\bash.exe</VerliteBashPath>
+    <VerliteBashPath Condition="'$(VerliteBashPath)' == '\bin\bash.exe' And Exists('$(LocalAppData)\Git\bin\bash.exe')">$(LocalAppData)\Git\bin\bash.exe</VerliteBashPath>
+    <VerliteBashPath Condition="'$(VerliteBashPath)' == '\bin\bash.exe'">bash.exe</VerliteBashPath>
+
+     <!-- escape it -->
+    <VerliteBashPath>"$(VerliteBashPath.Replace('\', '\\').Replace('"', '\\"'))"</VerliteBashPath>
+  </PropertyGroup>
+
+</Project>

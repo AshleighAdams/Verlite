@@ -4,7 +4,7 @@ To calculate a version, Verlite takes the head commit for the "current commit," 
 
 The graph below should give you a good idea for how things are versioned.
 
-![](VersionGraph.svg)
+![](Assets/VersionGraph.svg)
 
 Take note how the `old-feature` branch predates the version, taking only the version from when it originally branched, even after merging in a commit. It is for this reason squashing or merge commits should always be used, as only the first parent is taken into account upon version calculation.
 
