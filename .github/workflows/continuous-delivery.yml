@@ -13,6 +13,8 @@ on:
     - .editorconfig
     - .gitattributes
     - .gitignore
+    - .github/ISSUE_TEMPLATE/**
+    - .github/pull_request_template.md
 
 defaults:
   run:
