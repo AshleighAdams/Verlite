@@ -16,12 +16,16 @@ jobs:
     - *setup-dotnet5
     - *setup-nuget
 
-    - name: Setup MinVer for release
+    - name: Setup MinVer
       run: |
         git fetch --tags --force
-        git checkout "${GITHUB_REF#refs/*/}"
         dotnet tool install --global minver-cli --version 2.5.0
+
+    - name: Verify Tag
+      run: |
         curl https://github.com/AshleighAdams.gpg | gpg --import
+        git tag --verify "${GITHUB_REF#refs/*/}"
+        [[ "$(minver --tag-prefix=v)" == "v${GITHUB_REF#refs/*/}" ]] # error out if the versions don't match
 
     - *restore
     - *build
