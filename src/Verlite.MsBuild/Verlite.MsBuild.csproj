@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <OutputType>Library</OutputType>
     <RootNamespace>Verlite.MsBuild</RootNamespace>
     <Description>Lightweight automatic versioning via Git tags for continuous delivery and SDK-style projects.</Description>
@@ -29,10 +29,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Verlite.Core\Verlite.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="Microsoft.NETCore.App" PrivateAssets="All" />
   </ItemGroup>
 
   <Target Name="AddVerliteOutput" BeforeTargets="_GetPackageFiles">

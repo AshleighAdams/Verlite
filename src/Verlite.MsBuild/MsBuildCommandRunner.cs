@@ -19,7 +19,7 @@ namespace Verlite.MsBuild
 
 		Task<(string stdout, string stderr)> ICommandRunner.Run(string directory, string command, string[] args, IDictionary<string, string>? envVars)
 		{
-			string cmdline = $"{command} {string.Join(' ', args)}".Trim();
+			string cmdline = $"{command} {string.Join(" ", args)}".Trim();
 			Logger.LogCommandLine(Microsoft.Build.Framework.MessageImportance.High, cmdline);
 
 			return Runner.Run(directory, command, args, envVars);
