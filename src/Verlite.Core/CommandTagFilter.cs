@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -78,7 +79,8 @@ namespace Verlite
 			}
 		}
 
-		private static readonly Regex RxReplacer = new(@"([{}].?)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+		[ExcludeFromCodeCoverage]
+		private static Regex RxReplacer { get; } = new(@"([{}].?)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 		private static string ReplaceTagPlaceholder(string input, string version)
 		{
 			return RxReplacer.Replace(input, m => m.Value switch
