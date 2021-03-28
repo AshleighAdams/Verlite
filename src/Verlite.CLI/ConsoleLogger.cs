@@ -12,8 +12,7 @@ namespace Verlite.CLI
 		private static Regex NewlineReplacer { get; } = new(@"($|[^\r])\n", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 		private static string SanitizeMessage(string message)
 		{
-			var ret = $"Verlite: {message.Replace("\n", "\nVerlite: ", StringComparison.Ordinal)}";
-			return NewlineReplacer.Replace(ret, "\r\n");
+			return NewlineReplacer.Replace(message, "\r\n");
 		}
 
 		void ILogger.Normal(string message)
