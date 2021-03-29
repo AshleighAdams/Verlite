@@ -102,6 +102,7 @@ Additionally, Verlite has some extra features, some of which I required or desir
  - [Can shallow clones be used?](#can-shallow-clones-be-used) *(yes)*
  - [What happens if auto fetch isn't used?](#what-happens-if-auto-fetch-isnt-used) *(nothing unsafe)*
  - [Can I use only signed/specific/arbitrary tags?](#filtering-tags) *(yes)*
+ - [What is a good changelog strategy?](#changelog-strategy) *(changes since same or better stability)*
 
 ### Why Verlite?
 
@@ -194,12 +195,23 @@ Yes, this can be done by supplying a command in `--filter-tags`/`VerliteFilterTa
 
 See [docs/FilteringTags.md](docs/FilteringTags.md) for further reading.
 
+<h3 id="changelog-strategy">What is a good changelog strategy?</h3>
+
+While not related to Verlite per se, a good method for which changes to include in your release notes is: include all changes since the last version which was as equally stable or better.
+
+| Release notes for … | should contain changes since the last … build |
+| ------------------- | --------------------------------------------- |
+| Stable              | Stable                                        |
+| Release candidate   | Release candidate or stable                   |
+| Beta                | Beta, release candidate, or stable            |
+| Alpha               | Alpha, beta, release candidate, or stable     |
+
+
 [verlite-msbuild-badge]: https://img.shields.io/nuget/v/Verlite.MsBuild?label=Verlite.MsBuild
 [verlite-msbuild-link]: https://www.nuget.org/packages/Verlite.MsBuild
 [verlite-cli-badge]: https://img.shields.io/nuget/v/Verlite.MsBuild?label=Verlite.CLI
 [verlite-cli-link]: https://www.nuget.org/packages/Verlite.CLI
 [verlite-core-badge]: https://img.shields.io/nuget/v/Verlite.MsBuild?label=Verlite.Core
-
 [verlite-core-link]: https://www.nuget.org/packages/Verlite.Core
 [semver-2]: https://semver.org/spec/v2.0.0.html
 [codecov-badge]: https://codecov.io/gh/AshleighAdams/Verlite/branch/master/graph/badge.svg?token=ZE1ITHB3U3
