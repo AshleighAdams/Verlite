@@ -121,7 +121,7 @@ namespace Verlite.CLI
 				{
 					TagPrefix = tagPrefix,
 					DefaultPrereleasePhase = defaultPrereleasePhase,
-					MinimiumVersion = minVersion,
+					MinimumVersion = minVersion,
 					PrereleaseBaseHeight = prereleaseBaseHeight,
 					VersionOverride = versionOverride,
 					BuildMetadata = buildMetadata,
