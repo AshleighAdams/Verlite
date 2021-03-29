@@ -199,12 +199,12 @@ See [docs/FilteringTags.md](docs/FilteringTags.md) for further reading.
 
 While not related to Verlite per se, a good method for which changes to include in your release notes is: include all changes since the last version which was as equally stable or better.
 
-| Release notes for … | should contain changes since the last … build |
-| ------------------- | --------------------------------------------- |
-| Stable              | Stable                                        |
-| Release candidate   | Release candidate or stable                   |
-| Beta                | Beta, release candidate, or stable            |
-| Alpha               | Alpha, beta, release candidate, or stable     |
+| Changelogs for _\_\_\_\_ releases | should contain changes since the last _\_\_\_\_ build. |
+| --------------------------------- | ------------------------------------------------------ |
+| stable                            | stable                                                 |
+| release candidate                 | release candidate or stable                            |
+| beta                              | beta, release candidate, or stable                     |
+| alpha                             | alpha, beta, release candidate, or stable              |
 
 
 [verlite-msbuild-badge]: https://img.shields.io/nuget/v/Verlite.MsBuild?label=Verlite.MsBuild
