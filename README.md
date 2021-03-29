@@ -194,12 +194,12 @@ Yes, this can be done by supplying a command in `--filter-tags`/`VerliteFilterTa
 
 See [docs/FilteringTags.md](docs/FilteringTags.md) for further reading.
 
-
-[verlite-msbuild-badge]: https://img.shields.io/nuget/vpre/Verlite.MsBuild?label=Verlite.MsBuild
+[verlite-msbuild-badge]: https://img.shields.io/nuget/v/Verlite.MsBuild?label=Verlite.MsBuild
 [verlite-msbuild-link]: https://www.nuget.org/packages/Verlite.MsBuild
-[verlite-cli-badge]: https://img.shields.io/nuget/vpre/Verlite.MsBuild?label=Verlite.CLI
+[verlite-cli-badge]: https://img.shields.io/nuget/v/Verlite.MsBuild?label=Verlite.CLI
 [verlite-cli-link]: https://www.nuget.org/packages/Verlite.CLI
-[verlite-core-badge]: https://img.shields.io/nuget/vpre/Verlite.MsBuild?label=Verlite.Core
+[verlite-core-badge]: https://img.shields.io/nuget/v/Verlite.MsBuild?label=Verlite.Core
+
 [verlite-core-link]: https://www.nuget.org/packages/Verlite.Core
 [semver-2]: https://semver.org/spec/v2.0.0.html
 [codecov-badge]: https://codecov.io/gh/AshleighAdams/Verlite/branch/master/graph/badge.svg?token=ZE1ITHB3U3
