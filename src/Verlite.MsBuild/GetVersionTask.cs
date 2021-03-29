@@ -84,9 +84,8 @@ namespace Verlite.MsBuild
 					opts.DefaultPrereleasePhase = DefaultPrereleasePhase;
 
 				if (!string.IsNullOrWhiteSpace(MinimumVersion))
-					opts.MinimiumVersion = DecodeVersion(
+					opts.MinimumVersion = DecodeVersion(
 						MinimumVersion, nameof(MinimumVersion));
-
 
 				if (!string.IsNullOrWhiteSpace(PrereleaseBaseHeight))
 					opts.PrereleaseBaseHeight = DecodeInt(

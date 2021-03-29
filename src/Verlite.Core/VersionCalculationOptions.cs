@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Verlite
@@ -19,7 +20,7 @@ namespace Verlite
 		/// <summary>
 		/// If the destined version is not found or is below this value, it will be bumped up to this.
 		/// </summary>
-		public SemVer MinimiumVersion { get; set; } = new SemVer(0, 1, 0);
+		public SemVer MinimumVersion { get; set; } = new SemVer(0, 1, 0);
 		/// <summary>
 		/// The height to start with on non-tagged prereleases (the 4 value in 1.2.3-alpha.4).
 		/// </summary>
@@ -40,5 +41,15 @@ namespace Verlite
 		/// The component to bump in the semantic version post RTM release.
 		/// </summary>
 		public VersionPart AutoIncrement { get; set; } = VersionPart.Patch;
+
+		/// <summary>
+		/// Obsoleted due to a typo. Using this will redirect to the suggested replacement of <see cref="MinimumVersion"/> instead.
+		/// </summary>
+		[Obsolete("Use MinimumVersion instead.")]
+		public SemVer MinimiumVersion
+		{
+			get => MinimumVersion;
+			set => MinimumVersion = value;
+		}
 	}
 }

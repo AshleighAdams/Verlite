@@ -35,7 +35,7 @@ namespace UnitTests
 		{
 			var options = new VersionCalculationOptions()
 			{
-				MinimiumVersion = SemVer.Parse(minVer ?? "0.1.0"),
+				MinimumVersion = SemVer.Parse(minVer ?? "0.1.0"),
 			};
 
 			var version = versionStr is null ? (SemVer?)null: SemVer.Parse(versionStr);
@@ -97,7 +97,7 @@ namespace UnitTests
 			Assert.Throws<VersionCalculationException>(
 				() => VersionCalculator.FromTagInfomation(
 					lastTag: new(1, 0, 0),
-					options: new() { MinimiumVersion = new(2, 0, 0) },
+					options: new() { MinimumVersion = new(2, 0, 0) },
 					height: 0));
 		}
 

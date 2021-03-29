@@ -137,6 +137,8 @@ Verlite.VersionCalculationOptions.DefaultPrereleasePhase.get -> string!
 Verlite.VersionCalculationOptions.DefaultPrereleasePhase.set -> void
 Verlite.VersionCalculationOptions.MinimiumVersion.get -> Verlite.SemVer
 Verlite.VersionCalculationOptions.MinimiumVersion.set -> void
+Verlite.VersionCalculationOptions.MinimumVersion.get -> Verlite.SemVer
+Verlite.VersionCalculationOptions.MinimumVersion.set -> void
 Verlite.VersionCalculationOptions.PrereleaseBaseHeight.get -> int
 Verlite.VersionCalculationOptions.PrereleaseBaseHeight.set -> void
 Verlite.VersionCalculationOptions.QueryRemoteTags.get -> bool

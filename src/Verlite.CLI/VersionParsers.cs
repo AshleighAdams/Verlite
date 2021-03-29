@@ -8,13 +8,13 @@ namespace Verlite.CLI
 		public static SemVer ParseMinSemVer(System.CommandLine.Parsing.ArgumentResult result)
 		{
 			if (result.Tokens.Count == 0)
-				return Program.DefaultOptions.MinimiumVersion;
+				return Program.DefaultOptions.MinimumVersion;
 
 			var tokenValue = result.Tokens.Single().Value;
 			if (!SemVer.TryParse(tokenValue, out var version))
 			{
 				result.ErrorMessage = $"Failed to parse version {tokenValue} for option {result.Argument.Name}";
-				return Program.DefaultOptions.MinimiumVersion;
+				return Program.DefaultOptions.MinimumVersion;
 			}
 
 			return version.Value;
