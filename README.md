@@ -118,9 +118,9 @@ Yes, the the default phase of `alpha` can be changed using the `VerliteDefaultPr
 
 ### Why is the default phase "alpha" and not "alpha.0"?
 
-In short, to reduce fatigue. The first commits after an RTM tag are more likely to be hotfixes bumping the patch instead of something to undergo various prerelease phases, and so to make Continuous Delivery builds less fatiguing to use, the default phase omits a number, seeing such builds be versioned as `1.0.1-alpha.42` instead of `1.0.1-alpha.0.42`. Then upon early prereleases, it is recommended to tag with a `beta` `prerelease` phase, such as `1.0.1-beta.1`, in which the next CD deliverables are versioned like `1.0.1-beta.1.42`.
+To reduce fatigue. The first commits after a stable tag are likely to be either: hotfixes that are quickly released, or a [merge window](https://en.wikipedia.org/wiki/Merge_window) opening up, resulting in a flurry of change that developers directly consume from the CD pipeline. Therefore, the default behavior is to omit the leading zero, and keep these particular versions as short as possible.
 
-Should the you prefer `alpha.0` be used instead, such can be done by changing the default phase.
+Should the you prefer `alpha.0.n` be used after a stable release instead of `alpha.n`, the `VerliteDefaultPrereleasePhase` can be set to `alpha.0`.
 
 ### Can prereleases be tagged?
 
@@ -175,7 +175,7 @@ Yes, by setting a unique `VerliteTagPrefix` for each project.
 
 ### Can shallow clones be used?
 
-Yes, with a caveat—for performance reasons `verlite --auto-fetch` must be invoked to deepen the repository prior to building. To avoid footguns, auto-fetching is not exposed under MsBuild due to needing to querying the remote for each project in the solution with auto-fetching enabled.
+Yes, with a caveat—for performance reasons `verlite --auto-fetch` must be invoked to deepen the repository prior to building. To avoid footguns, auto-fetching is not exposed under MsBuild as to the need to query the remote for each project would slow down build times too much.
 
 ### What happens if auto fetch isn't used?
 
