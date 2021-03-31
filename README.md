@@ -60,13 +60,13 @@ See [docs/VersionCalculation.md](docs/VersionCalculation.md) for further reading
 | Set which version part should be bumped after an RTM release.       | -a, --auto-increment, VerliteAutoIncrement                       | patch   |
 | A command to test whether a tag should be ignored via exit code.    | -f, --filter-tags, VerliteFilterTags                             |         |
 
-# Comparison with GitVersion
+## Comparison with GitVersion
 
 GitVersion has a focus on branches, and is well suited for a Continuous Deployment workflow, where releases are triggered based upon branches or commit messages. Shallow repositories are not supported.
 
 Verlite cares only about tags—more specifically, the tags on the chain of first parents—and is well suited for Continuous Delivery workflows, where official releases happen by tagging.
 
-# Comparison with MinVer
+## Comparison with MinVer
 
 MinVer's behavior is a subset of Verlite, and so we can configured Verlite to behave the same with the following properties set:
 
