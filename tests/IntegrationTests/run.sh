@@ -4,6 +4,7 @@ set -euo pipefail
 cd "$(dirname $0)"
 
 export VERBOSE=""
+export REPO_PATH="$(git rev-parse --show-toplevel)"
 
 # setup the packages as version 0.0.0
 export NUGET_PACKAGES="$(mktemp -d)"
@@ -59,5 +60,6 @@ test branch-follows-first-parent
 test msbuild
 test multiple-tags-on-same-commit
 test auto-fetch
+test publish-different-framework
 
 echo "All complete."
