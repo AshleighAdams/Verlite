@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -227,8 +228,17 @@ namespace Verlite
 		/// <inheritdoc/>
 		public async Task<Commit?> GetParent(Commit commit)
 		{
+			var parents = await GetParents(commit);
+			return parents
+				.Select(p => (Commit?)p)
+				.FirstOrDefault();
+		}
+
+		/// <inheritdoc/>
+		public async Task<IReadOnlyList<Commit>> GetParents(Commit commit)
+		{
 			if (CachedParents.TryGetValue(commit, out Commit ret))
-				return ret;
+				return new[] { ret };
 
 			var contents = await GetCommitObject(commit);
 			var parent = ParseCommitObjectParent(contents);
@@ -237,7 +247,7 @@ namespace Verlite
 				CachedParents[commit] = parent.Value;
 
 			Log?.Verbatim($"GetParent() -> {parent}");
-			return parent;
+			return parent is not null ? new Commit[] { parent.Value } : Array.Empty<Commit>();
 		}
 
 		private static readonly Regex RefsTagRegex = new Regex(

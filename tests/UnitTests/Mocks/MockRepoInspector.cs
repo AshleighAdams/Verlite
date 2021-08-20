@@ -10,21 +10,13 @@ namespace UnitTests
 {
 	public class MockRepoCommit
 	{
-		public Commit Id { get; }
-		public IReadOnlyList<Tag> Tags { get; }
+		public Commit Id { get; init; }
+		public IReadOnlyList<Commit>? Parents { get; init; }
+		public IReadOnlyList<string> Tags { get; init; } = Array.Empty<string>();
 
-		public MockRepoCommit(string commitId, params string[] tags)
+		public MockRepoCommit(string commitId)
 		{
 			Id = new Commit(commitId);
-			if (tags.Length == 0)
-				Tags = Array.Empty<Tag>();
-			else
-			{
-				var tagsList = new List<Tag>();
-				foreach (string tag in tags)
-					tagsList.Add(new Tag(tag, Id));
-				Tags = tagsList;
-			}
 		}
 	}
 
@@ -33,7 +25,7 @@ namespace UnitTests
 		private class InternalCommit
 		{
 			public Commit Id { get; set; }
-			public Commit? ParentId { get; set; }
+			public IReadOnlyList<Commit> Parents { get; set; } = Array.Empty<Commit>();
 		}
 		private List<InternalCommit> Commits { get; } = new();
 		internal List<Tag> LocalTags { get; } = new();
@@ -49,15 +41,18 @@ namespace UnitTests
 				Commits.Add(new InternalCommit()
 				{
 					Id = commit.Id,
-					ParentId = parent,
+					Parents = commit.Parents ??
+						(parent is not null
+							? new Commit[] { parent!.Value }
+							: Array.Empty<Commit>()),
 				});
 
 				foreach (var tag in commit.Tags)
 				{
-					if (!addedTags.Add(tag.Name))
+					if (!addedTags.Add(tag))
 						throw new ArgumentException("Commits contained duplicate tag!", nameof(commits));
 				}
-				RemoteTags.AddRange(commit.Tags);
+				RemoteTags.AddRange(commit.Tags.Select(t => new Tag(t, commit.Id)));
 
 				parent = commit.Id;
 			}
@@ -78,7 +73,18 @@ namespace UnitTests
 
 		async Task<Commit?> IRepoInspector.GetParent(Commit commit)
 		{
-			return Commits.Where(ic => ic.Id == commit).FirstOrDefault()?.ParentId;
+			var parents = await (this as IRepoInspector).GetParents(commit);
+			return parents
+				.Select(p => (Commit?)p)
+				.FirstOrDefault();
+		}
+
+		async Task<IReadOnlyList<Commit>> IRepoInspector.GetParents(Commit commit)
+		{
+			return Commits
+				.Where(ic => ic.Id == commit)
+				.First()
+				.Parents;
 		}
 
 		async Task<TagContainer> IRepoInspector.GetTags(QueryTarget queryTarget)

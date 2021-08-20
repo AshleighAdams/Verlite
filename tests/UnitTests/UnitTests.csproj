@@ -10,8 +10,11 @@
 
 
   <ItemGroup>
+    <Compile Remove="StrykerOutput\**" />
     <Compile Remove="TestResults\**" />
+    <EmbeddedResource Remove="StrykerOutput\**" />
     <EmbeddedResource Remove="TestResults\**" />
+    <None Remove="StrykerOutput\**" />
     <None Remove="TestResults\**" />
   </ItemGroup>
 

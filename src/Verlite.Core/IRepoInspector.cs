@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
@@ -74,7 +75,14 @@ namespace Verlite
 		/// </summary>
 		/// <param name="commit">The commit.</param>
 		/// <returns>A task containing the primary parent commit, or <c>null</c> if it has none.</returns>
+		[Obsolete("Deprecated in favor of GetParents(). See GitHub issue #40.", error: false)]
 		Task<Commit?> GetParent(Commit commit);
+		/// <summary>
+		/// Gets all parents of the specified commit.
+		/// </summary>
+		/// <param name="commit">The commit.</param>
+		/// <returns>A task containing a list of parent commits.</returns>
+		Task<IReadOnlyList<Commit>> GetParents(Commit commit);
 		/// <summary>
 		/// Query tags from a desired target.
 		/// </summary>
