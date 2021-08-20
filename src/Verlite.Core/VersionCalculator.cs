@@ -40,7 +40,11 @@ namespace Verlite
 			if (options.MinimumVersion > lastTag.DestinedVersion)
 				return options.MinimumVersion;
 			else if (lastTag.Prerelease is not null)
-				return lastTag;
+			{
+				var ret = lastTag;
+				ret.BuildMetadata = null;
+				return ret;
+			}
 			else
 				return options.AutoIncrement switch
 				{
