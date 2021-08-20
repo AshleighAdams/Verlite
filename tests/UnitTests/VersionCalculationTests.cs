@@ -64,6 +64,8 @@ namespace UnitTests
 		[InlineData("1.1.2", VersionPart.Patch, "1.1.3")]
 		[InlineData("1.1.2", VersionPart.Minor, "1.2.0")]
 		[InlineData("1.1.2", VersionPart.Major, "2.0.0")]
+		[InlineData("1.1.2+abc", VersionPart.Major, "2.0.0")]
+		[InlineData("1.0.0-alpha.1", VersionPart.Patch, "1.0.0-alpha.1")]
 		[InlineData("1.0.0-alpha.1+data.2", VersionPart.Patch, "1.0.0-alpha.1")]
 		[InlineData("1.0.0-alpha.1+data.2", VersionPart.Minor, "1.0.0-alpha.1")]
 		[InlineData("1.0.0-alpha.1+data.2", VersionPart.Major, "1.0.0-alpha.1")]
