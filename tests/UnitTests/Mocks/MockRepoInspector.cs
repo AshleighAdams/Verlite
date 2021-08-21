@@ -59,7 +59,12 @@ namespace UnitTests
 			Commits.Reverse(); // reverse it to make First the HEAD.
 		}
 
-		async Task IRepoInspector.FetchTag(Tag tag, string remote)
+		Task IRepoInspector.FetchTag(Tag tag, string remote)
+		{
+			return (this as IRepoInspector).FetchTag(tag);
+		}
+
+		async Task IRepoInspector.FetchTag(Tag tag)
 		{
 			if (LocalTags.Contains(tag))
 				return;

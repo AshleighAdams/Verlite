@@ -14,7 +14,11 @@ static Verlite.Command.ParseCommandLine(string! cmdLine) -> System.Collections.G
 static Verlite.Command.Run(string! directory, string! command, string![]! args, System.Collections.Generic.IDictionary<string!, string!>? envVars = null) -> System.Threading.Tasks.Task<(string! stdout, string! stderr)>!
 static Verlite.Commit.operator !=(Verlite.Commit left, Verlite.Commit right) -> bool
 static Verlite.Commit.operator ==(Verlite.Commit left, Verlite.Commit right) -> bool
-static Verlite.GitRepoInspector.FromPath(string! path, Verlite.ILogger? log = null, Verlite.ICommandRunner? commandRunner = null) -> System.Threading.Tasks.Task<Verlite.GitRepoInspector!>!
+static Verlite.GitRepoInspector.FromPath(string! path) -> System.Threading.Tasks.Task<Verlite.GitRepoInspector!>!
+static Verlite.GitRepoInspector.FromPath(string! path, string! remote, Verlite.ILogger? log, Verlite.ICommandRunner! commandRunner) -> System.Threading.Tasks.Task<Verlite.GitRepoInspector!>!
+static Verlite.GitRepoInspector.FromPath(string! path, Verlite.ICommandRunner? commandRunner) -> System.Threading.Tasks.Task<Verlite.GitRepoInspector!>!
+static Verlite.GitRepoInspector.FromPath(string! path, Verlite.ILogger? log) -> System.Threading.Tasks.Task<Verlite.GitRepoInspector!>!
+static Verlite.GitRepoInspector.FromPath(string! path, Verlite.ILogger? log, Verlite.ICommandRunner? commandRunner) -> System.Threading.Tasks.Task<Verlite.GitRepoInspector!>!
 static Verlite.HeightCalculator.FromRepository(Verlite.IRepoInspector! repo, string! tagPrefix, bool queryRemoteTags, Verlite.ILogger? log = null, Verlite.ITagFilter? tagFilter = null) -> System.Threading.Tasks.Task<(int height, Verlite.TaggedVersion?)>!
 static Verlite.SemVer.ComparePrerelease(string! left, string! right) -> int
 static Verlite.SemVer.IsValidIdentifierCharacter(char input) -> bool
@@ -57,6 +61,7 @@ Verlite.GitMissingOrNotGitRepoException.GitMissingOrNotGitRepoException() -> voi
 Verlite.GitRepoInspector
 Verlite.GitRepoInspector.CanDeepen.get -> bool
 Verlite.GitRepoInspector.CanDeepen.set -> void
+Verlite.GitRepoInspector.FetchTag(Verlite.Tag tag) -> System.Threading.Tasks.Task!
 Verlite.GitRepoInspector.FetchTag(Verlite.Tag tag, string! remote) -> System.Threading.Tasks.Task!
 Verlite.GitRepoInspector.GetHead() -> System.Threading.Tasks.Task<Verlite.Commit?>!
 Verlite.GitRepoInspector.GetParent(Verlite.Commit commit) -> System.Threading.Tasks.Task<Verlite.Commit?>!
@@ -71,6 +76,7 @@ Verlite.ILogger.Normal(string! message) -> void
 Verlite.ILogger.Verbatim(string! message) -> void
 Verlite.ILogger.Verbose(string! message) -> void
 Verlite.IRepoInspector
+Verlite.IRepoInspector.FetchTag(Verlite.Tag tag) -> System.Threading.Tasks.Task!
 Verlite.IRepoInspector.FetchTag(Verlite.Tag tag, string! remote) -> System.Threading.Tasks.Task!
 Verlite.IRepoInspector.GetHead() -> System.Threading.Tasks.Task<Verlite.Commit?>!
 Verlite.IRepoInspector.GetParent(Verlite.Commit commit) -> System.Threading.Tasks.Task<Verlite.Commit?>!

@@ -94,6 +94,12 @@ namespace Verlite
 		/// </summary>
 		/// <param name="tag">The tag to fetch.</param>
 		/// <param name="remote">Which remote to fetch the tag from.</param>
+		[Obsolete("Use FetchTag(tag)", error: false)]
 		Task FetchTag(Tag tag, string remote);
+		/// <summary>
+		/// Fetches the specified tag from the remote.
+		/// </summary>
+		/// <param name="tag">The tag to fetch.</param>
+		Task FetchTag(Tag tag);
 	}
 }
