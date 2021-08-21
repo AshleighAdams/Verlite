@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -20,23 +22,43 @@ namespace Verlite
 	/// <seealso cref="IRepoInspector"/>
 	public sealed class GitRepoInspector : IRepoInspector
 	{
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+		// TODO: Remove all of these enumerated permutations of the old optional args in 2.0.0
+		[ExcludeFromCodeCoverage]
+		[Obsolete("Use FromPath(path, remote, log, commandRunner)", error: false)]
+		public static Task<GitRepoInspector> FromPath(string path, ILogger? log, ICommandRunner? commandRunner)
+			=> FromPath(path, "origin", log, commandRunner ?? new SystemCommandRunner());
+		[ExcludeFromCodeCoverage]
+		[Obsolete("Use FromPath(path, remote, log, commandRunner)", error: false)]
+		public static Task<GitRepoInspector> FromPath(string path, ILogger? log)
+			=> FromPath(path, "origin", log, new SystemCommandRunner());
+		[ExcludeFromCodeCoverage]
+		[Obsolete("Use FromPath(path, remote, log, commandRunner)", error: false)]
+		public static Task<GitRepoInspector> FromPath(string path, ICommandRunner? commandRunner)
+			=> FromPath(path, "origin", null, commandRunner?? new SystemCommandRunner());
+		[ExcludeFromCodeCoverage]
+		[Obsolete("Use FromPath(path, remote, log, commandRunner)", error: false)]
+		public static Task<GitRepoInspector> FromPath(string path)
+			=> FromPath(path, "origin", null, new SystemCommandRunner());
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+
 		/// <summary>
 		/// Creates an inspector from the specified path.
 		/// </summary>
 		/// <param name="path">The path of the Git repository.</param>
+		/// <param name="remote">The remote endpoint.</param>
 		/// <param name="log">A logger for diagnostics.</param>
-		/// <param name="commandRunner">A command runner to use. Defaults to <see cref="SystemCommandRunner"/> if null is given.</param>
+		/// <param name="commandRunner">A command runner to use.</param>
 		/// <exception cref="GitMissingOrNotGitRepoException">Thrown if the path is not a Git repository.</exception>
 		/// <returns>A task containing the Git repo inspector.</returns>
-		public static async Task<GitRepoInspector> FromPath(string path, ILogger? log = null, ICommandRunner? commandRunner = null)
+		public static async Task<GitRepoInspector> FromPath(string path, string remote, ILogger? log, ICommandRunner commandRunner)
 		{
-			commandRunner ??= new SystemCommandRunner();
-
 			try
 			{
 				var (root, _) = await commandRunner.Run(path, "git", new string[] { "rev-parse", "--show-toplevel" });
 				var ret = new GitRepoInspector(
 					root,
+					remote,
 					log,
 					commandRunner);
 				await ret.CacheParents();
@@ -60,10 +82,12 @@ namespace Verlite
 		public string Root { get; }
 		private Dictionary<Commit, Commit> CachedParents { get; } = new();
 		private (int depth, bool shallow, Commit deepest)? FetchDepth { get; set; }
+		public string Remote { get; }
 
-		private GitRepoInspector(string root, ILogger? log, ICommandRunner commandRunner)
+		private GitRepoInspector(string root, string remote, ILogger? log, ICommandRunner commandRunner)
 		{
 			Root = root;
+			Remote = remote;
 			Log = log;
 			CommandRunner = commandRunner;
 		}
@@ -169,11 +193,9 @@ namespace Verlite
 			try
 			{
 				if (DeepenFromCommitSupported)
-					_ = await Git("fetch", "origin", FetchDepth.Value.deepest.Id, $"--depth={deltaDepth}");
+					_ = await Git("fetch", Remote, FetchDepth.Value.deepest.Id, $"--depth={deltaDepth}");
 				else
-					_ = await Git("fetch", $"--depth={newDepth}");
-
-				await CacheParents();
+					_ = await Git("fetch", Remote, $"--depth={newDepth}");
 			}
 			catch (CommandException ex)
 				when (
@@ -227,8 +249,17 @@ namespace Verlite
 		/// <inheritdoc/>
 		public async Task<Commit?> GetParent(Commit commit)
 		{
+			var parents = await GetParents(commit);
+			return parents
+				.Select(p => (Commit?)p)
+				.FirstOrDefault();
+		}
+
+		/// <inheritdoc/>
+		public async Task<IReadOnlyList<Commit>> GetParents(Commit commit)
+		{
 			if (CachedParents.TryGetValue(commit, out Commit ret))
-				return ret;
+				return new[] { ret };
 
 			var contents = await GetCommitObject(commit);
 			var parent = ParseCommitObjectParent(contents);
@@ -237,7 +268,7 @@ namespace Verlite
 				CachedParents[commit] = parent.Value;
 
 			Log?.Verbatim($"GetParent() -> {parent}");
-			return parent;
+			return parent is not null ? new Commit[] { parent.Value } : Array.Empty<Commit>();
 		}
 
 		private static readonly Regex RefsTagRegex = new Regex(
@@ -265,7 +296,7 @@ namespace Verlite
 				try
 				{
 					Log?.Verbatim($"GetTags(): Reading remote tags.");
-					var (response, _) = await Git("ls-remote", "--tags");
+					var (response, _) = await Git("ls-remote", "--tags", Remote, "*");
 
 					foreach (Tag tag in MatchTags(response))
 					{
@@ -307,6 +338,12 @@ namespace Verlite
 				await Git("fetch", "--depth", "1", remote, $"refs/tags/{tag.Name}:refs/tags/{tag.Name}");
 			else
 				await Git("fetch", remote, $"refs/tags/{tag.Name}:refs/tags/{tag.Name}");
+		}
+
+		/// <inheritdoc/>
+		public Task FetchTag(Tag tag)
+		{
+			return FetchTag(tag, Remote);
 		}
 	}
 }

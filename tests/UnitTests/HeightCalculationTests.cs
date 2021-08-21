@@ -18,8 +18,8 @@ namespace UnitTests
 		{
 			var repo = new MockRepoInspector(new MockRepoCommit[]
 			{
-				new("commit_a", "v1.0.0"),
-				new("commit_b", "v1.0.0-alpha.1"),
+				new("commit_a") { Tags = new[]{ "v1.0.0" } },
+				new("commit_b") { Tags = new[]{ "v1.0.0-alpha.1" } },
 				new("commit_c"),
 			});
 
@@ -80,7 +80,7 @@ namespace UnitTests
 		{
 			var repo = new MockRepoInspector(new MockRepoCommit[]
 			{
-				new("commit_a", "v1.0.0.0"),
+				new("commit_a") { Tags = new[]{ "v1.0.0.0" } },
 				new("commit_b"),
 				new("commit_c"),
 			});
@@ -97,9 +97,9 @@ namespace UnitTests
 		{
 			var repo = new MockRepoInspector(new MockRepoCommit[]
 			{
-				new("commit_a", "vast-tag"),
-				new("commit_b", "very-nice-tag"),
-				new("commit_c", "v"),
+				new("commit_a") { Tags = new[]{ "vast-tag" } },
+				new("commit_b") { Tags = new[]{ "very-nice-tag" } },
+				new("commit_c") { Tags = new[]{ "v" } },
 			});
 
 			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
@@ -113,7 +113,7 @@ namespace UnitTests
 		{
 			var repo = new MockRepoInspector(new MockRepoCommit[]
 			{
-				new("commit_a", "v1.0.0-alpha.1", "v1.0.0", "v1.0.0-rc.1"),
+				new("commit_a") { Tags = new[]{ "v1.0.0-alpha.1", "v1.0.0", "v1.0.0-rc.1" } },
 				new("commit_b"),
 				new("commit_c"),
 			});
@@ -135,7 +135,7 @@ namespace UnitTests
 			var repo = new MockRepoInspector(new MockRepoCommit[]
 			{
 				new("commit_a"),
-				new("commit_b", "v1.0.0-alpha.1", "v1.0.0-rc.2", "v1.0.0-rc.10"),
+				new("commit_b") { Tags = new[]{ "v1.0.0-alpha.1", "v1.0.0-rc.2", "v1.0.0-rc.10" } },
 				new("commit_c"),
 			});
 
@@ -158,7 +158,7 @@ namespace UnitTests
 			{
 				new("commit_a"),
 				new("commit_b"),
-				new("commit_c", "v1.0.0-alpha.1"),
+				new("commit_c") { Tags = new[]{ "v1.0.0-alpha.1" } },
 			});
 
 			(_, _) = await HeightCalculator.FromRepository(repo, "v", true);
@@ -176,9 +176,9 @@ namespace UnitTests
 		{
 			var repo = new MockRepoInspector(new MockRepoCommit[]
 			{
-				new("commit_a", "abc/version/2.0.0"),
-				new("commit_b", "version/3.0.0"),
-				new("commit_c", "4.0.0"),
+				new("commit_a") { Tags = new[]{ "abc/version/2.0.0" } },
+				new("commit_b") { Tags = new[]{ "version/3.0.0" } },
+				new("commit_c") { Tags = new[]{ "4.0.0" } },
 				new("commit_d"),
 			});
 
@@ -209,8 +209,8 @@ namespace UnitTests
 		{
 			var repo = new MockRepoInspector(new MockRepoCommit[]
 			{
-				new("commit_a", "v1.0.0"),
-				new("commit_b", "v1.0.0-alpha.1"),
+				new("commit_a") { Tags = new[]{ "v1.0.0" } },
+				new("commit_b") { Tags = new[]{ "v1.0.0-alpha.1" } },
 				new("commit_c"),
 			});
 
@@ -232,8 +232,8 @@ namespace UnitTests
 		{
 			var repo = new MockRepoInspector(new MockRepoCommit[]
 			{
-				new("commit_a", "v1.0.0", "v1.0.1"),
-				new("commit_b", "v1.0.0-alpha.1"),
+				new("commit_a") { Tags = new[]{ "v1.0.0", "v1.0.1" } },
+				new("commit_b") { Tags = new[]{ "v1.0.0-alpha.1" } },
 				new("commit_c"),
 			});
 

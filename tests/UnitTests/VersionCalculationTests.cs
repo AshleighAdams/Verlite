@@ -131,7 +131,7 @@ namespace UnitTests
 		{
 			var repo = new MockRepoInspector(new MockRepoCommit[]
 			{
-				new("commit_a", "v5.4.3-rc.2.1"),
+				new("commit_a") { Tags = new[] { "v5.4.3-rc.2.1" } },
 			});
 
 			var semver = await VersionCalculator.FromRepository(repo, new() { QueryRemoteTags = true });
@@ -145,7 +145,7 @@ namespace UnitTests
 			var repo = new MockRepoInspector(new MockRepoCommit[]
 			{
 				new("commit_b"),
-				new("commit_a", "v4.3.2-rc.1"),
+				new("commit_a") { Tags = new[] { "v4.3.2-rc.1" } },
 			});
 
 			var semver = await VersionCalculator.FromRepository(repo, new() { QueryRemoteTags = true });
@@ -159,7 +159,7 @@ namespace UnitTests
 			var repo = new MockRepoInspector(new MockRepoCommit[]
 			{
 				new("commit_b"),
-				new("commit_a", "v3.2.1"),
+				new("commit_a") { Tags = new[] { "v3.2.1" } },
 			});
 
 			var semver = await VersionCalculator.FromRepository(repo, new() { QueryRemoteTags = true });
@@ -173,8 +173,8 @@ namespace UnitTests
 			var repo = new MockRepoInspector(new MockRepoCommit[]
 			{
 				new("commit_c"),
-				new("commit_b", "v3.2.1"),
-				new("commit_a", "v3.2.0"),
+				new("commit_b") { Tags = new[] { "v3.2.1" } },
+				new("commit_a") { Tags = new[] { "v3.2.0" } },
 			});
 
 			_ = await VersionCalculator.FromRepository(repo, new() { QueryRemoteTags = true });
@@ -188,8 +188,8 @@ namespace UnitTests
 			var repo = new MockRepoInspector(new MockRepoCommit[]
 			{
 				new("commit_c"),
-				new("commit_b", "v3.2.1"),
-				new("commit_a", "v3.2.0"),
+				new("commit_b") { Tags = new[] { "v3.2.1" } },
+				new("commit_a") { Tags = new[] { "v3.2.0" } },
 			});
 
 			_ = await VersionCalculator.FromRepository(repo, new() { QueryRemoteTags = false });

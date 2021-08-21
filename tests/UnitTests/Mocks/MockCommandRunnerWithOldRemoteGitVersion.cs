@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,12 +31,15 @@ namespace UnitTests
 			else
 				commandHistory.Add($"{command} {string.Join(' ', args)}");
 
-			return (command, firstArg, args) switch
+			if (firstArg == "fetch")
 			{
-				("git", "fetch", _) when args.Contains("origin") =>
-					throw new CommandException(128, "", "error: Server does not allow request for unadvertised object a1b2c3"),
-				_ => BaseRunner.Run(directory, command, args, envVars),
-			};
+				if (args.Length is not 3 and not 4)
+					throw new NotSupportedException();
+				if (args.Length == 4 && !args[2].StartsWith("--depth", StringComparison.Ordinal))
+					throw new CommandException(128, "", "error: Server does not allow request for unadvertised object a1b2c3");
+			}
+
+			return BaseRunner.Run(directory, command, args, envVars);
 		}
 	}
 }

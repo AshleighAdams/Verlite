@@ -244,7 +244,7 @@ namespace UnitTests
 			firstTags.Should().ContainSingle();
 			var firstTag = firstTags[0];
 
-			await repo.FetchTag(firstTag, "origin");
+			await repo.FetchTag(firstTag);
 
 			var localTags = await repo.GetTags(QueryTarget.Local);
 			localTags.Should().Contain(new Tag[]
@@ -347,7 +347,7 @@ namespace UnitTests
 				.Where(tag => tag.Name == "tag-two")
 				.First();
 
-			await repo.FetchTag(desiredTag, "origin");
+			await repo.FetchTag(desiredTag);
 
 			var desiredParent = await repo.GetParent(desiredTag.PointsTo);
 			desiredParent.Should().Be(deeperTag.PointsTo);
@@ -384,7 +384,7 @@ namespace UnitTests
 				.Where(tag => tag.Name == "tag-two")
 				.First();
 
-			await repo.FetchTag(desiredTag, "origin");
+			await repo.FetchTag(desiredTag);
 			repo = null; // repo modified invalidating internal cache, so remake inspector
 			repo = await clone.MakeInspector();
 
@@ -422,7 +422,7 @@ namespace UnitTests
 			var filteredHistory = mockCommandRunner.CommandHistory
 				.Where(cmd => cmd.Contains("git fetch", StringComparison.Ordinal))
 				.Select(cmd =>
-					cmd.Contains("origin", StringComparison.Ordinal) ?
+					!cmd.Contains("origin --depth", StringComparison.Ordinal) ?
 						"normal fetch" :
 						"legacy fetch");
 

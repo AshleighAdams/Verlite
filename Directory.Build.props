@@ -46,7 +46,7 @@
     <MinVerTagPrefix>v</MinVerTagPrefix>
     <!-- delete/set to patch the line below once almost out of v0.x.y (preferably once on a beta or rc). -->
     <MinVerAutoIncrement>patch</MinVerAutoIncrement>
-    <MinVerMinimumMajorMinor>1.1</MinVerMinimumMajorMinor>
+    <MinVerMinimumMajorMinor>1.2</MinVerMinimumMajorMinor>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MinVer" Version="2.5.0">
