@@ -34,7 +34,7 @@ namespace UnitTests
 			if (firstArg == "fetch")
 			{
 				if (args.Length is not 3 and not 4)
-					throw new NotSupportedException();
+					throw new NotSupportedException("MockCommandRunnerWithOldRemoteGitVersion: Unknown args for test behavior.");
 				if (args.Length == 4 && !args[2].StartsWith("--depth", StringComparison.Ordinal))
 					throw new CommandException(128, "", "error: Server does not allow request for unadvertised object a1b2c3");
 			}

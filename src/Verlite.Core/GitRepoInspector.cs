@@ -2,8 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Verlite
@@ -15,39 +19,24 @@ namespace Verlite
 	public class GitMissingOrNotGitRepoException : RepoInspectionException
 	{
 	}
-
-	internal static class LinqExtensions
+	/// <summary>
+	/// An exception when an unknown git error occurs.
+	/// </summary>
+	/// <seealso cref="RepoInspectionException"/>
+	public class UnknownGitException : RepoInspectionException
 	{
-		public static T MinBy<T, TSelector>(this IEnumerable<T> self, Func<T, TSelector> selector)
-			where TSelector : struct
-		{
-			T max = default!;
-			TSelector? select = null;
-			Comparer<TSelector>? comparer = Comparer<TSelector>.Default;
-
-			foreach (T item in self)
-			{
-				TSelector new_select = selector(item);
-
-				if (!select.HasValue || comparer.Compare(select.Value, new_select) > 0)
-				{
-					max = item;
-					select = new_select;
-				}
-			}
-
-			if (!select.HasValue)
-				throw new ArgumentException("no values to get the min of", nameof(self));
-
-			return max;
-		}
+		/// <summary>
+		/// Construct a new exception with an explanation message.
+		/// </summary>
+		/// <param name="message">The message.</param>
+		public UnknownGitException(string message) : base(message) { }
 	}
 
 	/// <summary>
 	/// Support Git repositories for version calculation.
 	/// </summary>
 	/// <seealso cref="IRepoInspector"/>
-	public sealed class GitRepoInspector : IRepoInspector
+	public sealed class GitRepoInspector : IRepoInspector, IDisposable
 	{
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		// TODO: Remove all of these enumerated permutations of the old optional args in 2.0.0
@@ -155,25 +144,73 @@ namespace Verlite
 			return parents is not null ? parents : Array.Empty<Commit>();
 		}
 
+		private readonly SemaphoreSlim catFileSemaphore = new(initialCount: 1, maxCount: 1);
+		internal Process? CatFileProcess { get; set; }
+		private async Task<string?> CatFile(string type, string id)
+		{
+			await catFileSemaphore.WaitAsync();
+			try
+			{
+				if (CatFileProcess is null)
+				{
+					ProcessStartInfo info = new()
+					{
+						FileName = "git",
+						Arguments = "cat-file --batch",
+						WorkingDirectory = Root,
+						RedirectStandardError = false,
+						RedirectStandardOutput = true,
+						RedirectStandardInput = true,
+						UseShellExecute = false,
+					};
+					CatFileProcess = Process.Start(info);
+				}
+				if (CatFileProcess.HasExited)
+					throw new UnknownGitException("The git cat-file process was unexpectedly terminated!");
+
+				var (cin, cout) = (CatFileProcess.StandardInput, CatFileProcess.StandardOutput);
+
+				await cin.WriteLineAsync(id);
+				string line = await cout.ReadLineAsync();
+				string[] response = line.Split(' ');
+
+				if (response[0] != id)
+					throw new UnknownGitException("The returned blob hash did not match.");
+				else if (response[1] == "missing")
+					return null;
+				else if (response[1] != type)
+					throw new UnknownGitException($"Blob for {id} expected {type} but was {response[1]}.");
+
+				int length = int.Parse(response[2], CultureInfo.InvariantCulture);
+
+				var buffer = new char[length];
+				await cout.ReadBlockAsync(buffer, 0, length);
+				await cout.ReadLineAsync(); // git appends a linefeed
+
+				return new string(buffer);
+			}
+			finally
+			{
+				catFileSemaphore.Release();
+			}
+		}
+
 		private Dictionary<Commit, string> CommitCache { get; } = new();
 		private async Task<string?> GetCommitObjectInternal(Commit commit)
 		{
-			try
+			if (CommitCache.TryGetValue(commit, out var cached))
+				return cached;
+
+			var contents = await CatFile("commit", commit.Id);
+			if (contents is not null)
 			{
-				if (CommitCache.TryGetValue(commit, out var cached))
-					return cached;
-
-				var (contents, _) = await Git("cat-file", "commit", commit.Id);
-				Log?.Verbatim($"GetCommitObjectInternal({commit}) -> {contents.Length} chars");
-
 				CommitCache[commit] = contents;
-				return contents;
+				Log?.Verbatim($"GetCommitObjectInternal({commit}) -> {contents.Length} chars");
 			}
-			catch (CommandException ex) when (ex.StandardError.Contains($"{commit}: bad file"))
-			{
+			else
 				Log?.Verbatim($"GetCommitObjectInternal({commit}) -> null");
-				return null;
-			}
+
+			return contents;
 		}
 
 		private class ProbeResult
@@ -192,11 +229,15 @@ namespace Verlite
 
 			var shallowCommits = new List<(Commit commit, int depth)>();
 			var toVisit = new Stack<(Commit commit, int depth)>();
+			var visited = new HashSet<Commit>();
 
 			toVisit.Push((head.Value, 1));
 			while (toVisit.Count != 0)
 			{
 				var (current, depth) = toVisit.Pop();
+
+				if (!visited.Add(current))
+					continue;
 
 				var commitContents = await GetCommitObjectInternal(current);
 				if (commitContents is null)
@@ -209,12 +250,6 @@ namespace Verlite
 				foreach (var parent in parents)
 					toVisit.Push((parent, depth + 1));
 			}
-
-			// select only the shortest path to that commit
-			shallowCommits = shallowCommits
-				.GroupBy(x => x.commit)
-				.Select(g => g.MinBy(x => x.depth))
-				.ToList();
 
 			return new()
 			{
@@ -247,7 +282,7 @@ namespace Verlite
 					var newTotalDepth = Math.Max(32, maxDepth * 2);
 
 					Log?.Normal($"Deepen(): Deepen {newTotalDepth} commits from HEAD.");
-					_ = await Git("fetch", $"--depth={newTotalDepth}");
+					_ = await Git("fetch", Remote, $"--depth={newTotalDepth}");
 				}
 			}
 			catch (CommandException ex)
@@ -382,6 +417,21 @@ namespace Verlite
 		public Task FetchTag(Tag tag)
 		{
 			return FetchTag(tag, Remote);
+		}
+
+		/// <summary>
+		/// Clean up resources used.
+		/// </summary>
+		public void Dispose()
+		{
+			try
+			{
+				CatFileProcess?.StandardInput.Close();
+				CatFileProcess?.Kill();
+				CatFileProcess?.Close();
+				catFileSemaphore.Dispose();
+			}
+			finally { }
 		}
 	}
 }

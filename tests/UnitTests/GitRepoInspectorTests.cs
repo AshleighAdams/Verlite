@@ -87,7 +87,7 @@ namespace UnitTests
 		{
 			await TestRepo.Git("init");
 
-			var repo = await TestRepo.MakeInspector();
+			using var repo = await TestRepo.MakeInspector();
 
 			var head = await repo.GetHead();
 
@@ -100,7 +100,7 @@ namespace UnitTests
 			await TestRepo.Git("init");
 			await TestRepo.Git("commit", "--allow-empty", "-m", "first");
 
-			var repo = await TestRepo.MakeInspector();
+			using var repo = await TestRepo.MakeInspector();
 			var head = await repo.GetHead();
 			head.Should().Be(new Commit("b2000fc1f1d2e5f816cfa51a4ad8764048f22f0a"));
 
@@ -115,7 +115,7 @@ namespace UnitTests
 			await TestRepo.Git("init");
 			await TestRepo.Git("commit", "--allow-empty", "-m", "first");
 
-			var repo = await TestRepo.MakeInspector();
+			using var repo = await TestRepo.MakeInspector();
 			var head = await repo.GetHead();
 			head.Should().Be(new Commit("b2000fc1f1d2e5f816cfa51a4ad8764048f22f0a"));
 			var parent = await repo.GetParent(head.Value);
@@ -130,7 +130,7 @@ namespace UnitTests
 			await TestRepo.Git("commit", "--allow-empty", "-m", "first");
 			await TestRepo.Git("commit", "--allow-empty", "-m", "second");
 
-			var repo = await TestRepo.MakeInspector();
+			using var repo = await TestRepo.MakeInspector();
 			var head = await repo.GetHead();
 			head.Should().Be(new Commit("110c6a3673eba54f33707cde2b721fb765443153"));
 			var parent = await repo.GetParent(head.Value);
@@ -147,7 +147,7 @@ namespace UnitTests
 			await TestRepo.Git("init");
 			await TestRepo.Git("commit", "--allow-empty", "-m", "parent 0123456789abcdef0123456789abcdef01234567");
 
-			var repo = await TestRepo.MakeInspector();
+			using var repo = await TestRepo.MakeInspector();
 			var head = await repo.GetHead();
 			var parent = await repo.GetParent(head.Value);
 
@@ -161,7 +161,7 @@ namespace UnitTests
 			await TestRepo.Git("commit", "--allow-empty", "-m", "first");
 			await TestRepo.Git("commit", "--allow-empty", "-m", "second");
 
-			var repo = await TestRepo.MakeInspector();
+			using var repo = await TestRepo.MakeInspector();
 			var tags = await repo.GetTags(QueryTarget.Local | QueryTarget.Remote);
 
 			tags.Should().BeEmpty();
@@ -176,7 +176,7 @@ namespace UnitTests
 			await TestRepo.Git("commit", "--allow-empty", "-m", "second");
 			await TestRepo.Git("tag", "tag-two");
 
-			var repo = await TestRepo.MakeInspector();
+			using var repo = await TestRepo.MakeInspector();
 			var tags = await repo.GetTags(QueryTarget.Remote);
 
 			tags.Should().BeEmpty();
@@ -191,7 +191,7 @@ namespace UnitTests
 			await TestRepo.Git("commit", "--allow-empty", "-m", "second");
 			await TestRepo.Git("tag", "tag-two");
 
-			var repo = await TestRepo.MakeInspector();
+			using var repo = await TestRepo.MakeInspector();
 			var tags = await repo.GetTags(QueryTarget.Local);
 
 			tags.Should().Contain(new Tag[]
@@ -213,7 +213,7 @@ namespace UnitTests
 			using var clone = new GitTestDirectory();
 			await clone.Git("clone", TestRepo.RootPath, ".", "--no-tags");
 
-			var repo = await clone.MakeInspector();
+			using var repo = await clone.MakeInspector();
 			var localTags = await repo.GetTags(QueryTarget.Local);
 			var remoteTags = await repo.GetTags(QueryTarget.Remote);
 
@@ -237,7 +237,7 @@ namespace UnitTests
 			using var clone = new GitTestDirectory();
 			await clone.Git("clone", TestRepo.RootPath, ".", "--no-tags");
 
-			var repo = await clone.MakeInspector();
+			using var repo = await clone.MakeInspector();
 			var remoteTags = await repo.GetTags(QueryTarget.Remote);
 
 			var firstTags = remoteTags.FindCommitTags(new Commit("b2000fc1f1d2e5f816cfa51a4ad8764048f22f0a"));
@@ -266,7 +266,7 @@ namespace UnitTests
 			using var clone = new GitTestDirectory();
 			await clone.Git("clone", TestRepo.RootPath, ".", "--branch", "master", "--depth", "1");
 
-			var repo = await clone.MakeInspector();
+			using var repo = await clone.MakeInspector();
 			var remoteTags = await repo.GetTags(QueryTarget.Remote);
 
 			remoteTags.Should().Contain(new Tag[]
@@ -289,7 +289,7 @@ namespace UnitTests
 			using var clone = new GitTestDirectory();
 			await clone.Git("clone", TestRepo.RootUri, ".", "--branch", "master", "--depth", "1");
 
-			var repo = await clone.MakeInspector();
+			using var repo = await clone.MakeInspector();
 			var head = await repo.GetHead();
 			var parent = await repo.GetParent(head.Value);
 
@@ -310,7 +310,7 @@ namespace UnitTests
 			using var clone = new GitTestDirectory();
 			await clone.Git("clone", TestRepo.RootUri, ".", "--branch", "master", "--depth", "1");
 
-			var repo = await clone.MakeInspector();
+			using var repo = await clone.MakeInspector();
 			repo.CanDeepen = true;
 			var head = await repo.GetHead();
 			var parent = await repo.GetParent(head.Value);
@@ -336,7 +336,7 @@ namespace UnitTests
 			using var clone = new GitTestDirectory();
 			await clone.Git("clone", TestRepo.RootUri, ".", "--branch", "master", "--depth", "1");
 
-			var repo = await clone.MakeInspector();
+			using var repo = await clone.MakeInspector();
 			repo.CanDeepen = false;
 
 			var remoteTags = await repo.GetTags(QueryTarget.Remote);
@@ -373,10 +373,10 @@ namespace UnitTests
 			await clone.Git("clone", TestRepo.RootUri, ".", "--branch", "master", "--depth", "1");
 			await clone.Git("fetch", "--unshallow"); // should have a deep clone with no tags
 
-			var repo = await clone.MakeInspector();
-			repo.CanDeepen = false;
+			using var repoA = await clone.MakeInspector();
+			repoA.CanDeepen = false;
 
-			var remoteTags = await repo.GetTags(QueryTarget.Remote);
+			var remoteTags = await repoA.GetTags(QueryTarget.Remote);
 			var desiredTag = remoteTags
 				.Where(tag => tag.Name == "tag-three")
 				.First();
@@ -384,14 +384,14 @@ namespace UnitTests
 				.Where(tag => tag.Name == "tag-two")
 				.First();
 
-			await repo.FetchTag(desiredTag);
-			repo = null; // repo modified invalidating internal cache, so remake inspector
-			repo = await clone.MakeInspector();
+			await repoA.FetchTag(desiredTag);
 
-			var desiredParent = await repo.GetParent(desiredTag.PointsTo);
+			using var repoB = await clone.MakeInspector();
+
+			var desiredParent = await repoB.GetParent(desiredTag.PointsTo);
 			desiredParent.Should().Be(deeperTag.PointsTo);
 
-			var deeperParent = await repo.GetParent(deeperTag.PointsTo);
+			var deeperParent = await repoB.GetParent(deeperTag.PointsTo);
 			deeperParent.Should().Be(new Commit("b2000fc1f1d2e5f816cfa51a4ad8764048f22f0a"));
 		}
 
@@ -409,7 +409,7 @@ namespace UnitTests
 			await clone.Git("clone", TestRepo.RootUri, ".", "--branch", "master", "--depth", "1");
 
 			var mockCommandRunner = new MockCommandRunnerWithOldRemoteGitVersion(new SystemCommandRunner());
-			var repo = await clone.MakeInspector(
+			using var repo = await clone.MakeInspector(
 				mockCommandRunner);
 
 			repo.CanDeepen = true;
@@ -429,6 +429,29 @@ namespace UnitTests
 			filteredHistory.Should().ContainInOrder(
 				"normal fetch",
 				"legacy fetch");
+		}
+
+		[Fact]
+		public async Task CommitsWithMultipleParentsReturnMultipleParents()
+		{
+			await TestRepo.Git("init");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "first");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "second");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "third");
+
+			await TestRepo.Git("branch", "feature", "HEAD^1");
+			await TestRepo.Git("checkout", "feature");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "fourth");
+			await TestRepo.Git("checkout", "master");
+			await TestRepo.Git("merge", "feature");
+
+			using var repo = await TestRepo.MakeInspector();
+
+			var head = await repo.GetHead();
+			var parents = await repo.GetParents(head.Value);
+
+			parents.Count.Should().Be(2);
+			parents.Distinct().Count().Should().Be(2);
 		}
 	}
 }
