@@ -3,9 +3,9 @@
 name: Release
 
 on:
-  push:
-    tags:
-    - v*
+  release:
+    types:
+    - published
 
 defaults:
   run:
@@ -40,9 +40,6 @@ jobs:
 
     - name: Verify Tag
       run: |
-        curl https://github.com/AshleighAdams.gpg | gpg --import
-        echo "BDE36CC9850449DD77ED51CFBF8DF4780B7BD0AD:6:" | gpg --import-ownertrust # Ashleigh Adams
-        git tag --verify "${GITHUB_REF#refs/*/}"
         [[ "v$(minver --tag-prefix=v)" == "${GITHUB_REF#refs/*/}" ]] # error out if the versions don't match
 
     - name: Restore
@@ -72,21 +69,14 @@ jobs:
         tag="${GITHUB_REF#refs/*/}"
         options=()
 
-        git tag -v --format='%(contents:subject)' "$tag" > msg.txt
-        echo >> msg.txt
-        git tag -v --format='%(contents:body)' "$tag" >> msg.txt
-        options+=("-F" "msg.txt")
-
-        if [[ "$(minver --tag-prefix=v --verbosity=e)" == *"-"* ]]; then
-          options+=("--prerelease")
-        fi
+        options+=("-m" "") # leave the title and body unchanged
 
         IFS=$'\n';
         for asset in $(find ./artifacts -name "*.nupkg"); do
           options+=("-a" "$asset")
         done
 
-        hub release create "${options[@]}" "$tag"
+        hub release edit "${options[@]}" "$tag"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
