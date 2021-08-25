@@ -408,7 +408,7 @@ namespace UnitTests
 			using var clone = new GitTestDirectory();
 			await clone.Git("clone", TestRepo.RootUri, ".", "--branch", "master", "--depth", "1");
 
-			var mockCommandRunner = new MockCommandRunnerWithOldRemoteGitVersion(
+			var mockCommandRunner = new MockCommandRunnerWithBehaviors(
 				new SystemCommandRunner(),
 				MockCommandRunnerInvalidBehavior.DisableDeepenFromCommit);
 			using var repo = await clone.MakeInspector(
@@ -489,7 +489,30 @@ namespace UnitTests
 			// forcibly kill the process
 			// exposed internals to kill the process
 			Assert.NotNull(repo.CatFileProcess);
-			repo.CatFileProcess!.Kill();
+			repo.CatFileProcess!.Kill(entireProcessTree: true);
+			await repo.CatFileProcess!.WaitForExitAsync();
+
+			// attempt to read a non-cached parent
+			await Assert.ThrowsAsync<UnknownGitException>(() => repo.GetParents(parents[0]));
+		}
+
+		[Fact]
+		public async Task CatfileDesynchronizingThrows()
+		{
+			await TestRepo.Git("init");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "a");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "b");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "c");
+
+			using var repo = await TestRepo.MakeInspector();
+			var head = await repo.GetHead();
+
+			// ensure the process has been started
+			var parents = await repo.GetParents(head.Value);
+
+			// forcibly desync the git catfile process
+			Assert.NotNull(repo.CatFileProcess);
+			repo.CatFileProcess!.StandardInput.WriteLine(head.Value);
 
 			// attempt to read a non-cached parent
 			await Assert.ThrowsAsync<UnknownGitException>(() => repo.GetParents(parents[0]));
@@ -498,7 +521,6 @@ namespace UnitTests
 		[Fact]
 		public async Task SilentlyFailingDeepenFailsPredictably()
 		{
-
 			await TestRepo.Git("init");
 			await TestRepo.Git("commit", "--allow-empty", "-m", "first");
 			await TestRepo.Git("tag", "tag-one");
@@ -509,7 +531,7 @@ namespace UnitTests
 			using var clone = new GitTestDirectory();
 			await clone.Git("clone", TestRepo.RootUri, ".", "--branch", "master", "--depth", "1");
 
-			var mockCommandRunner = new MockCommandRunnerWithOldRemoteGitVersion(
+			var mockCommandRunner = new MockCommandRunnerWithBehaviors(
 				new SystemCommandRunner(),
 				MockCommandRunnerInvalidBehavior.DisableFetchSilently);
 			using var repo = await clone.MakeInspector(
@@ -520,6 +542,32 @@ namespace UnitTests
 			var parent = (await repo.GetParents(head.Value))[0];
 
 			await Assert.ThrowsAsync<AutoDeepenException>(() => repo.GetParent(parent));
+		}
+
+		[Fact]
+		public async Task DeepeningEmptyGitHandled()
+		{
+			await TestRepo.Git("init");
+
+			using var repo = await TestRepo.MakeInspector();
+			repo.CanDeepen = true;
+
+			await Assert.ThrowsAsync<AutoDeepenException>(() => repo.GetParents(new Commit("idontexist")));
+		}
+
+		[Fact]
+		public async Task AccessingInvalidBlobAsCommitThrows()
+		{
+			await TestRepo.Git("init");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "first");
+
+			using var repo = await TestRepo.MakeInspector();
+
+			var head = await repo.GetHead();
+
+			var (tree, _) = await TestRepo.Git("show", "--quiet", head.Value.Id, "--format=%T");
+
+			await Assert.ThrowsAsync<UnknownGitException>(() => repo.GetParents(new Commit(tree)));
 		}
 	}
 }

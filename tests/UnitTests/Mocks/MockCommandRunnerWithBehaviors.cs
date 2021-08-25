@@ -9,15 +9,16 @@ namespace UnitTests
 {
 	public enum MockCommandRunnerInvalidBehavior
 	{
+		None,
 		DisableDeepenFromCommit,
 		DisableFetchSilently,
 	}
 
-	public sealed class MockCommandRunnerWithOldRemoteGitVersion : ICommandRunner
+	public sealed class MockCommandRunnerWithBehaviors : ICommandRunner
 	{
 		private ICommandRunner BaseRunner { get; }
-		private MockCommandRunnerInvalidBehavior InvalidBehavior { get; }
-		public MockCommandRunnerWithOldRemoteGitVersion(ICommandRunner baseRunner, MockCommandRunnerInvalidBehavior invalidBehavior)
+		public MockCommandRunnerInvalidBehavior InvalidBehavior { get; set; }
+		public MockCommandRunnerWithBehaviors(ICommandRunner baseRunner, MockCommandRunnerInvalidBehavior invalidBehavior)
 		{
 			BaseRunner = baseRunner;
 			InvalidBehavior = invalidBehavior;

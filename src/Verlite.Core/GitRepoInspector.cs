@@ -165,8 +165,6 @@ namespace Verlite
 					};
 					CatFileProcess = Process.Start(info);
 				}
-				if (CatFileProcess.HasExited)
-					throw new UnknownGitException("The git cat-file process was unexpectedly terminated!");
 
 				var (cin, cout) = (CatFileProcess.StandardInput, CatFileProcess.StandardOutput);
 
@@ -188,6 +186,10 @@ namespace Verlite
 				await cout.ReadLineAsync(); // git appends a linefeed
 
 				return new string(buffer);
+			}
+			catch (Exception ex)
+			{
+				throw new UnknownGitException($"Failed to communicate with the git cat-file process: {ex.Message}");
 			}
 			finally
 			{
@@ -223,7 +225,6 @@ namespace Verlite
 			Log?.Verbatim($"ProbeDepth()");
 
 			var head = await GetHead();
-
 			if (head is null)
 				return new ProbeResult();
 
@@ -261,7 +262,9 @@ namespace Verlite
 		private async Task Deepen()
 		{
 			var probe = await ProbeDepth();
-			Debug.Assert(probe.ShallowCommits.Count > 0);
+
+			if (probe.ShallowCommits.Count == 0)
+				throw new AutoDeepenException("Failed to deepen the repository. No shallow commits accessible from head. Maybe accessing orphaned commit?");
 
 			Log?.Normal($"Deepen(): Attempting to deepen the repository.");
 			try
@@ -431,6 +434,7 @@ namespace Verlite
 				CatFileProcess?.Close();
 				catFileSemaphore.Dispose();
 			}
+			catch (IOException) { } // process may already be terminated
 			finally { }
 		}
 	}
