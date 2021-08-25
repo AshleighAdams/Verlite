@@ -408,7 +408,9 @@ namespace UnitTests
 			using var clone = new GitTestDirectory();
 			await clone.Git("clone", TestRepo.RootUri, ".", "--branch", "master", "--depth", "1");
 
-			var mockCommandRunner = new MockCommandRunnerWithOldRemoteGitVersion(new SystemCommandRunner());
+			var mockCommandRunner = new MockCommandRunnerWithOldRemoteGitVersion(
+				new SystemCommandRunner(),
+				MockCommandRunnerInvalidBehavior.DisableDeepenFromCommit);
 			using var repo = await clone.MakeInspector(
 				mockCommandRunner);
 
@@ -452,6 +454,72 @@ namespace UnitTests
 
 			parents.Count.Should().Be(2);
 			parents.Distinct().Count().Should().Be(2);
+		}
+
+		[Fact]
+		public async Task CachedParentsReturnCorrectParents()
+		{
+			await TestRepo.Git("init");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "a");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "b");
+
+			using var repo = await TestRepo.MakeInspector();
+
+			var head = await repo.GetHead();
+			var parentsFirst = await repo.GetParents(head.Value);
+			var parentsSecond = await repo.GetParents(head.Value);
+
+			parentsFirst.Should().BeEquivalentTo(parentsSecond);
+		}
+
+		[Fact]
+		public async Task TerminatedCatFileThrows()
+		{
+			await TestRepo.Git("init");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "a");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "b");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "c");
+
+			using var repo = await TestRepo.MakeInspector();
+			var head = await repo.GetHead();
+
+			// ensure the process has been started
+			var parents = await repo.GetParents(head.Value);
+
+			// forcibly kill the process
+			// exposed internals to kill the process
+			Assert.NotNull(repo.CatFileProcess);
+			repo.CatFileProcess!.Kill();
+
+			// attempt to read a non-cached parent
+			await Assert.ThrowsAsync<UnknownGitException>(() => repo.GetParents(parents[0]));
+		}
+
+		[Fact]
+		public async Task SilentlyFailingDeepenFailsPredictably()
+		{
+
+			await TestRepo.Git("init");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "first");
+			await TestRepo.Git("tag", "tag-one");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "second");
+			await TestRepo.Git("tag", "tag-two");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "third");
+
+			using var clone = new GitTestDirectory();
+			await clone.Git("clone", TestRepo.RootUri, ".", "--branch", "master", "--depth", "1");
+
+			var mockCommandRunner = new MockCommandRunnerWithOldRemoteGitVersion(
+				new SystemCommandRunner(),
+				MockCommandRunnerInvalidBehavior.DisableFetchSilently);
+			using var repo = await clone.MakeInspector(
+				mockCommandRunner);
+
+			repo.CanDeepen = true;
+			var head = await repo.GetHead();
+			var parent = (await repo.GetParents(head.Value))[0];
+
+			await Assert.ThrowsAsync<AutoDeepenException>(() => repo.GetParent(parent));
 		}
 	}
 }
