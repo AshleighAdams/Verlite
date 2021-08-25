@@ -2,8 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Verlite
@@ -15,12 +19,24 @@ namespace Verlite
 	public class GitMissingOrNotGitRepoException : RepoInspectionException
 	{
 	}
+	/// <summary>
+	/// An exception when an unknown git error occurs.
+	/// </summary>
+	/// <seealso cref="RepoInspectionException"/>
+	public class UnknownGitException : RepoInspectionException
+	{
+		/// <summary>
+		/// Construct a new exception with an explanation message.
+		/// </summary>
+		/// <param name="message">The message.</param>
+		public UnknownGitException(string message) : base(message) { }
+	}
 
 	/// <summary>
 	/// Support Git repositories for version calculation.
 	/// </summary>
 	/// <seealso cref="IRepoInspector"/>
-	public sealed class GitRepoInspector : IRepoInspector
+	public sealed class GitRepoInspector : IRepoInspector, IDisposable
 	{
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		// TODO: Remove all of these enumerated permutations of the old optional args in 2.0.0
@@ -61,7 +77,6 @@ namespace Verlite
 					remote,
 					log,
 					commandRunner);
-				await ret.CacheParents();
 				return ret;
 			}
 			catch
@@ -80,9 +95,11 @@ namespace Verlite
 		/// The root of the repository.
 		/// </summary>
 		public string Root { get; }
-		private Dictionary<Commit, Commit> CachedParents { get; } = new();
-		private (int depth, bool shallow, Commit deepest)? FetchDepth { get; set; }
+		/// <summary>
+		/// The remote name used for network operations.
+		/// </summary>
 		public string Remote { get; }
+		private Dictionary<Commit, IReadOnlyList<Commit>> CachedParents { get; } = new();
 
 		private GitRepoInspector(string root, string remote, ILogger? log, ICommandRunner commandRunner)
 		{
@@ -110,92 +127,166 @@ namespace Verlite
 			}
 		}
 
-		private static Commit? ParseCommitObjectParent(string commitObj)
+		private static IReadOnlyList<Commit> ParseCommitObjectParents(string commitObj)
 		{
+			List<Commit>? parents = null;
 			var lines = commitObj.Split('\n');
 			foreach (var line in lines)
 			{
 				if (string.IsNullOrEmpty(line))
 					break;
 				if (line.StartsWith("parent ", StringComparison.Ordinal))
-					return new(line.Substring("parent ".Length));
+				{
+					parents ??= new();
+					parents.Add(new(line.Substring("parent ".Length)));
+				}
 			}
-			return null;
+			return parents is not null ? parents : Array.Empty<Commit>();
 		}
 
-		private async Task<string?> GetCommitObjectInternal(Commit commit)
+		private readonly SemaphoreSlim catFileSemaphore = new(initialCount: 1, maxCount: 1);
+		internal Process? CatFileProcess { get; set; }
+		private async Task<string?> CatFile(string type, string id)
 		{
+			await catFileSemaphore.WaitAsync();
 			try
 			{
-				var (contents, _) = await Git("cat-file", "commit", commit.Id);
-				Log?.Verbatim($"GetCommitObjectInternal({commit}) -> {contents.Length} chars");
-				return contents;
+				if (CatFileProcess is null)
+				{
+					ProcessStartInfo info = new()
+					{
+						FileName = "git",
+						Arguments = "cat-file --batch",
+						WorkingDirectory = Root,
+						RedirectStandardError = false,
+						RedirectStandardOutput = true,
+						RedirectStandardInput = true,
+						UseShellExecute = false,
+					};
+					CatFileProcess = Process.Start(info);
+				}
+
+				var (cin, cout) = (CatFileProcess.StandardInput, CatFileProcess.StandardOutput);
+
+				await cin.WriteLineAsync(id);
+				string line = await cout.ReadLineAsync();
+				string[] response = line.Split(' ');
+
+				if (response[0] != id)
+					throw new UnknownGitException("The returned blob hash did not match.");
+				else if (response[1] == "missing")
+					return null;
+				else if (response[1] != type)
+					throw new UnknownGitException($"Blob for {id} expected {type} but was {response[1]}.");
+
+				int length = int.Parse(response[2], CultureInfo.InvariantCulture);
+
+				var buffer = new char[length];
+				await cout.ReadBlockAsync(buffer, 0, length);
+				await cout.ReadLineAsync(); // git appends a linefeed
+
+				return new string(buffer);
 			}
-			catch (CommandException ex) when (ex.StandardError.Contains($"{commit}: bad file"))
+			catch (Exception ex)
 			{
-				Log?.Verbatim($"GetCommitObjectInternal({commit}) -> null");
-				return null;
+				throw new UnknownGitException($"Failed to communicate with the git cat-file process: {ex.Message}");
+			}
+			finally
+			{
+				catFileSemaphore.Release();
 			}
 		}
 
-		private async Task<(int depth, bool shallow, Commit deepestCommit)> MeasureDepth()
+		private Dictionary<Commit, string> CommitCache { get; } = new();
+		private async Task<string?> GetCommitObjectInternal(Commit commit)
 		{
-			int depth = 0;
-			var current = await GetHead()
-				?? throw new InvalidOperationException("MeasureDepth(): Could not fetch head");
-			Commit deepest = current;
+			if (CommitCache.TryGetValue(commit, out var cached))
+				return cached;
 
-			while (CachedParents.TryGetValue(current, out Commit parent))
+			var contents = await CatFile("commit", commit.Id);
+			if (contents is not null)
 			{
-				deepest = current;
-				current = parent;
-				depth++;
-				Log?.Verbatim($"MeasureDepth(): Found parent {parent}, depth {depth}");
+				CommitCache[commit] = contents;
+				Log?.Verbatim($"GetCommitObjectInternal({commit}) -> {contents.Length} chars");
 			}
+			else
+				Log?.Verbatim($"GetCommitObjectInternal({commit}) -> null");
 
-			while (true)
+			return contents;
+		}
+
+		private class ProbeResult
+		{
+			public IReadOnlyList<(Commit commit, int depth)> ShallowCommits { get; set; } = Array.Empty<(Commit, int)>();
+		}
+
+		private async Task<ProbeResult> ProbeDepth()
+		{
+			Log?.Verbatim($"ProbeDepth()");
+
+			var head = await GetHead();
+			if (head is null)
+				return new ProbeResult();
+
+			var shallowCommits = new List<(Commit commit, int depth)>();
+			var toVisit = new Stack<(Commit commit, int depth)>();
+			var visited = new HashSet<Commit>();
+
+			toVisit.Push((head.Value, 1));
+			while (toVisit.Count != 0)
 			{
-				string? commitObj = await GetCommitObjectInternal(current);
-				if (commitObj is null)
+				var (current, depth) = toVisit.Pop();
+
+				if (!visited.Add(current))
+					continue;
+
+				var commitContents = await GetCommitObjectInternal(current);
+				if (commitContents is null)
 				{
-					Log?.Verbatim($"MeasureDepth() -> (depth: {depth}, shallow: true)");
-					return (depth, shallow: true, deepestCommit: deepest);
+					shallowCommits.Add((current, depth));
+					continue;
 				}
 
-				Commit? parent = ParseCommitObjectParent(commitObj);
-				if (parent is null)
-				{
-					Log?.Verbatim($"MeasureDepth() -> (depth: {depth}, shallow: false)");
-					return (depth, shallow: false, deepestCommit: current);
-				}
-
-				depth++;
-				deepest = current;
-				current = parent.Value;
+				var parents = ParseCommitObjectParents(commitContents);
+				foreach (var parent in parents)
+					toVisit.Push((parent, depth + 1));
 			}
+
+			return new()
+			{
+				ShallowCommits = shallowCommits,
+			};
 		}
 
 		private bool DeepenFromCommitSupported { get; set; } = true;
 		private async Task Deepen()
 		{
-			Debug.Assert(FetchDepth is null || FetchDepth.Value.shallow == true);
+			var probe = await ProbeDepth();
 
-			FetchDepth = await MeasureDepth();
-			if (FetchDepth.Value.shallow == false)
-				return;
+			if (probe.ShallowCommits.Count == 0)
+				throw new AutoDeepenException("Failed to deepen the repository. No shallow commits accessible from head. Maybe accessing orphaned commit?");
 
-			int wasDepth = FetchDepth.Value.depth;
-			int newDepth = Math.Max(32, FetchDepth.Value.depth * 2);
-			int deltaDepth = newDepth - wasDepth;
-
-			Log?.Normal($"Deepen(): Deepening to depth {newDepth} (+{deltaDepth} commits, was {wasDepth})");
-
+			Log?.Normal($"Deepen(): Attempting to deepen the repository.");
 			try
 			{
 				if (DeepenFromCommitSupported)
-					_ = await Git("fetch", Remote, FetchDepth.Value.deepest.Id, $"--depth={deltaDepth}");
+				{
+					foreach (var (commit, depth) in probe.ShallowCommits)
+					{
+						var additionalDepth = Math.Max(32, depth); // effectively doubling
+
+						Log?.Normal($"Deepen(): Deepen {additionalDepth} commits from {commit}.");
+						_ = await Git("fetch", Remote, commit.Id, $"--depth={additionalDepth}");
+					}
+				}
 				else
-					_ = await Git("fetch", Remote, $"--depth={newDepth}");
+				{
+					var maxDepth = probe.ShallowCommits.Max(x => x.depth);
+					var newTotalDepth = Math.Max(32, maxDepth * 2);
+
+					Log?.Normal($"Deepen(): Deepen {newTotalDepth} commits from HEAD.");
+					_ = await Git("fetch", Remote, $"--depth={newTotalDepth}");
+				}
 			}
 			catch (CommandException ex)
 				when (
@@ -210,6 +301,10 @@ namespace Verlite
 			{
 				throw new AutoDeepenException(ex);
 			}
+
+			var reprobe = await ProbeDepth();
+			if (reprobe.ShallowCommits.SequenceEqual(probe.ShallowCommits))
+				throw new AutoDeepenException("Failed to deepen the repository. Shallow commits did not change.");
 		}
 
 		private async Task<string> GetCommitObject(Commit commit)
@@ -228,24 +323,6 @@ namespace Verlite
 				?? throw new AutoDeepenException($"Deepened repo did not contain commit {commit}");
 		}
 
-		private async Task CacheParents()
-		{
-			try
-			{
-				var (contents, _) = await Git("rev-list", "HEAD", "--first-parent");
-				var lines = contents.Split('\n');
-
-				for (int i = 0; i < lines.Length - 1; i++)
-					CachedParents[new(lines[i])] = new(lines[i + 1]);
-
-				Log?.Verbatim($"CacheParents(): Cached {CachedParents.Count} parents.");
-			}
-			catch (CommandException ex)
-				when (ex.StandardError.StartsWith("fatal: ambiguous argument 'HEAD'", StringComparison.Ordinal))
-			{
-			}
-		}
-
 		/// <inheritdoc/>
 		public async Task<Commit?> GetParent(Commit commit)
 		{
@@ -258,17 +335,16 @@ namespace Verlite
 		/// <inheritdoc/>
 		public async Task<IReadOnlyList<Commit>> GetParents(Commit commit)
 		{
-			if (CachedParents.TryGetValue(commit, out Commit ret))
-				return new[] { ret };
+			if (CachedParents.TryGetValue(commit, out var ret))
+				return ret;
 
 			var contents = await GetCommitObject(commit);
-			var parent = ParseCommitObjectParent(contents);
+			var parents = ParseCommitObjectParents(contents);
 
-			if (parent is not null)
-				CachedParents[commit] = parent.Value;
+			CachedParents[commit] = parents;
 
-			Log?.Verbatim($"GetParent() -> {parent}");
-			return parent is not null ? new Commit[] { parent.Value } : Array.Empty<Commit>();
+			Log?.Verbatim($"GetParents() -> {string.Join(", ", parents)}");
+			return parents;
 		}
 
 		private static readonly Regex RefsTagRegex = new Regex(
@@ -330,11 +406,11 @@ namespace Verlite
 		/// <inheritdoc/>
 		public async Task FetchTag(Tag tag, string remote)
 		{
-			FetchDepth ??= await MeasureDepth();
+			var probe = await ProbeDepth();
 
 			Log?.Verbose($"FetchTag({tag}, {remote})");
 
-			if (FetchDepth.Value.shallow)
+			if (probe.ShallowCommits.Count != 0)
 				await Git("fetch", "--depth", "1", remote, $"refs/tags/{tag.Name}:refs/tags/{tag.Name}");
 			else
 				await Git("fetch", remote, $"refs/tags/{tag.Name}:refs/tags/{tag.Name}");
@@ -344,6 +420,22 @@ namespace Verlite
 		public Task FetchTag(Tag tag)
 		{
 			return FetchTag(tag, Remote);
+		}
+
+		/// <summary>
+		/// Clean up resources used.
+		/// </summary>
+		public void Dispose()
+		{
+			try
+			{
+				CatFileProcess?.StandardInput.Close();
+				CatFileProcess?.Kill();
+				CatFileProcess?.Close();
+				catFileSemaphore.Dispose();
+			}
+			catch (IOException) { } // process may already be terminated
+			finally { }
 		}
 	}
 }

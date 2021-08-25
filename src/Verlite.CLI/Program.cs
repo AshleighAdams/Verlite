@@ -132,7 +132,7 @@ namespace Verlite.CLI
 				var version = opts.VersionOverride ?? new SemVer();
 				if (opts.VersionOverride is null)
 				{
-					var repo = await GitRepoInspector.FromPath(sourceDirectory, log, commandRunner);
+					using var repo = await GitRepoInspector.FromPath(sourceDirectory, log, commandRunner);
 					repo.CanDeepen = autoFetch;
 
 					ITagFilter? tagFilter = null;

@@ -106,8 +106,7 @@ namespace Verlite.MsBuild
 			var version = opts.VersionOverride ?? new SemVer();
 			if (opts.VersionOverride is null)
 			{
-				var repo = await GitRepoInspector.FromPath(ProjectDirectory, log, commandRunner);
-				
+				using var repo = await GitRepoInspector.FromPath(ProjectDirectory, log, commandRunner);
 
 				ITagFilter? tagFilter = null;
 				if (!string.IsNullOrWhiteSpace(FilterTags))
