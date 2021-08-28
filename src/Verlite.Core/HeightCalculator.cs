@@ -57,45 +57,111 @@ namespace Verlite
 			if (head is null)
 				return (1, null);
 
-			var current = head.Value;
+			return await FromCommit(
+				commit: head.Value,
+				descriptor: "HEAD",
+				options: new FromCommitOptions(repo, tags, tagPrefix, log, tagFilter));
+		}
+
+		private class FromCommitOptions
+		{
+			public IRepoInspector Repo { get; }
+			public TagContainer Tags { get; }
+			public string TagPrefix { get; }
+			public ILogger? Log { get; }
+			public ITagFilter? TagFilter { get; }
+			/// <summary>
+			/// because we visit first to last, we can stop searching once we find a branch's fork point
+			/// </summary>
+			public HashSet<Commit> Visited { get; } = new();
+
+			public FromCommitOptions(
+				IRepoInspector repo,
+				TagContainer tags,
+				string tagPrefix,
+				ILogger? log,
+				ITagFilter? tagFilter)
+			{
+				Repo = repo;
+				Tags = tags;
+				TagPrefix = tagPrefix;
+				Log = log;
+				TagFilter = tagFilter;
+			}
+
+		}
+
+		private static async Task<(int height, TaggedVersion? version)> FromCommit(
+			Commit commit,
+			string descriptor,
+			FromCommitOptions options)
+		{
+			var current = commit;
 			int height = 0;
 			while (true)
 			{
-				var currentTags = tags.FindCommitTags(current);
+				var currentDescriptor = height == 0 ? descriptor : $"{descriptor}~{height}";
+
+				// already visited in an ultimately prior parent
+				if (!options.Visited.Add(current))
+				{
+					options.Log?.Verbatim($"{currentDescriptor} found in prior parent, discontinuing branch.");
+					return (-1, null);
+				}
+
+				var currentTags = options.Tags.FindCommitTags(current);
 				var versions = currentTags
-					.Where(t => t.Name.StartsWith(tagPrefix, StringComparison.Ordinal))
-					.SelectWhereSemver(tagPrefix, log)
+					.Where(t => t.Name.StartsWith(options.TagPrefix, StringComparison.Ordinal))
+					.SelectWhereSemver(options.TagPrefix, options.Log)
 					.OrderByDescending(v => v.Version)
 					.ToList();
 
-				log?.Verbatim($"HEAD^{height} {current} has {currentTags.Count} total tags with {versions.Count} versions.");
+				options.Log?.Verbatim($"{currentDescriptor} has {currentTags.Count} total tags with {versions.Count} versions.");
 
 				foreach (var tag in currentTags)
-					log?.Verbatim($"  found tag: {tag.Name}");
+					options.Log?.Verbatim($"  found tag: {tag.Name}");
 
 				List<TaggedVersion>? filteredVersions = null;
 				foreach (var version in versions)
 				{
-					bool passesFilter = tagFilter is null || await tagFilter.PassesFilter(version);
+					bool passesFilter = options.TagFilter is null || await options.TagFilter.PassesFilter(version);
 
 					if (passesFilter)
 					{
-						log?.Verbatim($"  version candidate: {version.Version}");
+						options.Log?.Verbatim($"  version candidate: {version.Version}");
 						filteredVersions ??= new();
 						filteredVersions.Add(version);
 					}
 					else
-						log?.Verbatim($"  version filtered: {version.Version} (from tag {version.Tag.Name})");
+						options.Log?.Verbatim($"  version filtered: {version.Version} (from tag {version.Tag.Name})");
 				}
 
 				if (filteredVersions is not null)
 					return (height, filteredVersions.First());
 
 				height++;
-				var parent = await repo.GetParent(current);
-				if (parent is null)
+				var parents = await options.Repo.GetParents(current);
+				if (parents.Count == 0)
 					break;
-				current = parent.Value;
+				else if (parents.Count == 1)
+					current = parents[0];
+				else
+				{
+					// calculate branch recursively, firstmost parents take priority
+					var best = await FromCommit(parents[0], $"{currentDescriptor}^1", options);
+					var bestIndex = 0;
+
+					for (int i = 1; i < parents.Count; i++)
+					{
+						var test = await FromCommit(parents[i], $"{currentDescriptor}^{i + 1}", options);
+						if (best.version is null && test.version is not null)
+							(best, bestIndex) = (test, i);
+						else if (best.version is not null && test.version is not null && test.version.Version > best.version.Version)
+							(best, bestIndex) = (test, i);
+					}
+
+					return (height + best.height, best.version);
+				}
 			}
 
 			return (height, null);
