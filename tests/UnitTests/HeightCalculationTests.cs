@@ -60,6 +60,160 @@ namespace UnitTests
 		}
 
 		[Fact]
+		public async Task FirstParentsHeightIsPreferred()
+		{
+			var gtor = new MockRepoGenerator();
+			var master = gtor.Branch(null);
+			master.Commit();
+			var feat = master.Branch();
+			feat.Commit();
+			feat.Commit();
+			feat.Commit();
+			master.Merge(feat);
+
+			var repo = new MockRepoInspector(gtor, master);
+
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+
+			tag.Should().BeNull();
+			height.Should().Be(2);
+		}
+
+		[Fact]
+		public async Task FirstParentsHeightIsPreferredWithOrphans()
+		{
+			var gtor = new MockRepoGenerator();
+			var master = gtor.Branch(null);
+			master.Commit();
+			var feat = gtor.Branch(null);
+			feat.Commit();
+			feat.Commit();
+			feat.Commit();
+			master.Merge(feat);
+
+			var repo = new MockRepoInspector(gtor, master);
+
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+
+			tag.Should().BeNull();
+			height.Should().Be(2);
+		}
+
+		[Fact]
+		public async Task MergeMasterIntoFeatureUpdatesVersion()
+		{
+			var gtor = new MockRepoGenerator();
+			var master = gtor.Branch(null);
+			master.Commit();
+			master.Tag("v1.0.0");
+			var feature = master.Branch();
+			feature.Commit();
+			master.Commit();
+			master.Tag("v2.0.0");
+			feature.Merge(master);
+
+			var repo = new MockRepoInspector(gtor, feature);
+
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+
+			Assert.NotNull(tag);
+			tag!.Tag.Name.Should().Be("v2.0.0");
+			height.Should().Be(1);
+		}
+
+		[Fact]
+		public async Task ResolvingMergeConflictBumpsCorrectly()
+		{
+			var gtor = new MockRepoGenerator();
+			var master = gtor.Branch(null);
+			master.Commit();
+			master.Tag("v1.0.0");
+			var feature = master.Branch();
+			feature.Commit();
+			master.Commit();
+			master.Tag("v2.0.0");
+			feature.Merge(master);
+			master.Merge(feature);
+
+			var repo = new MockRepoInspector(gtor, master);
+
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+
+			Assert.NotNull(tag);
+			tag!.Tag.Name.Should().Be("v2.0.0");
+			height.Should().Be(1);
+		}
+
+		[Fact]
+		public async Task MergeOldMasterIntoFeatureDoesntUpdateVersion()
+		{
+			var gtor = new MockRepoGenerator();
+			var master = gtor.Branch(null);
+			master.Commit();
+			master.Tag("v1.0.0");
+			var oldPlace = master.Branch();
+			master.Commit();
+			master.Tag("v2.0.0");
+			var feature = master.Branch();
+			feature.Commit();
+			feature.Merge(oldPlace);
+
+			var repo = new MockRepoInspector(gtor, feature);
+
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+
+			Assert.NotNull(tag);
+			tag!.Tag.Name.Should().Be("v2.0.0");
+			height.Should().Be(2);
+		}
+
+		[Fact]
+		public async Task TagSelectableFromOrphan()
+		{
+			var gtor = new MockRepoGenerator();
+			var master = gtor.Branch(null);
+			master.Commit();
+			master.Commit();
+			var orphan = gtor.Branch(null);
+			orphan.Commit();
+			orphan.Tag("v1.0.0");
+			orphan.Commit();
+			orphan.Commit();
+			orphan.Commit();
+			master.Merge(orphan);
+
+			var repo = new MockRepoInspector(gtor, master);
+
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+
+			Assert.NotNull(tag);
+			tag!.Tag.Name.Should().Be("v1.0.0");
+			height.Should().Be(4);
+		}
+
+		[Fact]
+		public async Task TagSelectableSecondaryParents()
+		{
+			var gtor = new MockRepoGenerator();
+			var master = gtor.Branch(null);
+			master.Commit();
+			var feature = master.Branch();
+			feature.Commit();
+			feature.Tag("v1.0.0");
+			feature.Commit();
+			feature.Commit();
+			master.Merge(feature);
+
+			var repo = new MockRepoInspector(gtor, master);
+
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+
+			Assert.NotNull(tag);
+			tag!.Tag.Name.Should().Be("v1.0.0");
+			height.Should().Be(3);
+		}
+
+		[Fact]
 		public async Task NoTagsReturnsNoTag()
 		{
 			var repo = new MockRepoInspector(new MockRepoCommit[]
