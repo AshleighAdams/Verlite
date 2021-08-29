@@ -100,6 +100,28 @@ namespace UnitTests
 		}
 
 		[Fact]
+		public async Task FirstParentsHeightIsPreferredWithTags()
+		{
+			var gtor = new MockRepoGenerator();
+			var master = gtor.Branch(null);
+			master.Commit();
+			var feat = master.Branch();
+			master.Commit();
+			master.Tag("v1.0.0+master");
+			feat.Commit();
+			feat.Tag("v1.0.0+feature");
+			master.Merge(feat);
+
+			var repo = new MockRepoInspector(gtor, master);
+
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+
+			Assert.NotNull(tag);
+			tag!.Tag.Name.Should().Be("v1.0.0+master");
+			height.Should().Be(1);
+		}
+
+		[Fact]
 		public async Task MergeMasterIntoFeatureUpdatesVersion()
 		{
 			var gtor = new MockRepoGenerator();
