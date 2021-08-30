@@ -1,6 +1,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -59,7 +60,7 @@ namespace Verlite
 
 			return await FromCommit(
 				commit: head.Value,
-				descriptor: "HEAD",
+				commitDescriptor: "HEAD",
 				options: new FromCommitOptions(repo, tags, tagPrefix, log, tagFilter));
 		}
 
@@ -70,10 +71,6 @@ namespace Verlite
 			public string TagPrefix { get; }
 			public ILogger? Log { get; }
 			public ITagFilter? TagFilter { get; }
-			/// <summary>
-			/// because we visit first to last, we can stop searching once we find a branch's fork point
-			/// </summary>
-			public HashSet<Commit> Visited { get; } = new();
 
 			public FromCommitOptions(
 				IRepoInspector repo,
@@ -93,20 +90,26 @@ namespace Verlite
 
 		private static async Task<(int height, TaggedVersion? version)> FromCommit(
 			Commit commit,
-			string descriptor,
+			string commitDescriptor,
 			FromCommitOptions options)
 		{
-			var current = commit;
-			int height = 0;
-			while (true)
+			var visited = new HashSet<Commit>();
+			var toVisit = new Stack<(Commit commit, int height, string descriptor, int heightSinceBranch)>();
+			toVisit.Push((commit, 0, commitDescriptor, 0));
+
+			var candidates = new List<(int height, TaggedVersion? version)>();
+
+			while (toVisit.Count > 0)
 			{
-				var currentDescriptor = height == 0 ? descriptor : $"{descriptor}~{height}";
+				var (current, height, rootDescriptor, heightSinceBranch) = toVisit.Pop();
+
+				var descriptor = heightSinceBranch == 0 ? rootDescriptor : $"{rootDescriptor}~{heightSinceBranch}";
 
 				// already visited in an ultimately prior parent
-				if (!options.Visited.Add(current))
+				if (!visited.Add(current))
 				{
-					options.Log?.Verbatim($"{currentDescriptor} found in prior parent, discontinuing branch.");
-					return (-1, null);
+					options.Log?.Verbatim($"{descriptor} found in prior parent, discontinuing branch.");
+					continue;
 				}
 
 				var currentTags = options.Tags.FindCommitTags(current);
@@ -116,7 +119,7 @@ namespace Verlite
 					.OrderByDescending(v => v.Version)
 					.ToList();
 
-				options.Log?.Verbatim($"{currentDescriptor} has {currentTags.Count} total tags with {versions.Count} versions.");
+				options.Log?.Verbatim($"{descriptor} has {currentTags.Count} total tags with {versions.Count} versions.");
 
 				foreach (var tag in currentTags)
 					options.Log?.Verbatim($"  found tag: {tag.Name}");
@@ -137,34 +140,38 @@ namespace Verlite
 				}
 
 				if (filteredVersions is not null)
-					return (height, filteredVersions.First());
+				{
+					var candidateVersion = filteredVersions[0];
+					candidates.Add((height, candidateVersion));
+					options.Log?.Verbose($"Candidate version {candidateVersion.Version} found with {height} height at {descriptor}.");
+					continue;
+				}
 
-				height++;
 				var parents = await options.Repo.GetParents(current);
+
 				if (parents.Count == 0)
-					break;
-				else if (parents.Count == 1)
-					current = parents[0];
+				{
+					int phantomCommitHeight = height + 1;
+					candidates.Add((phantomCommitHeight, null));
+				}
 				else
 				{
-					// calculate branch recursively, firstmost parents take priority
-					var best = await FromCommit(parents[0], $"{currentDescriptor}^1", options);
-					var bestIndex = 0;
-
-					for (int i = 1; i < parents.Count; i++)
+					for (int i = parents.Count; i-- > 0;)
 					{
-						var test = await FromCommit(parents[i], $"{currentDescriptor}^{i + 1}", options);
-						if (best.version is null && test.version is not null)
-							(best, bestIndex) = (test, i);
-						else if (best.version is not null && test.version is not null && test.version.Version > best.version.Version)
-							(best, bestIndex) = (test, i);
+						if (i == 0)
+							toVisit.Push((parents[i], height + 1, rootDescriptor, heightSinceBranch + 1));
+						else
+							toVisit.Push((parents[i], height + 1, $"{rootDescriptor}^{i}", 0));
 					}
-
-					return (height + best.height, best.version);
 				}
 			}
 
-			return (height, null);
+			Debug.Assert(candidates.Count > 0);
+
+			return candidates
+				.OrderByDescending(x => x.version is not null)
+				.ThenByDescending(x => x.version?.Version)
+				.First();
 		}
 	}
 }
