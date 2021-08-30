@@ -11,7 +11,7 @@
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <Authors>Ashleigh Adams, Adam Ralph</Authors>
-    <Copyright>Copyright 2020 Ashleigh Adams, Adam Ralph</Copyright>
+    <Copyright>Copyright 2021 Ashleigh Adams, Adam Ralph</Copyright>
     <PackageLicenseExpression>(MIT AND Apache-2.0)</PackageLicenseExpression>
     <PackageTags>automatic;version;versioning;git;tags;tool</PackageTags>
   </PropertyGroup>

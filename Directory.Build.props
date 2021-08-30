@@ -28,7 +28,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Copyright>Copyright 2020 Ashleigh Adams</Copyright>
+    <Copyright>Copyright 2021 Ashleigh Adams</Copyright>
     <PackageIcon>images/packageicon.png</PackageIcon>
   </PropertyGroup>
   <ItemGroup>
@@ -55,8 +55,16 @@
     </PackageReference>
   </ItemGroup>
 
+  <!-- Add README.md to NuGets -->
+  <PropertyGroup Condition="'$(IsPackable)'=='true'">
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(IsPackable)'=='true'">
+    <None Include="$(MSBuildThisFileDirectory)/README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+
   <!-- Deterministic CI builds, normalizing file paths etc... -->
-  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+  <PropertyGroup Condition="'$(CI)' != ''">
     <Deterministic>true</Deterministic>
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
