@@ -70,14 +70,6 @@ namespace Verlite
 		/// <returns>A task containing the commit, or <c>null</c> if there is none.</returns>
 		Task<Commit?> GetHead();
 		/// <summary>
-		/// Gets the primary parent of the specified commit. <br/>
-		/// In DVCSs this is typically the first parent.
-		/// </summary>
-		/// <param name="commit">The commit.</param>
-		/// <returns>A task containing the primary parent commit, or <c>null</c> if it has none.</returns>
-		[Obsolete("Deprecated in favor of GetParents(). See GitHub issue #40.", error: false)]
-		Task<Commit?> GetParent(Commit commit);
-		/// <summary>
 		/// Gets all parents of the specified commit.
 		/// </summary>
 		/// <param name="commit">The commit.</param>
@@ -89,13 +81,6 @@ namespace Verlite
 		/// <param name="queryTarget">The target to query.</param>
 		/// <returns>A task containing a <see cref="TagContainer"/></returns>
 		Task<TagContainer> GetTags(QueryTarget queryTarget);
-		/// <summary>
-		/// Fetches the specified tag from the desired remote.
-		/// </summary>
-		/// <param name="tag">The tag to fetch.</param>
-		/// <param name="remote">Which remote to fetch the tag from.</param>
-		[Obsolete("Use FetchTag(tag)", error: false)]
-		Task FetchTag(Tag tag, string remote);
 		/// <summary>
 		/// Fetches the specified tag from the remote.
 		/// </summary>

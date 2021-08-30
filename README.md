@@ -53,12 +53,13 @@ See [docs/VersionCalculation.md](docs/VersionCalculation.md) for further reading
 | The minimum RTM version, i.e the destined version.                  | -m, --min-version, VerliteMinimumVersion                         | 0.1.0   |
 | The height for continuous deliverable auto heights should begin at. | -p, --prerelease-base-height, VerlitePrereleaseBaseHeight        | 1       |
 | Force the calculated version to be this version.                    | --version-override, VerliteVersionOverride                       |         |
-| Logging level.                                                      | --verbosity, VerliteVerbosity                                    | Normal  |
+| Logging level.                                                      | --verbosity, VerliteVerbosity                                    | normal  |
 | Set the build data to this value.                                   | -b, --build-metadata, VerliteBuildMetadata                       |         |
-| Part of the version to print.                                       | -s, --show                                                       | All     |
+| Part of the version to print.                                       | -s, --show                                                       | all     |
 | Automatically fetch commits and a tag for shallow clones.           | --auto-fetch                                                     | false   |
 | Set which version part should be bumped after an RTM release.       | -a, --auto-increment, VerliteAutoIncrement                       | patch   |
 | A command to test whether a tag should be ignored via exit code.    | -f, --filter-tags, VerliteFilterTags                             |         |
+| The remote endpoint to use when fetching tags and commits.          | -r, --remote, VerliteRemote                                      | origin  |
 
 ## Comparison with GitVersion
 

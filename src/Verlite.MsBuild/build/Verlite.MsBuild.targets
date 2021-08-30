@@ -43,6 +43,7 @@ This file has been modified by Ashleigh Adams and adapted for Verlite -->
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerlitePrereleaseBaseHeight=$(VerlitePrereleaseBaseHeight)" />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteAutoIncrement=$(VerliteAutoIncrement)" />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteFilterTags=$(VerliteFilterTags)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteRemote=$(VerliteRemote)" />
 
     <Verlite.MsBuild.GetVersionTask ProjectDirectory="$(MSBuildProjectDirectory)"
                                     BuildMetadata="$(VerliteBuildMetadata)"
@@ -54,7 +55,8 @@ This file has been modified by Ashleigh Adams and adapted for Verlite -->
                                     VersionOverride="$(VerliteVersionOverride)"
                                     PrereleaseBaseHeight="$(VerlitePrereleaseBaseHeight)"
                                     AutoIncrement="$(VerliteAutoIncrement)"
-                                    FilterTags="$(VerliteFilterTags)" >
+                                    FilterTags="$(VerliteFilterTags)"
+                                    Remote="$(VerliteRemote)" >
       <Output TaskParameter="Version" PropertyName="VerliteVersion" />
       <Output TaskParameter="VersionMajor" PropertyName="VerliteMajor" />
       <Output TaskParameter="VersionMinor" PropertyName="VerliteMinor" />

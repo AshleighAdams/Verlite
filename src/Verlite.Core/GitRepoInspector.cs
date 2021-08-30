@@ -38,26 +38,6 @@ namespace Verlite
 	/// <seealso cref="IRepoInspector"/>
 	public sealed class GitRepoInspector : IRepoInspector, IDisposable
 	{
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-		// TODO: Remove all of these enumerated permutations of the old optional args in 2.0.0
-		[ExcludeFromCodeCoverage]
-		[Obsolete("Use FromPath(path, remote, log, commandRunner)", error: false)]
-		public static Task<GitRepoInspector> FromPath(string path, ILogger? log, ICommandRunner? commandRunner)
-			=> FromPath(path, "origin", log, commandRunner ?? new SystemCommandRunner());
-		[ExcludeFromCodeCoverage]
-		[Obsolete("Use FromPath(path, remote, log, commandRunner)", error: false)]
-		public static Task<GitRepoInspector> FromPath(string path, ILogger? log)
-			=> FromPath(path, "origin", log, new SystemCommandRunner());
-		[ExcludeFromCodeCoverage]
-		[Obsolete("Use FromPath(path, remote, log, commandRunner)", error: false)]
-		public static Task<GitRepoInspector> FromPath(string path, ICommandRunner? commandRunner)
-			=> FromPath(path, "origin", null, commandRunner?? new SystemCommandRunner());
-		[ExcludeFromCodeCoverage]
-		[Obsolete("Use FromPath(path, remote, log, commandRunner)", error: false)]
-		public static Task<GitRepoInspector> FromPath(string path)
-			=> FromPath(path, "origin", null, new SystemCommandRunner());
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
-
 		/// <summary>
 		/// Creates an inspector from the specified path.
 		/// </summary>
@@ -347,7 +327,7 @@ namespace Verlite
 			return parents;
 		}
 
-		private static readonly Regex RefsTagRegex = new Regex(
+		private static readonly Regex RefsTagRegex = new(
 			@"^(?<pointer>[a-zA-Z0-9]+)\s*refs/tags/(?<tag>.+?)(\^\{\})?$",
 			RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.ExplicitCapture);
 		private static IEnumerable<Tag> MatchTags(string commandOutput)

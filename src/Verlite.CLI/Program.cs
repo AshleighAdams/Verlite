@@ -90,6 +90,10 @@ namespace Verlite.CLI
 					aliases: new[] { "--filter-tags", "-f" },
 					getDefaultValue: () => string.Empty,
 					description: "Specify a command to execute, an exit code of 0 will not filter the tag."),
+				new Option<string>(
+					aliases: new[] { "--remote", "-r" },
+					getDefaultValue: () => DefaultOptions.Remote,
+					description: "The remote endpoint to use when fetching tags and commits."),
 			};
 			rootCommand.WithHandler(nameof(RootCommandAsync));
 			return await rootCommand.InvokeAsync(args);
@@ -107,6 +111,7 @@ namespace Verlite.CLI
 			bool autoFetch,
 			AutoIncrement autoIncrement,
 			string filterTags,
+			string remote,
 			string sourceDirectory)
 		{
 			try
@@ -127,12 +132,13 @@ namespace Verlite.CLI
 					BuildMetadata = buildMetadata,
 					QueryRemoteTags = autoFetch,
 					AutoIncrement = autoIncrement.Value(),
+					Remote = remote,
 				};
 
 				var version = opts.VersionOverride ?? new SemVer();
 				if (opts.VersionOverride is null)
 				{
-					using var repo = await GitRepoInspector.FromPath(sourceDirectory, log, commandRunner);
+					using var repo = await GitRepoInspector.FromPath(sourceDirectory, opts.Remote, log, commandRunner);
 					repo.CanDeepen = autoFetch;
 
 					ITagFilter? tagFilter = null;
