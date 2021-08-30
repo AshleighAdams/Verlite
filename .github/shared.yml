@@ -38,7 +38,7 @@ definitions:
     
   test: &test
     name: Test
-    run: dotnet test --configuration Release --no-build --logger GitHubActions -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura
+    run: dotnet test --configuration Debug --logger GitHubActions -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura
 
   mutation-test: &mutation-test
     name: Mutation Test
