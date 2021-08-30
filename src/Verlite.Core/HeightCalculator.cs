@@ -161,7 +161,7 @@ namespace Verlite
 						if (i == 0)
 							toVisit.Push((parents[i], height + 1, rootDescriptor, heightSinceBranch + 1));
 						else
-							toVisit.Push((parents[i], height + 1, $"{rootDescriptor}^{i}", 0));
+							toVisit.Push((parents[i], height + 1, $"{rootDescriptor}^{i + 1}", 0));
 					}
 				}
 			}
