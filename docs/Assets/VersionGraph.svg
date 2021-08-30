@@ -1,21 +1,21 @@
-<svg width="1029.6875" height="1093.5" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="1029.6875" height="1113.5" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<g transform="translate(10, 10)">
 		<g>
-			<path d="M 0 1040 C 0 1000 0 1000 0 960 L 0 880 L 0 800 L 0 720 L 0 640 C 0 600 50 600 50 560 M 0 880 C 0 840 0 840 0 800 L 0 720 L 0 640 L 0 560 L 0 480 L 0 400 L 0 320 L 0 240 L 0 160 L 0 80 C 0 40 0 40 0 0" fill="transparent" stroke="#979797" stroke-width="10" transform="translate(14, 14)"></path>
-			<path d="M 0 1040 C 0 1000 50 1000 50 960 L 50 880 L 50 800 L 50 720 L 50 640 L 50 560 L 50 480 C 50 440 0 440 0 400" fill="transparent" stroke="#008fb5" stroke-width="10" transform="translate(14, 14)"></path>
-			<path d="M 0 880 C 0 840 100 840 100 800 L 100 720 L 100 640 L 100 560 L 100 480 L 100 400 C 100 360 0 360 0 320" fill="transparent" stroke="#f1c109" stroke-width="10" transform="translate(14, 14)"></path>
-			<path d="M 0 880 C 0 840 150 840 150 800 L 150 720 L 150 640 L 150 560 L 150 480 L 150 400 L 150 320 C 150 280 0 280 0 240" fill="transparent" stroke="#979797" stroke-width="10" transform="translate(14, 14)"></path>
+			<path d="M 0 1040 C 0 1000 0 1000 0 960 L 0 880 L 0 800 L 0 720 L 0 640 C 0 600 50 600 50 560 M 0 880 C 0 840 0 840 0 800 L 0 720 L 0 640 L 0 560 L 0 480 L 0 400 L 0 320 L 0 240 L 0 160 L 0 80 C 0 40 0 40 0 0" fill="none" stroke="#979797" stroke-width="10" transform="translate(14, 14)"></path>
+			<path d="M 0 1040 C 0 1000 50 1000 50 960 L 50 880 L 50 800 L 50 720 L 50 640 L 50 560 L 50 480 C 50 440 0 440 0 400" fill="none" stroke="#008fb5" stroke-width="10" transform="translate(14, 14)"></path>
+			<path d="M 0 880 C 0 840 100 840 100 800 L 100 720 L 100 640 L 100 560 L 100 480 L 100 400 C 100 360 0 360 0 320" fill="none" stroke="#f1c109" stroke-width="10" transform="translate(14, 14)"></path>
+			<path d="M 0 880 C 0 840 150 840 150 800 L 150 720 L 150 640 L 150 560 L 150 480 L 150 400 L 150 320 C 150 280 0 280 0 240" fill="none" stroke="#979797" stroke-width="10" transform="translate(14, 14)"></path>
 		</g>
 		<g>
 			<g transform="translate(0, 1040)">
 				<g>
 					<defs>
-						<circle cx="14" cy="14" r="14" id="5f9f92499dd8e9be65a7d91291e7344f8d3111c1" fill="#979797"></circle>
-						<clipPath id="clip-5f9f92499dd8e9be65a7d91291e7344f8d3111c1">
-							<use href="#5f9f92499dd8e9be65a7d91291e7344f8d3111c1" xlink:href="#5f9f92499dd8e9be65a7d91291e7344f8d3111c1"></use>
+						<circle cx="14" cy="14" r="14" id="fd54311b6c78f9342f66dc68d1d89fab7a03492f" fill="#979797"></circle>
+						<clipPath id="clip-fd54311b6c78f9342f66dc68d1d89fab7a03492f">
+							<use href="#fd54311b6c78f9342f66dc68d1d89fab7a03492f" xlink:href="#fd54311b6c78f9342f66dc68d1d89fab7a03492f"></use>
 						</clipPath>
 					</defs>
-					<use href="#5f9f92499dd8e9be65a7d91291e7344f8d3111c1" xlink:href="#5f9f92499dd8e9be65a7d91291e7344f8d3111c1" clip-path="url(#clip-5f9f92499dd8e9be65a7d91291e7344f8d3111c1)" stroke="" stroke-width="0"></use>
+					<use href="#fd54311b6c78f9342f66dc68d1d89fab7a03492f" xlink:href="#fd54311b6c78f9342f66dc68d1d89fab7a03492f" clip-path="url(#clip-fd54311b6c78f9342f66dc68d1d89fab7a03492f)" stroke="" stroke-width="0"></use>
 				</g>
 				<g transform="translate(0, 0)">
 					<g transform="translate(293.84375, 14)">
@@ -32,12 +32,12 @@
 			<g transform="translate(50, 960)">
 				<g>
 					<defs>
-						<circle cx="14" cy="14" r="14" id="6e542bdce43b9bf605c8c9a87c7b2e4c3cad5e42" fill="#008fb5"></circle>
-						<clipPath id="clip-6e542bdce43b9bf605c8c9a87c7b2e4c3cad5e42">
-							<use href="#6e542bdce43b9bf605c8c9a87c7b2e4c3cad5e42" xlink:href="#6e542bdce43b9bf605c8c9a87c7b2e4c3cad5e42"></use>
+						<circle cx="14" cy="14" r="14" id="bbb688468b764b3172c550b639f217933a646db1" fill="#008fb5"></circle>
+						<clipPath id="clip-bbb688468b764b3172c550b639f217933a646db1">
+							<use href="#bbb688468b764b3172c550b639f217933a646db1" xlink:href="#bbb688468b764b3172c550b639f217933a646db1"></use>
 						</clipPath>
 					</defs>
-					<use href="#6e542bdce43b9bf605c8c9a87c7b2e4c3cad5e42" xlink:href="#6e542bdce43b9bf605c8c9a87c7b2e4c3cad5e42" clip-path="url(#clip-6e542bdce43b9bf605c8c9a87c7b2e4c3cad5e42)" stroke="" stroke-width="0"></use>
+					<use href="#bbb688468b764b3172c550b639f217933a646db1" xlink:href="#bbb688468b764b3172c550b639f217933a646db1" clip-path="url(#clip-bbb688468b764b3172c550b639f217933a646db1)" stroke="" stroke-width="0"></use>
 				</g>
 				<g transform="translate(-50, 0)">
 					<g transform="translate(200, 14)">
@@ -48,12 +48,12 @@
 			<g transform="translate(0, 880)">
 				<g>
 					<defs>
-						<circle cx="14" cy="14" r="14" id="0b35e4b226a4a8d7ccec0fd580108847e8e1833c" fill="#979797"></circle>
-						<clipPath id="clip-0b35e4b226a4a8d7ccec0fd580108847e8e1833c">
-							<use href="#0b35e4b226a4a8d7ccec0fd580108847e8e1833c" xlink:href="#0b35e4b226a4a8d7ccec0fd580108847e8e1833c"></use>
+						<circle cx="14" cy="14" r="14" id="d60635e6872f405645a11a55e045f2ec2c940d19" fill="#979797"></circle>
+						<clipPath id="clip-d60635e6872f405645a11a55e045f2ec2c940d19">
+							<use href="#d60635e6872f405645a11a55e045f2ec2c940d19" xlink:href="#d60635e6872f405645a11a55e045f2ec2c940d19"></use>
 						</clipPath>
 					</defs>
-					<use href="#0b35e4b226a4a8d7ccec0fd580108847e8e1833c" xlink:href="#0b35e4b226a4a8d7ccec0fd580108847e8e1833c" clip-path="url(#clip-0b35e4b226a4a8d7ccec0fd580108847e8e1833c)" stroke="" stroke-width="0"></use>
+					<use href="#d60635e6872f405645a11a55e045f2ec2c940d19" xlink:href="#d60635e6872f405645a11a55e045f2ec2c940d19" clip-path="url(#clip-d60635e6872f405645a11a55e045f2ec2c940d19)" stroke="" stroke-width="0"></use>
 				</g>
 				<g transform="translate(0, 0)">
 					<g transform="translate(293.84375, 14)">
@@ -70,12 +70,12 @@
 			<g transform="translate(100, 800)">
 				<g>
 					<defs>
-						<circle cx="14" cy="14" r="14" id="ce12dd9a704c30246efa12cced411c26eda51f35" fill="#f1c109"></circle>
-						<clipPath id="clip-ce12dd9a704c30246efa12cced411c26eda51f35">
-							<use href="#ce12dd9a704c30246efa12cced411c26eda51f35" xlink:href="#ce12dd9a704c30246efa12cced411c26eda51f35"></use>
+						<circle cx="14" cy="14" r="14" id="a9416c8837da51534dea1ee945f5117bca9f1616" fill="#f1c109"></circle>
+						<clipPath id="clip-a9416c8837da51534dea1ee945f5117bca9f1616">
+							<use href="#a9416c8837da51534dea1ee945f5117bca9f1616" xlink:href="#a9416c8837da51534dea1ee945f5117bca9f1616"></use>
 						</clipPath>
 					</defs>
-					<use href="#ce12dd9a704c30246efa12cced411c26eda51f35" xlink:href="#ce12dd9a704c30246efa12cced411c26eda51f35" clip-path="url(#clip-ce12dd9a704c30246efa12cced411c26eda51f35)" stroke="" stroke-width="0"></use>
+					<use href="#a9416c8837da51534dea1ee945f5117bca9f1616" xlink:href="#a9416c8837da51534dea1ee945f5117bca9f1616" clip-path="url(#clip-a9416c8837da51534dea1ee945f5117bca9f1616)" stroke="" stroke-width="0"></use>
 				</g>
 				<g transform="translate(-100, 0)">
 					<g transform="translate(200, 14)">
@@ -86,12 +86,12 @@
 			<g transform="translate(100, 720)">
 				<g>
 					<defs>
-						<circle cx="14" cy="14" r="14" id="b54e0a13f72f2432cd8116d4a1b93b6cb3efc23e" fill="#f1c109"></circle>
-						<clipPath id="clip-b54e0a13f72f2432cd8116d4a1b93b6cb3efc23e">
-							<use href="#b54e0a13f72f2432cd8116d4a1b93b6cb3efc23e" xlink:href="#b54e0a13f72f2432cd8116d4a1b93b6cb3efc23e"></use>
+						<circle cx="14" cy="14" r="14" id="32d034c2656f1cf7ea7064ed30ba2c3d30ca3fef" fill="#f1c109"></circle>
+						<clipPath id="clip-32d034c2656f1cf7ea7064ed30ba2c3d30ca3fef">
+							<use href="#32d034c2656f1cf7ea7064ed30ba2c3d30ca3fef" xlink:href="#32d034c2656f1cf7ea7064ed30ba2c3d30ca3fef"></use>
 						</clipPath>
 					</defs>
-					<use href="#b54e0a13f72f2432cd8116d4a1b93b6cb3efc23e" xlink:href="#b54e0a13f72f2432cd8116d4a1b93b6cb3efc23e" clip-path="url(#clip-b54e0a13f72f2432cd8116d4a1b93b6cb3efc23e)" stroke="" stroke-width="0"></use>
+					<use href="#32d034c2656f1cf7ea7064ed30ba2c3d30ca3fef" xlink:href="#32d034c2656f1cf7ea7064ed30ba2c3d30ca3fef" clip-path="url(#clip-32d034c2656f1cf7ea7064ed30ba2c3d30ca3fef)" stroke="" stroke-width="0"></use>
 				</g>
 				<g transform="translate(-100, 0)">
 					<g transform="translate(200, 14)">
@@ -102,12 +102,12 @@
 			<g transform="translate(100, 640)">
 				<g>
 					<defs>
-						<circle cx="14" cy="14" r="14" id="76db0d81c84db56b967f2c7f35f583ec83f32ee6" fill="#f1c109"></circle>
-						<clipPath id="clip-76db0d81c84db56b967f2c7f35f583ec83f32ee6">
-							<use href="#76db0d81c84db56b967f2c7f35f583ec83f32ee6" xlink:href="#76db0d81c84db56b967f2c7f35f583ec83f32ee6"></use>
+						<circle cx="14" cy="14" r="14" id="f17e99fc52f87dc63b66ae1724f521509e8da438" fill="#f1c109"></circle>
+						<clipPath id="clip-f17e99fc52f87dc63b66ae1724f521509e8da438">
+							<use href="#f17e99fc52f87dc63b66ae1724f521509e8da438" xlink:href="#f17e99fc52f87dc63b66ae1724f521509e8da438"></use>
 						</clipPath>
 					</defs>
-					<use href="#76db0d81c84db56b967f2c7f35f583ec83f32ee6" xlink:href="#76db0d81c84db56b967f2c7f35f583ec83f32ee6" clip-path="url(#clip-76db0d81c84db56b967f2c7f35f583ec83f32ee6)" stroke="" stroke-width="0"></use>
+					<use href="#f17e99fc52f87dc63b66ae1724f521509e8da438" xlink:href="#f17e99fc52f87dc63b66ae1724f521509e8da438" clip-path="url(#clip-f17e99fc52f87dc63b66ae1724f521509e8da438)" stroke="" stroke-width="0"></use>
 				</g>
 				<g transform="translate(-100, 0)">
 					<g transform="translate(301.1875, 14)">
@@ -124,16 +124,16 @@
 			<g transform="translate(50, 560)">
 				<g>
 					<defs>
-						<circle cx="14" cy="14" r="14" id="3e5d164a969bdf6c779fad799975b2f081433b50" fill="#008fb5"></circle>
-						<clipPath id="clip-3e5d164a969bdf6c779fad799975b2f081433b50">
-							<use href="#3e5d164a969bdf6c779fad799975b2f081433b50" xlink:href="#3e5d164a969bdf6c779fad799975b2f081433b50"></use>
+						<circle cx="14" cy="14" r="14" id="52dc1fa42cb73337c58bac0d7d8b7838c921320f" fill="#008fb5"></circle>
+						<clipPath id="clip-52dc1fa42cb73337c58bac0d7d8b7838c921320f">
+							<use href="#52dc1fa42cb73337c58bac0d7d8b7838c921320f" xlink:href="#52dc1fa42cb73337c58bac0d7d8b7838c921320f"></use>
 						</clipPath>
 					</defs>
-					<use href="#3e5d164a969bdf6c779fad799975b2f081433b50" xlink:href="#3e5d164a969bdf6c779fad799975b2f081433b50" clip-path="url(#clip-3e5d164a969bdf6c779fad799975b2f081433b50)" stroke="" stroke-width="0"></use>
+					<use href="#52dc1fa42cb73337c58bac0d7d8b7838c921320f" xlink:href="#52dc1fa42cb73337c58bac0d7d8b7838c921320f" clip-path="url(#clip-52dc1fa42cb73337c58bac0d7d8b7838c921320f)" stroke="" stroke-width="0"></use>
 				</g>
 				<g transform="translate(-50, 0)">
 					<g transform="translate(319.84375, 14)">
-						<text alignment-baseline="central" dominant-baseline="central" fill="#008fb5" style="font: normal 14pt Arial">Versioned as: 0.1.1-alpha.2</text>
+						<text alignment-baseline="central" dominant-baseline="central" fill="#008fb5" style="font: normal 14pt Arial">Versioned as: 1.0.1-alpha.1</text>
 					</g>
 					<g transform="translate(200, 0)">
 						<g>
@@ -146,12 +146,12 @@
 			<g transform="translate(150, 480)">
 				<g>
 					<defs>
-						<circle cx="14" cy="14" r="14" id="0eb21b59216fb7b0f704a975dbd2eec5a4bf4f93" fill="#979797"></circle>
-						<clipPath id="clip-0eb21b59216fb7b0f704a975dbd2eec5a4bf4f93">
-							<use href="#0eb21b59216fb7b0f704a975dbd2eec5a4bf4f93" xlink:href="#0eb21b59216fb7b0f704a975dbd2eec5a4bf4f93"></use>
+						<circle cx="14" cy="14" r="14" id="657f5455f02bba018bdaecd3e21b487acdf53ede" fill="#979797"></circle>
+						<clipPath id="clip-657f5455f02bba018bdaecd3e21b487acdf53ede">
+							<use href="#657f5455f02bba018bdaecd3e21b487acdf53ede" xlink:href="#657f5455f02bba018bdaecd3e21b487acdf53ede"></use>
 						</clipPath>
 					</defs>
-					<use href="#0eb21b59216fb7b0f704a975dbd2eec5a4bf4f93" xlink:href="#0eb21b59216fb7b0f704a975dbd2eec5a4bf4f93" clip-path="url(#clip-0eb21b59216fb7b0f704a975dbd2eec5a4bf4f93)" stroke="" stroke-width="0"></use>
+					<use href="#657f5455f02bba018bdaecd3e21b487acdf53ede" xlink:href="#657f5455f02bba018bdaecd3e21b487acdf53ede" clip-path="url(#clip-657f5455f02bba018bdaecd3e21b487acdf53ede)" stroke="" stroke-width="0"></use>
 				</g>
 				<g transform="translate(-150, 0)">
 					<g transform="translate(289.78125, 14)">
@@ -168,12 +168,12 @@
 			<g transform="translate(0, 400)">
 				<g>
 					<defs>
-						<circle cx="14" cy="14" r="14" id="5818e198be21d57a8985e16df3b88efdbe432216" fill="#979797"></circle>
-						<clipPath id="clip-5818e198be21d57a8985e16df3b88efdbe432216">
-							<use href="#5818e198be21d57a8985e16df3b88efdbe432216" xlink:href="#5818e198be21d57a8985e16df3b88efdbe432216"></use>
+						<circle cx="14" cy="14" r="14" id="72b85f5cf9535915982aea65c494c7de7f2aa24e" fill="#979797"></circle>
+						<clipPath id="clip-72b85f5cf9535915982aea65c494c7de7f2aa24e">
+							<use href="#72b85f5cf9535915982aea65c494c7de7f2aa24e" xlink:href="#72b85f5cf9535915982aea65c494c7de7f2aa24e"></use>
 						</clipPath>
 					</defs>
-					<use href="#5818e198be21d57a8985e16df3b88efdbe432216" xlink:href="#5818e198be21d57a8985e16df3b88efdbe432216" clip-path="url(#clip-5818e198be21d57a8985e16df3b88efdbe432216)" stroke="" stroke-width="0"></use>
+					<use href="#72b85f5cf9535915982aea65c494c7de7f2aa24e" xlink:href="#72b85f5cf9535915982aea65c494c7de7f2aa24e" clip-path="url(#clip-72b85f5cf9535915982aea65c494c7de7f2aa24e)" stroke="" stroke-width="0"></use>
 				</g>
 				<g transform="translate(0, 0)">
 					<g transform="translate(200, 14)">
@@ -184,12 +184,12 @@
 			<g transform="translate(0, 320)">
 				<g>
 					<defs>
-						<circle cx="14" cy="14" r="14" id="c918f031669fa0a210975c9bde59c36fc9286df4" fill="#979797"></circle>
-						<clipPath id="clip-c918f031669fa0a210975c9bde59c36fc9286df4">
-							<use href="#c918f031669fa0a210975c9bde59c36fc9286df4" xlink:href="#c918f031669fa0a210975c9bde59c36fc9286df4"></use>
+						<circle cx="14" cy="14" r="14" id="a2ad1988e8c61e02923dc10a9a96aa4c72fa476a" fill="#979797"></circle>
+						<clipPath id="clip-a2ad1988e8c61e02923dc10a9a96aa4c72fa476a">
+							<use href="#a2ad1988e8c61e02923dc10a9a96aa4c72fa476a" xlink:href="#a2ad1988e8c61e02923dc10a9a96aa4c72fa476a"></use>
 						</clipPath>
 					</defs>
-					<use href="#c918f031669fa0a210975c9bde59c36fc9286df4" xlink:href="#c918f031669fa0a210975c9bde59c36fc9286df4" clip-path="url(#clip-c918f031669fa0a210975c9bde59c36fc9286df4)" stroke="" stroke-width="0"></use>
+					<use href="#a2ad1988e8c61e02923dc10a9a96aa4c72fa476a" xlink:href="#a2ad1988e8c61e02923dc10a9a96aa4c72fa476a" clip-path="url(#clip-a2ad1988e8c61e02923dc10a9a96aa4c72fa476a)" stroke="" stroke-width="0"></use>
 				</g>
 				<g transform="translate(0, 0)">
 					<g transform="translate(200, 14)">
@@ -200,12 +200,12 @@
 			<g transform="translate(0, 240)">
 				<g>
 					<defs>
-						<circle cx="14" cy="14" r="14" id="cf69e8f9846107bf214a4eb14c867508a2b41672" fill="#979797"></circle>
-						<clipPath id="clip-cf69e8f9846107bf214a4eb14c867508a2b41672">
-							<use href="#cf69e8f9846107bf214a4eb14c867508a2b41672" xlink:href="#cf69e8f9846107bf214a4eb14c867508a2b41672"></use>
+						<circle cx="14" cy="14" r="14" id="99f1b88810fc30498dddacb48ef3e64e9f0867fe" fill="#979797"></circle>
+						<clipPath id="clip-99f1b88810fc30498dddacb48ef3e64e9f0867fe">
+							<use href="#99f1b88810fc30498dddacb48ef3e64e9f0867fe" xlink:href="#99f1b88810fc30498dddacb48ef3e64e9f0867fe"></use>
 						</clipPath>
 					</defs>
-					<use href="#cf69e8f9846107bf214a4eb14c867508a2b41672" xlink:href="#cf69e8f9846107bf214a4eb14c867508a2b41672" clip-path="url(#clip-cf69e8f9846107bf214a4eb14c867508a2b41672)" stroke="" stroke-width="0"></use>
+					<use href="#99f1b88810fc30498dddacb48ef3e64e9f0867fe" xlink:href="#99f1b88810fc30498dddacb48ef3e64e9f0867fe" clip-path="url(#clip-99f1b88810fc30498dddacb48ef3e64e9f0867fe)" stroke="" stroke-width="0"></use>
 				</g>
 				<g transform="translate(0, 0)">
 					<g transform="translate(331.15625, 14)">
@@ -222,12 +222,12 @@
 			<g transform="translate(0, 160)">
 				<g>
 					<defs>
-						<circle cx="14" cy="14" r="14" id="79024a47e99b34944cb7c5db75d7a6708809c598" fill="#979797"></circle>
-						<clipPath id="clip-79024a47e99b34944cb7c5db75d7a6708809c598">
-							<use href="#79024a47e99b34944cb7c5db75d7a6708809c598" xlink:href="#79024a47e99b34944cb7c5db75d7a6708809c598"></use>
+						<circle cx="14" cy="14" r="14" id="6d5c0908a30d0f19000b7925b34477a2099851ec" fill="#979797"></circle>
+						<clipPath id="clip-6d5c0908a30d0f19000b7925b34477a2099851ec">
+							<use href="#6d5c0908a30d0f19000b7925b34477a2099851ec" xlink:href="#6d5c0908a30d0f19000b7925b34477a2099851ec"></use>
 						</clipPath>
 					</defs>
-					<use href="#79024a47e99b34944cb7c5db75d7a6708809c598" xlink:href="#79024a47e99b34944cb7c5db75d7a6708809c598" clip-path="url(#clip-79024a47e99b34944cb7c5db75d7a6708809c598)" stroke="" stroke-width="0"></use>
+					<use href="#6d5c0908a30d0f19000b7925b34477a2099851ec" xlink:href="#6d5c0908a30d0f19000b7925b34477a2099851ec" clip-path="url(#clip-6d5c0908a30d0f19000b7925b34477a2099851ec)" stroke="" stroke-width="0"></use>
 				</g>
 				<g transform="translate(0, 0)">
 					<g transform="translate(200, 14)">
@@ -238,12 +238,12 @@
 			<g transform="translate(0, 80)">
 				<g>
 					<defs>
-						<circle cx="14" cy="14" r="14" id="0d80817b906bb8e164e1fa92c4890ce3d4626043" fill="#979797"></circle>
-						<clipPath id="clip-0d80817b906bb8e164e1fa92c4890ce3d4626043">
-							<use href="#0d80817b906bb8e164e1fa92c4890ce3d4626043" xlink:href="#0d80817b906bb8e164e1fa92c4890ce3d4626043"></use>
+						<circle cx="14" cy="14" r="14" id="8909ced745b41b4b2f875a3dd00a9484917921b7" fill="#979797"></circle>
+						<clipPath id="clip-8909ced745b41b4b2f875a3dd00a9484917921b7">
+							<use href="#8909ced745b41b4b2f875a3dd00a9484917921b7" xlink:href="#8909ced745b41b4b2f875a3dd00a9484917921b7"></use>
 						</clipPath>
 					</defs>
-					<use href="#0d80817b906bb8e164e1fa92c4890ce3d4626043" xlink:href="#0d80817b906bb8e164e1fa92c4890ce3d4626043" clip-path="url(#clip-0d80817b906bb8e164e1fa92c4890ce3d4626043)" stroke="" stroke-width="0"></use>
+					<use href="#8909ced745b41b4b2f875a3dd00a9484917921b7" xlink:href="#8909ced745b41b4b2f875a3dd00a9484917921b7" clip-path="url(#clip-8909ced745b41b4b2f875a3dd00a9484917921b7)" stroke="" stroke-width="0"></use>
 				</g>
 				<g transform="translate(0, 0)">
 					<g transform="translate(200, 14)">
@@ -254,12 +254,12 @@
 			<g transform="translate(0, 0)">
 				<g>
 					<defs>
-						<circle cx="14" cy="14" r="14" id="e45516813befede896d3f5ffe66c03dfae0f7deb" fill="#979797"></circle>
-						<clipPath id="clip-e45516813befede896d3f5ffe66c03dfae0f7deb">
-							<use href="#e45516813befede896d3f5ffe66c03dfae0f7deb" xlink:href="#e45516813befede896d3f5ffe66c03dfae0f7deb"></use>
+						<circle cx="14" cy="14" r="14" id="6137eb21197e16a2ecac4b384b8f507835dc6cab" fill="#979797"></circle>
+						<clipPath id="clip-6137eb21197e16a2ecac4b384b8f507835dc6cab">
+							<use href="#6137eb21197e16a2ecac4b384b8f507835dc6cab" xlink:href="#6137eb21197e16a2ecac4b384b8f507835dc6cab"></use>
 						</clipPath>
 					</defs>
-					<use href="#e45516813befede896d3f5ffe66c03dfae0f7deb" xlink:href="#e45516813befede896d3f5ffe66c03dfae0f7deb" clip-path="url(#clip-e45516813befede896d3f5ffe66c03dfae0f7deb)" stroke="" stroke-width="0"></use>
+					<use href="#6137eb21197e16a2ecac4b384b8f507835dc6cab" xlink:href="#6137eb21197e16a2ecac4b384b8f507835dc6cab" clip-path="url(#clip-6137eb21197e16a2ecac4b384b8f507835dc6cab)" stroke="" stroke-width="0"></use>
 				</g>
 				<g transform="translate(0, 0)">
 					<g transform="translate(512.828125, 14)">
