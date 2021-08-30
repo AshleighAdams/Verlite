@@ -113,7 +113,7 @@ namespace Verlite
 				if (!localTag.Any())
 				{
 					log?.Normal("Local repo missing version tag, fetching.");
-					await repo.FetchTag(lastTagVer.Tag, "origin");
+					await repo.FetchTag(lastTagVer.Tag);
 				}
 			}
 

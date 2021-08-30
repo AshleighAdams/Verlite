@@ -133,11 +133,6 @@ namespace UnitTests
 			Head = commits.Count > 0 ? commits[0].Id : null;
 		}
 
-		Task IRepoInspector.FetchTag(Tag tag, string remote)
-		{
-			return (this as IRepoInspector).FetchTag(tag);
-		}
-
 		async Task IRepoInspector.FetchTag(Tag tag)
 		{
 			if (LocalTags.Contains(tag))
@@ -149,14 +144,6 @@ namespace UnitTests
 		async Task<Commit?> IRepoInspector.GetHead()
 		{
 			return Head;
-		}
-
-		async Task<Commit?> IRepoInspector.GetParent(Commit commit)
-		{
-			var parents = await (this as IRepoInspector).GetParents(commit);
-			return parents
-				.Select(p => (Commit?)p)
-				.FirstOrDefault();
 		}
 
 		async Task<IReadOnlyList<Commit>> IRepoInspector.GetParents(Commit commit)

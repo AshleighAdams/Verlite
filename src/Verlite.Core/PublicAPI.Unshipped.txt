@@ -3,3 +3,5 @@ Verlite.GitRepoInspector.Dispose() -> void
 Verlite.GitRepoInspector.Remote.get -> string!
 Verlite.UnknownGitException
 Verlite.UnknownGitException.UnknownGitException(string! message) -> void
+Verlite.VersionCalculationOptions.Remote.get -> string!
+Verlite.VersionCalculationOptions.Remote.set -> void

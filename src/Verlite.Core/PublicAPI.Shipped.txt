@@ -14,11 +14,7 @@ static Verlite.Command.ParseCommandLine(string! cmdLine) -> System.Collections.G
 static Verlite.Command.Run(string! directory, string! command, string![]! args, System.Collections.Generic.IDictionary<string!, string!>? envVars = null) -> System.Threading.Tasks.Task<(string! stdout, string! stderr)>!
 static Verlite.Commit.operator !=(Verlite.Commit left, Verlite.Commit right) -> bool
 static Verlite.Commit.operator ==(Verlite.Commit left, Verlite.Commit right) -> bool
-static Verlite.GitRepoInspector.FromPath(string! path) -> System.Threading.Tasks.Task<Verlite.GitRepoInspector!>!
 static Verlite.GitRepoInspector.FromPath(string! path, string! remote, Verlite.ILogger? log, Verlite.ICommandRunner! commandRunner) -> System.Threading.Tasks.Task<Verlite.GitRepoInspector!>!
-static Verlite.GitRepoInspector.FromPath(string! path, Verlite.ICommandRunner? commandRunner) -> System.Threading.Tasks.Task<Verlite.GitRepoInspector!>!
-static Verlite.GitRepoInspector.FromPath(string! path, Verlite.ILogger? log) -> System.Threading.Tasks.Task<Verlite.GitRepoInspector!>!
-static Verlite.GitRepoInspector.FromPath(string! path, Verlite.ILogger? log, Verlite.ICommandRunner? commandRunner) -> System.Threading.Tasks.Task<Verlite.GitRepoInspector!>!
 static Verlite.HeightCalculator.FromRepository(Verlite.IRepoInspector! repo, string! tagPrefix, bool queryRemoteTags, Verlite.ILogger? log = null, Verlite.ITagFilter? tagFilter = null) -> System.Threading.Tasks.Task<(int height, Verlite.TaggedVersion?)>!
 static Verlite.SemVer.ComparePrerelease(string! left, string! right) -> int
 static Verlite.SemVer.IsValidIdentifierCharacter(char input) -> bool
@@ -77,9 +73,7 @@ Verlite.ILogger.Verbatim(string! message) -> void
 Verlite.ILogger.Verbose(string! message) -> void
 Verlite.IRepoInspector
 Verlite.IRepoInspector.FetchTag(Verlite.Tag tag) -> System.Threading.Tasks.Task!
-Verlite.IRepoInspector.FetchTag(Verlite.Tag tag, string! remote) -> System.Threading.Tasks.Task!
 Verlite.IRepoInspector.GetHead() -> System.Threading.Tasks.Task<Verlite.Commit?>!
-Verlite.IRepoInspector.GetParent(Verlite.Commit commit) -> System.Threading.Tasks.Task<Verlite.Commit?>!
 Verlite.IRepoInspector.GetParents(Verlite.Commit commit) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<Verlite.Commit>!>!
 Verlite.IRepoInspector.GetTags(Verlite.QueryTarget queryTarget) -> System.Threading.Tasks.Task<Verlite.TagContainer!>!
 Verlite.ITagFilter
@@ -143,8 +137,6 @@ Verlite.VersionCalculationOptions.BuildMetadata.get -> string?
 Verlite.VersionCalculationOptions.BuildMetadata.set -> void
 Verlite.VersionCalculationOptions.DefaultPrereleasePhase.get -> string!
 Verlite.VersionCalculationOptions.DefaultPrereleasePhase.set -> void
-Verlite.VersionCalculationOptions.MinimiumVersion.get -> Verlite.SemVer
-Verlite.VersionCalculationOptions.MinimiumVersion.set -> void
 Verlite.VersionCalculationOptions.MinimumVersion.get -> Verlite.SemVer
 Verlite.VersionCalculationOptions.MinimumVersion.set -> void
 Verlite.VersionCalculationOptions.PrereleaseBaseHeight.get -> int

@@ -57,8 +57,9 @@ namespace UnitTests
 		{
 			return GitRepoInspector.FromPath(
 				path: RootPath,
+				remote: "origin",
 				log: null,
-				commandRunner);
+				commandRunner ?? new SystemCommandRunner());
 		}
 
 		public void Dispose()

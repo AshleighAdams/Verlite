@@ -41,15 +41,9 @@ namespace Verlite
 		/// The component to bump in the semantic version post RTM release.
 		/// </summary>
 		public VersionPart AutoIncrement { get; set; } = VersionPart.Patch;
-
 		/// <summary>
-		/// Obsoleted due to a typo. Using this will redirect to the suggested replacement of <see cref="MinimumVersion"/> instead.
+		/// The remote endpoint to use when fetching tags and commits.
 		/// </summary>
-		[Obsolete("Use MinimumVersion instead.")]
-		public SemVer MinimiumVersion
-		{
-			get => MinimumVersion;
-			set => MinimumVersion = value;
-		}
+		public string Remote { get; set; } = "origin";
 	}
 }

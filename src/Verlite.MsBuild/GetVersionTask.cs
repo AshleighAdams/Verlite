@@ -20,6 +20,7 @@ namespace Verlite.MsBuild
 		public string PrereleaseBaseHeight { get; set; } = "";
 		public string AutoIncrement { get; set; } = "";
 		public string FilterTags { get; set; } = "";
+		public string Remote { get; set; } = "";
 
 		public override bool Execute()
 		{
@@ -101,12 +102,15 @@ namespace Verlite.MsBuild
 				if (!string.IsNullOrWhiteSpace(AutoIncrement))
 					opts.AutoIncrement = DecodeVersionPart(
 						AutoIncrement, nameof(AutoIncrement));
+
+				if (!string.IsNullOrWhiteSpace(Remote))
+					opts.Remote = Remote;
 			}
 
 			var version = opts.VersionOverride ?? new SemVer();
 			if (opts.VersionOverride is null)
 			{
-				using var repo = await GitRepoInspector.FromPath(ProjectDirectory, log, commandRunner);
+				using var repo = await GitRepoInspector.FromPath(ProjectDirectory, opts.Remote, log, commandRunner);
 
 				ITagFilter? tagFilter = null;
 				if (!string.IsNullOrWhiteSpace(FilterTags))
