@@ -1,3 +1,5 @@
+// generate from here: https://codepen.io/nicoespeon/pen/arqPWb
+
 const template = GitgraphJS.templateExtend(GitgraphJS.TemplateName.Metro, {
     commit: {
         message: {
@@ -28,7 +30,7 @@ const featureA = master.branch("some-fix")
   .commit("Versioned as: 1.0.1-alpha.2")
   .commit("Versioned as: 1.0.1-alpha.3");
 
-featureC.merge(master, "Versioned as: 0.1.1-alpha.2");
+featureC.merge(master, "Versioned as: 1.0.1-alpha.1");
 
 const featureB = master.branch("new-fix")
   .commit("Versioned as: 1.0.1-alpha.1");

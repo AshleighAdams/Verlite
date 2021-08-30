@@ -1,6 +1,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -57,48 +58,120 @@ namespace Verlite
 			if (head is null)
 				return (1, null);
 
-			var current = head.Value;
-			int height = 0;
-			while (true)
+			return await FromCommit(
+				commit: head.Value,
+				commitDescriptor: "HEAD",
+				options: new FromCommitOptions(repo, tags, tagPrefix, log, tagFilter));
+		}
+
+		private class FromCommitOptions
+		{
+			public IRepoInspector Repo { get; }
+			public TagContainer Tags { get; }
+			public string TagPrefix { get; }
+			public ILogger? Log { get; }
+			public ITagFilter? TagFilter { get; }
+
+			public FromCommitOptions(
+				IRepoInspector repo,
+				TagContainer tags,
+				string tagPrefix,
+				ILogger? log,
+				ITagFilter? tagFilter)
 			{
-				var currentTags = tags.FindCommitTags(current);
+				Repo = repo;
+				Tags = tags;
+				TagPrefix = tagPrefix;
+				Log = log;
+				TagFilter = tagFilter;
+			}
+
+		}
+
+		private static async Task<(int height, TaggedVersion? version)> FromCommit(
+			Commit commit,
+			string commitDescriptor,
+			FromCommitOptions options)
+		{
+			var visited = new HashSet<Commit>();
+			var toVisit = new Stack<(Commit commit, int height, string descriptor, int heightSinceBranch)>();
+			toVisit.Push((commit, 0, commitDescriptor, 0));
+
+			var candidates = new List<(int height, TaggedVersion? version)>();
+
+			while (toVisit.Count > 0)
+			{
+				var (current, height, rootDescriptor, heightSinceBranch) = toVisit.Pop();
+
+				var descriptor = heightSinceBranch == 0 ? rootDescriptor : $"{rootDescriptor}~{heightSinceBranch}";
+
+				// already visited in an ultimately prior parent
+				if (!visited.Add(current))
+				{
+					options.Log?.Verbatim($"{descriptor} found in prior parent, discontinuing branch.");
+					continue;
+				}
+
+				var currentTags = options.Tags.FindCommitTags(current);
 				var versions = currentTags
-					.Where(t => t.Name.StartsWith(tagPrefix, StringComparison.Ordinal))
-					.SelectWhereSemver(tagPrefix, log)
+					.Where(t => t.Name.StartsWith(options.TagPrefix, StringComparison.Ordinal))
+					.SelectWhereSemver(options.TagPrefix, options.Log)
 					.OrderByDescending(v => v.Version)
 					.ToList();
 
-				log?.Verbatim($"HEAD^{height} {current} has {currentTags.Count} total tags with {versions.Count} versions.");
+				options.Log?.Verbatim($"{descriptor} has {currentTags.Count} total tags with {versions.Count} versions.");
 
 				foreach (var tag in currentTags)
-					log?.Verbatim($"  found tag: {tag.Name}");
+					options.Log?.Verbatim($"  found tag: {tag.Name}");
 
 				List<TaggedVersion>? filteredVersions = null;
 				foreach (var version in versions)
 				{
-					bool passesFilter = tagFilter is null || await tagFilter.PassesFilter(version);
+					bool passesFilter = options.TagFilter is null || await options.TagFilter.PassesFilter(version);
 
 					if (passesFilter)
 					{
-						log?.Verbatim($"  version candidate: {version.Version}");
+						options.Log?.Verbatim($"  version candidate: {version.Version}");
 						filteredVersions ??= new();
 						filteredVersions.Add(version);
 					}
 					else
-						log?.Verbatim($"  version filtered: {version.Version} (from tag {version.Tag.Name})");
+						options.Log?.Verbatim($"  version filtered: {version.Version} (from tag {version.Tag.Name})");
 				}
 
 				if (filteredVersions is not null)
-					return (height, filteredVersions.First());
+				{
+					var candidateVersion = filteredVersions[0];
+					candidates.Add((height, candidateVersion));
+					options.Log?.Verbose($"Candidate version {candidateVersion.Version} found with {height} height at {descriptor}.");
+					continue;
+				}
 
-				height++;
-				var parent = await repo.GetParent(current);
-				if (parent is null)
-					break;
-				current = parent.Value;
+				var parents = await options.Repo.GetParents(current);
+
+				if (parents.Count == 0)
+				{
+					int phantomCommitHeight = height + 1;
+					candidates.Add((phantomCommitHeight, null));
+				}
+				else
+				{
+					for (int i = parents.Count; i-- > 0;)
+					{
+						if (i == 0)
+							toVisit.Push((parents[i], height + 1, rootDescriptor, heightSinceBranch + 1));
+						else
+							toVisit.Push((parents[i], height + 1, $"{rootDescriptor}^{i}", 0));
+					}
+				}
 			}
 
-			return (height, null);
+			Debug.Assert(candidates.Count > 0);
+
+			return candidates
+				.OrderByDescending(x => x.version is not null)
+				.ThenByDescending(x => x.version?.Version)
+				.First();
 		}
 	}
 }

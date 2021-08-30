@@ -42,7 +42,7 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
     - name: Test
-      run: dotnet test --configuration Release --no-build --logger GitHubActions -p:CollectCoverage=true
+      run: dotnet test --configuration Debug --logger GitHubActions -p:CollectCoverage=true
         -p:CoverletOutputFormat=cobertura
 
     - name: Pack

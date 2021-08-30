@@ -34,7 +34,7 @@ Versioning based upon commit messages or branches is out of scope. Such can be d
 
 ## Version Calculation
 
-Take the head commit, if one or more version tags exist, use the highest version, otherwise, keep following the first parent of each commit until a version tag is found, taking the highest version tag, then bumping the version and appending the "commit height" onto the end.
+Take the head commit, if one or more version tags exist, use the highest version, otherwise, keep following all parents until a version tag is found, taking the highest version tag, then bumping the version and appending the "commit height" onto the end.
 
 To bump the version, the patch is by default incremented by 1. The version part to bump can be configured via `VerliteAutoIncrement`/`--auto-increment` option.
 
@@ -64,7 +64,7 @@ See [docs/VersionCalculation.md](docs/VersionCalculation.md) for further reading
 
 GitVersion has a focus on branches, and is well suited for a Continuous Deployment workflow, where releases are triggered based upon branches or commit messages. Shallow repositories are not supported.
 
-Verlite cares only about tags—more specifically, the tags on the chain of first parents—and is well suited for Continuous Delivery workflows, where official releases happen by tagging.
+Verlite cares only about tags, and is well suited for Continuous Delivery workflows, where official releases happen by tagging.
 
 ## Comparison with MinVer
 
