@@ -58,6 +58,7 @@ namespace Verlite
 			if (head is null)
 				return (1, null);
 
+			// Stryker disable once all: used for logging only
 			return await FromCommit(
 				commit: head.Value,
 				commitDescriptor: "HEAD",
@@ -103,7 +104,9 @@ namespace Verlite
 			{
 				var (current, height, rootDescriptor, heightSinceBranch) = toVisit.Pop();
 
+				// Stryker disable all: used for logging only
 				var descriptor = heightSinceBranch == 0 ? rootDescriptor : $"{rootDescriptor}~{heightSinceBranch}";
+				// Stryker restore all
 
 				// already visited in an ultimately prior parent
 				if (!visited.Add(current))
@@ -156,17 +159,23 @@ namespace Verlite
 				}
 				else
 				{
-					for (int i = parents.Count; i-- > 0;)
+					// commits to visit must be added in the reverse order, so the earlier parents are visited first
+					for (int i = parents.Count; i --> 0;)
 					{
-						if (i == 0)
-							toVisit.Push((parents[i], height + 1, rootDescriptor, heightSinceBranch + 1));
-						else
-							toVisit.Push((parents[i], height + 1, $"{rootDescriptor}^{i + 1}", 0));
+						var parent = parents[i];
+						var parentHeight = height + 1;
+						// Stryker disable all: used for logging only
+						var isDiverging = i == 0;
+						var parentDescriptor = isDiverging ? $"{rootDescriptor}^{i + 1}" : rootDescriptor;
+						var parentHeightSinceBranch = isDiverging ? 0 : heightSinceBranch + 1;
+						// Stryker restore all
+
+						toVisit.Push((parents[i], height + 1, parentDescriptor, parentHeightSinceBranch));
 					}
 				}
 			}
 
-			Debug.Assert(candidates.Count > 0);
+			Debug.Assert(candidates.Count != 0);
 
 			return candidates
 				.OrderByDescending(x => x.version is not null)
