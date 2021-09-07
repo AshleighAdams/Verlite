@@ -170,7 +170,7 @@ namespace Verlite
 						var parentHeightSinceBranch = isDiverging ? 0 : heightSinceBranch + 1;
 						// Stryker restore all
 
-						toVisit.Push((parents[i], height + 1, parentDescriptor, parentHeightSinceBranch));
+						toVisit.Push((parents[i], parentHeight, parentDescriptor, parentHeightSinceBranch));
 					}
 				}
 			}
