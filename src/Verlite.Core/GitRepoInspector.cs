@@ -133,6 +133,7 @@ namespace Verlite
 			{
 				if (CatFileProcess is null)
 				{
+					Log?.Verbatim($"{Root} $ git cat-file --batch");
 					ProcessStartInfo info = new()
 					{
 						FileName = "git",
@@ -151,6 +152,9 @@ namespace Verlite
 				await cin.WriteLineAsync(id);
 				string line = await cout.ReadLineAsync();
 				string[] response = line.Split(' ');
+
+				Log?.Verbatim($"git cat-file < {id}");
+				Log?.Verbatim($"git cat-file > {line}");
 
 				if (response[0] != id)
 					throw new UnknownGitException("The returned blob hash did not match.");
