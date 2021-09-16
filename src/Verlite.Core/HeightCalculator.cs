@@ -165,8 +165,8 @@ namespace Verlite
 						var parent = parents[i];
 						var parentHeight = height + 1;
 						// Stryker disable all: used for logging only
-						var isDiverging = i == 0;
-						var parentDescriptor = isDiverging ? $"{rootDescriptor}^{i + 1}" : rootDescriptor;
+						var isDiverging = i != 0;
+						var parentDescriptor = isDiverging ? $"{descriptor}^{i + 1}" : rootDescriptor;
 						var parentHeightSinceBranch = isDiverging ? 0 : heightSinceBranch + 1;
 						// Stryker restore all
 
