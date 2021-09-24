@@ -131,8 +131,10 @@ namespace Verlite
 			await catFileSemaphore.WaitAsync();
 			try
 			{
+				bool isFirst = false;
 				if (CatFileProcess is null)
 				{
+					isFirst = true;
 					Log?.Verbatim($"{Root} $ git cat-file --batch");
 					ProcessStartInfo info = new()
 					{
@@ -148,6 +150,25 @@ namespace Verlite
 				}
 
 				var (cin, cout) = (CatFileProcess.StandardInput, CatFileProcess.StandardOutput);
+
+				// if this git call is forwarded onto another shell script,
+				// then it's possible to query git before it's ready, but once
+				// it does respond, it's ready to be used.
+				if (isFirst)
+				{
+					Log?.Verbatim($"First run: awaiting cat-file startup.");
+					await cin.WriteLineAsync(" ");
+
+					var timeout = Task.Delay(5000);
+					var gotBack = cout.ReadLineAsync();
+
+					var completedTask = await Task.WhenAny(timeout, gotBack);
+
+					if (completedTask == timeout)
+						throw new UnknownGitException("The git cat-file process timed out.");
+					else if (gotBack.Result != "  missing")
+						throw new UnknownGitException($"The git cat-file process returned unexpected output: {gotBack.Result}");
+				}
 
 				await cin.WriteLineAsync(id);
 				string line = await cout.ReadLineAsync();
