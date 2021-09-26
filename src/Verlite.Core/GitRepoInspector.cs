@@ -159,15 +159,21 @@ namespace Verlite
 					Log?.Verbatim($"First run: awaiting cat-file startup.");
 					await cin.WriteLineAsync(" ");
 
-					var timeout = Task.Delay(5000);
+					using var cts = new CancellationTokenSource();
+
+					var timeout = Task.Delay(5000, cts.Token);
 					var gotBack = cout.ReadLineAsync();
 
 					var completedTask = await Task.WhenAny(timeout, gotBack);
 
-					if (completedTask == timeout)
+					if (completedTask != timeout)
+						cts.Cancel();
+					else
 						throw new UnknownGitException("The git cat-file process timed out.");
-					else if (gotBack.Result != "  missing")
-						throw new UnknownGitException($"The git cat-file process returned unexpected output: {gotBack.Result}");
+
+					var result = await gotBack;
+					if (result != "  missing")
+						throw new UnknownGitException($"The git cat-file process returned unexpected output: {result}");
 				}
 
 				await cin.WriteLineAsync(id);
