@@ -49,7 +49,7 @@ jobs:
       run: dotnet pack -o artifacts --configuration Release --no-restore
 
     - name: Publish Codecov
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v2
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         files: ./tests/UnitTests/coverage.cobertura.xml
