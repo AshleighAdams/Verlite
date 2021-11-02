@@ -81,11 +81,11 @@ jobs:
         cd tests/UnitTests
         if [[ "$GITHUB_REF" == "refs/heads/master" ]]; then
           dotnet stryker \
-            --reporters "['html', 'dashboard', 'progress']" \
+            --reporter html --reporter dashboard --reporter progress \
             --dashboard-project "github.com/${GITHUB_REPOSITORY}" \
             --dashboard-version "master"
         else
-          dotnet stryker --reporters "['html', 'progress']"
+          dotnet stryker --reporter html --reporter progress
         fi
         mkdir -p ../../artifacts
         find StrykerOutput -name mutation-report.html -exec cp {} ../../artifacts/ \;
