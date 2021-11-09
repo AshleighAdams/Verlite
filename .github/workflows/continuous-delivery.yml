@@ -80,10 +80,7 @@ jobs:
         dotnet tool install --global dotnet-stryker
         cd tests/UnitTests
         if [[ "$GITHUB_REF" == "refs/heads/master" ]]; then
-          dotnet stryker \
-            --reporter html --reporter dashboard --reporter progress \
-            --dashboard-project "github.com/${GITHUB_REPOSITORY}" \
-            --dashboard-version "master"
+          dotnet stryker --reporter html --reporter dashboard --reporter progress
         else
           dotnet stryker --reporter html --reporter progress
         fi
