@@ -1,5 +1,5 @@
 ---
-name: Feature Request
+name: Feature request
 about: Request a new feature or suggest a change
 title: Short description
 labels: proposal

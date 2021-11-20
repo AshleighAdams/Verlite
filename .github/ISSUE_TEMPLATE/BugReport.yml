@@ -1,5 +1,5 @@
 # Copied from dotnet/runtime
-name: Bug Report
+name: Bug report
 description: Report a bug, where something isn't working as expected.
 labels: ["bug"]
 body:
@@ -18,7 +18,7 @@ body:
   - type: textarea
     id: repro-steps
     attributes:
-      label: Reproduction Steps
+      label: Reproduction steps
       description: |
         Please include minimal steps to reproduce the problem if possible. E.g.: the smallest possible code snippet; or a small project, with steps to run it. If possible include text as text rather than screenshots (so it shows up in searches).
       placeholder: Minimal Reproduction
@@ -54,10 +54,10 @@ body:
   - type: textarea
     id: known-workarounds
     attributes:
-      label: Known Workarounds
+      label: Known workarounds
       description: |
         Please provide a description of any known workarounds.
-      placeholder: Known Workarounds
+      placeholder: Known workarounds
     validations:
       required: false
   - type: textarea
