@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- Allow using `init` and records in .NET Core versions prior to .NET 5 -->
-    <PackageReference Include="IsExternalInit" Version="1.0.1" PrivateAssets="All" />
+    <PackageReference Include="IsExternalInit" Version="1.0.2" PrivateAssets="All" />
     <!-- Nullable reference types for netstandard2.0 -->
     <PackageReference Include="Nullable" Version="1.3.0" PrivateAssets="All" />
   </ItemGroup>
