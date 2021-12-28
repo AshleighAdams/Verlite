@@ -26,6 +26,8 @@ namespace Verlite
 			SemVer ret = version;
 			ret.Prerelease ??= options.DefaultPrereleasePhase;
 			ret.Prerelease += $".{options.PrereleaseBaseHeight + (height - 1)}";
+			ret.BuildMetadata = options.BuildMetadata;
+
 			return ret;
 		}
 		/// <summary>
@@ -74,7 +76,18 @@ namespace Verlite
 				if (options.MinimumVersion > lastTag.Value.DestinedVersion)
 					throw new VersionCalculationException($"Direct tag ({lastTag.Value}) destined version ({lastTag.Value.DestinedVersion}) is below the minimum version ({options.MinimumVersion}).");
 
-				return lastTag.Value;
+				var directVersion = lastTag.Value;
+
+				// integrate tag meta and optional meta together
+				directVersion.BuildMetadata = (directVersion.BuildMetadata, options.BuildMetadata) switch
+				{
+					(null, null) => null,
+					(not null, null) => directVersion.BuildMetadata,
+					(null, not null) => options.BuildMetadata,
+					(not null, not null) => $"{directVersion.BuildMetadata}-{options.BuildMetadata}",
+				};
+
+				return directVersion;
 			}
 
 			var nextVersion = NextVersion(lastTag.Value, options);
@@ -104,7 +117,6 @@ namespace Verlite
 				log: log,
 				tagFilter: tagFilter);
 			var version = FromTagInfomation(lastTagVer?.Version, options, height);
-			version.BuildMetadata = options.BuildMetadata;
 
 			if (lastTagVer is not null && options.QueryRemoteTags)
 			{

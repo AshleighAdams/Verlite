@@ -196,5 +196,90 @@ namespace UnitTests
 
 			repo.LocalTags.Should().BeEmpty();
 		}
+
+		[Fact]
+		public async Task TaggedBuildMetadataIsPreserved()
+		{
+			var repo = new MockRepoInspector(new MockRepoCommit[]
+			{
+				new("commit_a") { Tags = new[] { "v1.2.3+4" } },
+			});
+
+			var version = await VersionCalculator.FromRepository(repo, new()
+			{
+				QueryRemoteTags = true,
+			});
+
+			version.BuildMetadata.Should().Be("4");
+		}
+
+		[Fact]
+		public async Task TaggedWithHeightBuildMetadataIsNotPreserved()
+		{
+			var repo = new MockRepoInspector(new MockRepoCommit[]
+			{
+				new("commit_b"),
+				new("commit_a") { Tags = new[] { "v1.2.3+4" } },
+			});
+
+			var version = await VersionCalculator.FromRepository(repo, new()
+			{
+				QueryRemoteTags = true,
+			});
+
+			version.BuildMetadata.Should().BeNull();
+		}
+
+		[Fact]
+		public async Task TaggedWithHeightStillUsesOptionsMetadata()
+		{
+			var repo = new MockRepoInspector(new MockRepoCommit[]
+			{
+				new("commit_b"),
+				new("commit_a") { Tags = new[] { "v1.2.3+4" } },
+			});
+
+			var version = await VersionCalculator.FromRepository(repo, new()
+			{
+				QueryRemoteTags = true,
+				BuildMetadata = "git.a1b2c3d",
+			});
+
+			version.BuildMetadata.Should().Be("git.a1b2c3d");
+		}
+
+		[Fact]
+		public async Task DirectTagWithNoMetaUsesOnlyOptionsMetadata()
+		{
+			var repo = new MockRepoInspector(new MockRepoCommit[]
+			{
+				new("commit_a") { Tags = new[] { "v1.2.3" } },
+			});
+
+			var version = await VersionCalculator.FromRepository(repo, new()
+			{
+				QueryRemoteTags = true,
+				BuildMetadata = "git.a1b2c3d",
+			});
+
+			version.BuildMetadata.Should().Be("git.a1b2c3d");
+		}
+
+		[Fact]
+		public async Task TaggedBuildMetadataConcatenates()
+		{
+			var repo = new MockRepoInspector(new MockRepoCommit[]
+			{
+				new("commit_a") { Tags = new[] { "v1.2.3+4" } },
+			});
+
+			var version = await VersionCalculator.FromRepository(repo, new()
+			{
+				BuildMetadata = "git.a1b2c3d",
+				QueryRemoteTags = true,
+			});
+
+			version.BuildMetadata.Should().Be("4-git.a1b2c3d");
+		}
 	}
 }
