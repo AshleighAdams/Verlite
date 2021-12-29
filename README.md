@@ -104,6 +104,7 @@ Additionally, Verlite has some extra features, some of which I required or desir
  - [What happens if auto fetch isn't used?](#what-happens-if-auto-fetch-isnt-used) *(nothing unsafe)*
  - [Can I use only signed/specific/arbitrary tags?](#filtering-tags) *(yes)*
  - [What is a good changelog strategy?](#changelog-strategy) *(changes since same or better stability)*
+ - [What happens if tag buildmeta and options buildmeta are set?](#tag-and-option-meta) *(concatenated together)*
 
 ### Why Verlite?
 
@@ -207,6 +208,12 @@ While not related to Verlite per se, a good method for which changes to include 
 | beta                              | beta, release candidate, or stable                     |
 | alpha                             | alpha, beta, release candidate, or stable              |
 
+<h3 id="tag-and-option-meta">What happens if tag buildmeta and options buildmeta are set?</h3>
+
+If a tag with height is being used, the build metadata is discarded, and the options's build metadata used if present.
+In the case of both tag without height and options having build metadata, they are concatenated together with a hash.
+
+Tagging a release as say, `v1.2.3+abc` and also specifying `--build-metadata xyz` will result in a final version of `1.2.3+abc-xyz`.
 
 [verlite-msbuild-badge]: https://img.shields.io/nuget/v/Verlite.MsBuild?label=Verlite.MsBuild
 [verlite-msbuild-link]: https://www.nuget.org/packages/Verlite.MsBuild
