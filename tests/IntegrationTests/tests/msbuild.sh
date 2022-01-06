@@ -30,3 +30,5 @@ should-exist artifacts/TagPrefix.3.0.1-alpha.1.nupkg
 should-exist artifacts/TagFilter.1.0.1-alpha.1.nupkg
 should-exist artifacts/MinimumVersion.4.0.0-alpha.1.nupkg
 should-exist artifacts/VersionOverride.1.33.7.nupkg
+should-exist artifacts/EmbeddedVersion.1.0.1-alpha.1.nupkg
+should-exist artifacts/EmbeddedVersionDisabled.1.0.1-alpha.1.nupkg

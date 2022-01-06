@@ -60,6 +60,7 @@ See [docs/VersionCalculation.md](docs/VersionCalculation.md) for further reading
 | Set which version part should be bumped after an RTM release.       | -a, --auto-increment, VerliteAutoIncrement                       | patch   |
 | A command to test whether a tag should be ignored via exit code.    | -f, --filter-tags, VerliteFilterTags                             |         |
 | The remote endpoint to use when fetching tags and commits.          | -r, --remote, VerliteRemote                                      | origin  |
+| Generate version strings and embed them via a source generator.     | VerliteEmbedVersion                                              | true    |
 
 ## Comparison with GitVersion
 
@@ -105,6 +106,8 @@ Additionally, Verlite has some extra features, some of which I required or desir
  - [Can I use only signed/specific/arbitrary tags?](#filtering-tags) *(yes)*
  - [What is a good changelog strategy?](#changelog-strategy) *(changes since same or better stability)*
  - [What happens if tag buildmeta and options buildmeta are set?](#tag-and-option-meta) *(concatenated together)*
+ - [Can I access computed versions in my assembly?](#embedded-versions) *(yes)*
+ - [Can others access computed versions in the assembly?](#embedded-versions-visibility) *(no\*)*
 
 ### Why Verlite?
 
@@ -214,6 +217,42 @@ If a tag with height is being used, the build metadata is discarded, and the opt
 In the case of both tag without height and options having build metadata, they are concatenated together with a hash.
 
 Tagging a release as say, `v1.2.3+abc` and also specifying `--build-metadata xyz` will result in a final version of `1.2.3+abc-xyz`.
+
+<h3 id="embedded-versions">Can I access computed versions in my assembly?</h3>
+
+Yes, since v2.1, the computed versions are added by default using a source generator.
+This can be disabled by setting the `VerliteEmbedVersion` property to `false`.
+
+The embedded version is structured as follows:
+
+```cs
+namespace Verlite
+{
+	internal static class Version
+	{
+		public const string Full;
+		public const string Core;
+		public const string Major;
+		public const string Minor;
+		public const string Patch;
+		public const string Prerelease;
+		public const string BuildMetadata;
+	}
+}
+```
+
+<h3 id="embedded-versions-visibility">Can others access computed versions in the assembly?</h3>
+
+No, the generated structure is marked as `internal`, and only visible to your assembly.
+Should you wish to expose this version, it is recomended you use a public static property:
+
+```cs
+namespace MyLibrary;
+public static class Version
+{
+	public string Version => Verlite.Version.FullVersion;
+}
+```
 
 [verlite-msbuild-badge]: https://img.shields.io/nuget/v/Verlite.MsBuild?label=Verlite.MsBuild
 [verlite-msbuild-link]: https://www.nuget.org/packages/Verlite.MsBuild
