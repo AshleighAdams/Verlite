@@ -36,7 +36,7 @@
     <ItemGroup>
       <None Include="$(OutputPath)\**\*" Exclude="$(OutputPath)\**\*.dev.json" Pack="true" PackagePath="verlite" />
       <!-- Also put the dlls to register our analyzer -->
-      <None Include="$(OutputPath)\**\*" Exclude="$(OutputPath)\**\*.dev.json" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+      <None Include="$(OutputPath)\$(AssemblyName).dll" Exclude="$(OutputPath)\**\*.dev.json" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
   </Target>
 </Project>
