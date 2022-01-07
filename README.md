@@ -96,6 +96,7 @@ Additionally, Verlite has some extra features, some of which I required or desir
  - [Can I change the default phase?](#can-i-change-the-default-phase) *(yes)*
  - [Why is the default phase "alpha" and not "alpha.0"?](#why-is-the-default-phase-alpha-and-not-alpha0) *(reduce fatigue)*
  - [Can prereleases be tagged?](#can-prereleases-be-tagged) *(yes, must be)*
+ - [Can I get the commit hash?](#get-commit-hash) *(yes)*
  - [Can I use a branching strategy?](#can-i-use-a-branching-strategy) *(sort of)*
  - [Can Verlite be used elsewhere?](#can-verlite-be-used-elsewhere) *(yes)*
  - [What is the default tag prefix?](#what-is-the-default-tag-prefix) *("v")*
@@ -127,6 +128,10 @@ Should the you prefer `alpha.0.n` be used after a stable release instead of `alp
 ### Can prereleases be tagged?
 
 You should only release tagged prereleases. Then for subsequent untagged commits, they will be versioned with the tagged version with the height appended. For example, the next commit after `2.0.0-rc.1` may be versioned as `2.0.0-rc.1.1`.
+
+<h3 id="get-commit-hash">Can I get the commit hash?</h3>
+
+Yes, the commit hash is exposed in the `$(VerliteCommit)` property which can be used after the `Verlite` task has run.
 
 ### Can I use a branching strategy?
 
