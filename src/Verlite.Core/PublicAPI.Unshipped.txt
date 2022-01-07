@@ -1,6 +1,7 @@
 #nullable enable
 Verlite.GitRepoInspector.Dispose() -> void
 Verlite.GitRepoInspector.Remote.get -> string!
+Verlite.SemVer.CoreVersion.get -> Verlite.SemVer
 Verlite.UnknownGitException
 Verlite.UnknownGitException.UnknownGitException(string! message) -> void
 Verlite.VersionCalculationOptions.Remote.get -> string!
