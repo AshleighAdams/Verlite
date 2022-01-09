@@ -39,7 +39,7 @@ namespace Verlite
 		/// <returns>The next version calculated from the input.</returns>
 		public static SemVer NextVersion(SemVer lastTag, VersionCalculationOptions options)
 		{
-			if (options.MinimumVersion > lastTag.DestinedVersion)
+			if (options.MinimumVersion > lastTag.CoreVersion)
 				return options.MinimumVersion;
 			else if (lastTag.Prerelease is not null)
 			{
@@ -73,8 +73,8 @@ namespace Verlite
 			bool directTag = height == 0;
 			if (directTag)
 			{
-				if (options.MinimumVersion > lastTag.Value.DestinedVersion)
-					throw new VersionCalculationException($"Direct tag ({lastTag.Value}) destined version ({lastTag.Value.DestinedVersion}) is below the minimum version ({options.MinimumVersion}).");
+				if (options.MinimumVersion > lastTag.Value.CoreVersion)
+					throw new VersionCalculationException($"Direct tag ({lastTag.Value}) destined version ({lastTag.Value.CoreVersion}) is below the minimum version ({options.MinimumVersion}).");
 
 				var directVersion = lastTag.Value;
 
