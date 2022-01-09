@@ -23,6 +23,7 @@ namespace Verlite
 			context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.VerlitePatch", out var patch);
 			context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.VerlitePrerelease", out var prerelease);
 			context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.VerliteBuildMetadata", out var meta);
+			context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.VerliteCommit", out var commit);
 
 			version ??= string.Empty;
 			major ??= string.Empty;
@@ -30,6 +31,7 @@ namespace Verlite
 			patch ??= string.Empty;
 			prerelease ??= string.Empty;
 			meta ??= string.Empty;
+			commit ??= string.Empty;
 
 			var coreVersion = string.IsNullOrEmpty(version) ? string.Empty : $"{major}.{minor}.{patch}";
 
@@ -51,6 +53,7 @@ namespace Verlite
 		public const string Patch = ""{patch}"";
 		public const string Prerelease = ""{prerelease}"";
 		public const string BuildMetadata = ""{meta}"";
+		public const string Commit = ""{commit}"";
 	}}
 }}
 ";

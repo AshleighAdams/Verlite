@@ -27,6 +27,7 @@ This file has been modified by Ashleigh Adams and adapted for Verlite -->
     <CompilerVisibleProperty Include="VerlitePatch" />
     <CompilerVisibleProperty Include="VerlitePrerelease" />
     <CompilerVisibleProperty Include="VerliteBuildMetadata" />
+    <CompilerVisibleProperty Include="VerliteCommit" />
   </ItemGroup>
 
   <PropertyGroup>
