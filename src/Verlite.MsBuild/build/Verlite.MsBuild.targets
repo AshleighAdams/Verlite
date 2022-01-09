@@ -15,7 +15,20 @@ This file has been modified by Ashleigh Adams and adapted for Verlite -->
   <PropertyGroup>
     <MSBuildAllProjects Condition="'$(MSBuildAssemblyVersion)' == '' Or '$(MSBuildAssemblyVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <GetPackageVersionDependsOn>$(GetPackageVersionDependsOn);Verlite</GetPackageVersionDependsOn>
+    <CoreCompileDependsOn>Verlite;$(CoreCompileDependsOn)</CoreCompileDependsOn>
   </PropertyGroup>
+
+  <!-- expose these variables to the source generator -->
+  <ItemGroup>
+    <CompilerVisibleProperty Include="VerliteEmbedVersion" />
+    <CompilerVisibleProperty Include="VerliteVersion" />
+    <CompilerVisibleProperty Include="VerliteMajor" />
+    <CompilerVisibleProperty Include="VerliteMinor" />
+    <CompilerVisibleProperty Include="VerlitePatch" />
+    <CompilerVisibleProperty Include="VerlitePrerelease" />
+    <CompilerVisibleProperty Include="VerliteBuildMetadata" />
+    <CompilerVisibleProperty Include="VerliteCommit" />
+  </ItemGroup>
 
   <PropertyGroup>
     <VerliteDetailed>low</VerliteDetailed>
@@ -26,7 +39,7 @@ This file has been modified by Ashleigh Adams and adapted for Verlite -->
   </PropertyGroup>
 
   <Target Name="Verlite"
-          BeforeTargets="BeforeCompile;GetAssemblyVersion;CoreCompile;GenerateNuspec;_GenerateRestoreProjectSpec;_GetOutputItemsFromPack;EnsureWixToolsetInstalled"
+          BeforeTargets="PrepareForBuild;GenerateMSBuildEditorConfigFile;BeforeCompile;GetAssemblyVersion;CoreCompile;GenerateNuspec;_GenerateRestoreProjectSpec;_GetOutputItemsFromPack;EnsureWixToolsetInstalled"
           Condition="'$(DesignTimeBuild)' != 'true' AND '$(VerliteDisabled)' != 'true'">
 
     <Error Code="VERLITE0001" Condition="'$(UsingMicrosoftNETSdk)' != 'true'" Text="Verlite.MsBuild only works in SDK-style projects." />

@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.0.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.11.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,6 +37,8 @@
   <Target Name="AddVerliteOutput" BeforeTargets="_GetPackageFiles">
     <ItemGroup>
       <None Include="$(OutputPath)\**\*" Exclude="$(OutputPath)\**\*.dev.json" Pack="true" PackagePath="verlite" />
+      <!-- Also put the dlls to register our analyzer -->
+      <None Include="$(OutputPath)\Verlite.*.dll" Exclude="$(OutputPath)\**\*.dev.json" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
   </Target>
 </Project>
