@@ -4,21 +4,23 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Verlite.MsBuild</RootNamespace>
     <Description>Lightweight automatic versioning via Git tags for continuous delivery and SDK-style projects.</Description>
-    
+
     <NoWarn>$(NoWarn);NU5100;NU5105;CS1591</NoWarn>
     <DevelopmentDependency>true</DevelopmentDependency>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <Authors>Ashleigh Adams, Adam Ralph</Authors>
-    <Copyright>Copyright 2020 Ashleigh Adams, Adam Ralph</Copyright>
+    <Copyright>Copyright 2022 Ashleigh Adams, 2020 Adam Ralph</Copyright>
     <PackageLicenseExpression>(MIT AND Apache-2.0)</PackageLicenseExpression>
     <PackageTags>automatic;version;versioning;git;tags;tool</PackageTags>
+    <PackageReadme>README.md</PackageReadme>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="build\**\*" />
     <None Remove="buildMultiTargeting\**\*" />
+    <None Include="README.md" Pack="true" PackagePath="/" />
     <Content Include="build\**\*" PackagePath="build" />
     <Content Include="buildMultiTargeting\**\*" PackagePath="buildMultiTargeting" />
   </ItemGroup>
