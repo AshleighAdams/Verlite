@@ -75,6 +75,7 @@ This file has been modified by Ashleigh Adams and adapted for Verlite -->
       <Output TaskParameter="VersionPatch" PropertyName="VerlitePatch" />
       <Output TaskParameter="VersionPrerelease" PropertyName="VerlitePrerelease" />
       <Output TaskParameter="VersionBuildMetadata" PropertyName="VerliteBuildMetadata" />
+      <Output TaskParameter="Commit" PropertyName="VerliteCommit" />
     </Verlite.MsBuild.GetVersionTask>
 
     <PropertyGroup>
@@ -90,6 +91,7 @@ This file has been modified by Ashleigh Adams and adapted for Verlite -->
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] VerlitePatch=$(VerlitePatch)" />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] VerlitePrerelease=$(VerlitePrerelease)" />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] VerliteBuildMetadata=$(VerliteBuildMetadata)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] VerliteCommit=$(VerliteCommit)" />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] AssemblyVersion=$(AssemblyVersion)" />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] FileVersion=$(FileVersion)" />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] PackageVersion=$(PackageVersion)" />

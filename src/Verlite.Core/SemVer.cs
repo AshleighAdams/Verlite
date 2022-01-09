@@ -36,6 +36,13 @@ namespace Verlite
 		/// <summary>
 		/// The version without any prerelease or metadata, for which a prerelease would be working toward.
 		/// </summary>
+		public SemVer CoreVersion => new(Major, Minor, Patch);
+
+		/// <summary>
+		/// The version without any prerelease or metadata, for which a prerelease would be working toward.<br/>
+		/// Deprecated in favor of <see cref="CoreVersion"/>
+		/// </summary>
+		[Obsolete("Use CoreVersion")]
 		public SemVer DestinedVersion => new(Major, Minor, Patch);
 
 		/// <summary>
