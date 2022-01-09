@@ -14,7 +14,7 @@
     <Copyright>Copyright 2022 Ashleigh Adams, 2020 Adam Ralph</Copyright>
     <PackageLicenseExpression>(MIT AND Apache-2.0)</PackageLicenseExpression>
     <PackageTags>automatic;version;versioning;git;tags;tool</PackageTags>
-    <PackageReadme>README.md</PackageReadme>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>

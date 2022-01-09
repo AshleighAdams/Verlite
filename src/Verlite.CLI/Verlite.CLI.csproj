@@ -12,7 +12,7 @@
     <!-- The below will cause our exception messages to be translated. -->
     <UseSystemResourceKeys>false</UseSystemResourceKeys>
     <PackageTags>automatic;version;versioning;git;tags;msbuild</PackageTags>
-    <PackageReadme>README.md</PackageReadme>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
