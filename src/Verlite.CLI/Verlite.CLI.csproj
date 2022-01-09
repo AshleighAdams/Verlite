@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <TargetFrameworks>netcoreapp2.1;net5.0;</TargetFrameworks>
@@ -12,7 +12,12 @@
     <!-- The below will cause our exception messages to be translated. -->
     <UseSystemResourceKeys>false</UseSystemResourceKeys>
     <PackageTags>automatic;version;versioning;git;tags;msbuild</PackageTags>
+    <PackageReadme>README.md</PackageReadme>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Verlite.Core\Verlite.Core.csproj" />

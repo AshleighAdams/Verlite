@@ -28,7 +28,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Copyright>Copyright 2020 Ashleigh Adams</Copyright>
+    <Copyright>Copyright 2022 Ashleigh Adams</Copyright>
     <PackageIcon>images/packageicon.png</PackageIcon>
   </PropertyGroup>
   <ItemGroup>
