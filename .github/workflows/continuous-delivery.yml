@@ -148,7 +148,7 @@ jobs:
 
     - name: Publish Nuget GitHub
       run: dotnet nuget push 'artifacts/*.nupkg' -k ${GITHUB_TOKEN} -s github --skip-duplicate
-        --no-symbols
+        --no-symbols 1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
