@@ -49,7 +49,7 @@
     <MinVerMinimumMajorMinor>2.1</MinVerMinimumMajorMinor>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MinVer" Version="2.5.0">
+    <PackageReference Include="MinVer" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
