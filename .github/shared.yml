@@ -43,10 +43,10 @@ definitions:
   mutation-test: &mutation-test
     name: Mutation Test
     run: |
-      dotnet tool install --global dotnet-stryker --version 1.2.2 # TODO: remove the version constraint
+      dotnet tool install --global dotnet-stryker
       cd tests/UnitTests
       if [[ "$GITHUB_REF" == "refs/heads/master" ]]; then
-        dotnet stryker --reporter html --reporter dashboard --reporter progress
+        dotnet stryker --reporter html --reporter dashboard --reporter progress --version master
       else
         dotnet stryker --reporter html --reporter progress
       fi
