@@ -169,18 +169,18 @@ namespace Verlite.CLI
 			}
 			catch (GitMissingOrNotGitRepoException)
 			{
-				Console.Error.WriteLine("Input is not a git repo or git not installed.");
+				await Console.Error.WriteLineAsync("Input is not a git repo or git not installed.");
 				Environment.Exit(1);
 			}
 			catch (AutoDeepenException ex)
 			{
-				Console.Error.WriteLine(ex.Message);
+				await Console.Error.WriteLineAsync(ex.Message);
 				Environment.Exit(1);
 			}
 			catch (RepoTooShallowException ex)
 			{
-				Console.Error.WriteLine(ex.Message);
-				Console.Error.WriteLine("For CI/CD, use `verlite --auto-fetch`");
+				await Console.Error.WriteLineAsync(ex.Message);
+				await Console.Error.WriteLineAsync("For CI/CD, use `verlite --auto-fetch`");
 				Environment.Exit(1);
 			}
 		}

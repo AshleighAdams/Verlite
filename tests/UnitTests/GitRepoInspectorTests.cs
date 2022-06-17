@@ -513,7 +513,7 @@ namespace UnitTests
 
 			// forcibly desync the git catfile process
 			Assert.NotNull(repo.CatFileProcess);
-			repo.CatFileProcess!.StandardInput.WriteLine(head.Value);
+			await repo.CatFileProcess!.StandardInput.WriteLineAsync(head.Value.Id);
 
 			// attempt to read a non-cached parent
 			await Assert.ThrowsAsync<UnknownGitException>(() => repo.GetParents(parents[0]));

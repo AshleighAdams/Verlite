@@ -1,7 +1,10 @@
 #nullable enable
 Verlite.GitRepoInspector.Dispose() -> void
+Verlite.GitRepoInspector.EnableLightweightTags.get -> bool
+Verlite.GitRepoInspector.EnableLightweightTags.set -> void
 Verlite.GitRepoInspector.Remote.get -> string!
 Verlite.SemVer.CoreVersion.get -> Verlite.SemVer
+Verlite.TagContainer.ContainsTag(Verlite.Tag tag) -> bool
 Verlite.UnknownGitException
 Verlite.UnknownGitException.UnknownGitException(string! message) -> void
 Verlite.VersionCalculationOptions.Remote.get -> string!
