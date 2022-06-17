@@ -44,12 +44,8 @@ namespace Verlite
 			ILogger? log = null,
 			ITagFilter? tagFilter = null)
 		{
-			QueryTarget queryTags = QueryTarget.Local;
-			if (queryRemoteTags)
-				queryTags |= QueryTarget.Remote;
-
 			var head = await repo.GetHead();
-			var tags = await repo.GetTags(queryTags);
+			var tags = await repo.GetTags(queryRemoteTags ? QueryTarget.Local | QueryTarget.Remote : QueryTarget.Local);
 
 			log?.Verbose("Found the following tags:");
 			foreach (var tag in tags)
@@ -59,13 +55,33 @@ namespace Verlite
 				return (1, null);
 
 			// Stryker disable once all: used for logging only
-			return await FromCommit(
+			var candidates = await GetCandidates(
 				commit: head.Value,
 				commitDescriptor: "HEAD",
-				options: new FromCommitOptions(repo, tags, tagPrefix, log, tagFilter));
+				options: new CandidateOptions(repo, tags, tagPrefix, log, tagFilter));
+
+			if (queryRemoteTags)
+			{
+				var localTags = await repo.GetTags(QueryTarget.Local);
+				foreach (var (_, version) in candidates)
+				{
+					if (version is null)
+						continue;
+					if (localTags.ContainsTag(version.Tag))
+						continue;
+
+					log?.Normal("Local repo missing version tag, fetching.");
+					await repo.FetchTag(version.Tag);
+				}
+			}
+
+			return candidates
+				.OrderByDescending(x => x.version is not null)
+				.ThenByDescending(x => x.version?.Version)
+				.First();
 		}
 
-		private class FromCommitOptions
+		private class CandidateOptions
 		{
 			public IRepoInspector Repo { get; }
 			public TagContainer Tags { get; }
@@ -73,7 +89,7 @@ namespace Verlite
 			public ILogger? Log { get; }
 			public ITagFilter? TagFilter { get; }
 
-			public FromCommitOptions(
+			public CandidateOptions(
 				IRepoInspector repo,
 				TagContainer tags,
 				string tagPrefix,
@@ -89,10 +105,10 @@ namespace Verlite
 
 		}
 
-		private static async Task<(int height, TaggedVersion? version)> FromCommit(
+		private static async Task<IReadOnlyList<(int height, TaggedVersion? version)>> GetCandidates(
 			Commit commit,
 			string commitDescriptor,
-			FromCommitOptions options)
+			CandidateOptions options)
 		{
 			var visited = new HashSet<Commit>();
 			var toVisit = new Stack<(Commit commit, int height, string descriptor, int heightSinceBranch)>();
@@ -176,11 +192,7 @@ namespace Verlite
 			}
 
 			Debug.Assert(candidates.Count != 0);
-
-			return candidates
-				.OrderByDescending(x => x.version is not null)
-				.ThenByDescending(x => x.version?.Version)
-				.First();
+			return candidates;
 		}
 	}
 }

@@ -34,6 +34,11 @@ namespace Verlite
 			return ret;
 		}
 
+		public bool ContainsTag(Tag tag)
+		{
+			return Tags.Contains(tag);
+		}
+
 		/// <summary>
 		/// Gets the enumerator for iterating over the collection.
 		/// </summary>
