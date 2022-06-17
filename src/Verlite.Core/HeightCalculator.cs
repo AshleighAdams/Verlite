@@ -89,8 +89,7 @@ namespace Verlite
 		/// </summary>
 		/// <param name="repo">The repo to walk.</param>
 		/// <param name="tagPrefix">What version tags are prefixed with.</param>
-		/// <param name="queryRemoteTags">Whether to query local or local and remote tags.</param>
-		/// <param name="fetchTags">Whether to fetch tags we don't yet have locally.</param>
+		/// <param name="queryRemoteTags">Whether to query local or local and remote tags, will not be fetched.</param>
 		/// <param name="log">The log to output verbose diagnostics to.</param>
 		/// <param name="tagFilter">A filter to test tags against. A value of <c>null</c> means do not filter.</param>
 		/// <returns>A task containing the height, and, if found, the tagged version.</returns>
