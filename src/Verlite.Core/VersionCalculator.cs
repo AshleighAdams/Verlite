@@ -114,6 +114,7 @@ namespace Verlite
 				repo: repo,
 				tagPrefix: options.TagPrefix,
 				queryRemoteTags: options.QueryRemoteTags,
+				fetchTags: options.QueryRemoteTags,
 				log: log,
 				tagFilter: tagFilter);
 
