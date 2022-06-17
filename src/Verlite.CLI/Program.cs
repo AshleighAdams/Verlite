@@ -81,6 +81,10 @@ namespace Verlite.CLI
 					aliases: new[] { "--auto-fetch" },
 					getDefaultValue: () => false,
 					description: "Automatically fetch commits from a shallow repository until a version tag is encountered."),
+				new Option<bool>(
+					aliases: new[] { "--fetch-lightweight-tags" },
+					getDefaultValue: () => false,
+					description: "Create a lightweight tag instead of fetching the remote's."),
 				new Option<AutoIncrement>(
 					aliases: new[] { "--auto-increment", "-a" },
 					isDefault: true,
@@ -109,6 +113,7 @@ namespace Verlite.CLI
 			string? buildMetadata,
 			Show show,
 			bool autoFetch,
+			bool fetchLightweightTags,
 			AutoIncrement autoIncrement,
 			string filterTags,
 			string remote,
@@ -140,6 +145,7 @@ namespace Verlite.CLI
 				{
 					using var repo = await GitRepoInspector.FromPath(sourceDirectory, opts.Remote, log, commandRunner);
 					repo.CanDeepen = autoFetch;
+					repo.EnableLightweightTags = fetchLightweightTags;
 
 					ITagFilter? tagFilter = null;
 					if (!string.IsNullOrWhiteSpace(filterTags))

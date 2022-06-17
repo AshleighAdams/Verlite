@@ -72,6 +72,10 @@ namespace Verlite
 		/// </summary>
 		public bool CanDeepen { get; set; }
 		/// <summary>
+		/// Enable shortcutting git fetch to eliminate potentially problematic git fetches.
+		/// </summary>
+		public bool EnableLightweightTags { get; set; }
+		/// <summary>
 		/// The root of the repository.
 		/// </summary>
 		public string Root { get; }
@@ -280,6 +284,7 @@ namespace Verlite
 		}
 
 		private bool DeepenFromCommitSupported { get; set; } = true;
+
 		private async Task Deepen()
 		{
 			var probe = await ProbeDepth();
@@ -427,6 +432,12 @@ namespace Verlite
 		/// <inheritdoc/>
 		public async Task FetchTag(Tag tag, string remote)
 		{
+			if (EnableLightweightTags)
+			{
+				await Git("tag", "--no-sign", tag.Name, tag.PointsTo.Id);
+				return;
+			}
+
 			var probe = await ProbeDepth();
 
 			Log?.Verbose($"FetchTag({tag}, {remote})");
