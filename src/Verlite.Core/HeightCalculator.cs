@@ -34,6 +34,7 @@ namespace Verlite
 		/// <param name="repo">The repo to walk.</param>
 		/// <param name="tagPrefix">What version tags are prefixed with.</param>
 		/// <param name="queryRemoteTags">Whether to query local or local and remote tags.</param>
+		/// <param name="fetchTags">Whether to fetch tags we don't yet have locally.</param>
 		/// <param name="log">The log to output verbose diagnostics to.</param>
 		/// <param name="tagFilter">A filter to test tags against. A value of <c>null</c> means do not filter.</param>
 		/// <returns>A task containing the height, and, if found, the tagged version.</returns>
@@ -41,15 +42,12 @@ namespace Verlite
 			IRepoInspector repo,
 			string tagPrefix,
 			bool queryRemoteTags,
-			ILogger? log = null,
-			ITagFilter? tagFilter = null)
+			bool fetchTags,
+			ILogger? log,
+			ITagFilter? tagFilter)
 		{
-			QueryTarget queryTags = QueryTarget.Local;
-			if (queryRemoteTags)
-				queryTags |= QueryTarget.Remote;
-
 			var head = await repo.GetHead();
-			var tags = await repo.GetTags(queryTags);
+			var tags = await repo.GetTags(queryRemoteTags ? QueryTarget.Local | QueryTarget.Remote : QueryTarget.Local);
 
 			log?.Verbose("Found the following tags:");
 			foreach (var tag in tags)
@@ -59,13 +57,53 @@ namespace Verlite
 				return (1, null);
 
 			// Stryker disable once all: used for logging only
-			return await FromCommit(
+			var candidates = await GetCandidates(
 				commit: head.Value,
 				commitDescriptor: "HEAD",
-				options: new FromCommitOptions(repo, tags, tagPrefix, log, tagFilter));
+				options: new CandidateOptions(repo, tags, tagPrefix, log, tagFilter));
+
+			if (fetchTags)
+			{
+				var localTags = await repo.GetTags(QueryTarget.Local);
+				foreach (var (_, version) in candidates)
+				{
+					if (version is null)
+						continue;
+					if (localTags.ContainsTag(version.Tag))
+						continue;
+
+					log?.Normal("Local repo missing version tag, fetching.");
+					await repo.FetchTag(version.Tag);
+				}
+			}
+
+			return candidates
+				.OrderByDescending(x => x.version is not null)
+				.ThenByDescending(x => x.version?.Version)
+				.First();
 		}
 
-		private class FromCommitOptions
+		[Obsolete("Use FromRepository() with all arguments present.")]
+		/// <summary>
+		/// Calculate the height from a repository by walking, from the head, the primary parents until a version tag is found.
+		/// </summary>
+		/// <param name="repo">The repo to walk.</param>
+		/// <param name="tagPrefix">What version tags are prefixed with.</param>
+		/// <param name="queryRemoteTags">Whether to query local or local and remote tags, will not be fetched.</param>
+		/// <param name="log">The log to output verbose diagnostics to.</param>
+		/// <param name="tagFilter">A filter to test tags against. A value of <c>null</c> means do not filter.</param>
+		/// <returns>A task containing the height, and, if found, the tagged version.</returns>
+		public static Task<(int height, TaggedVersion?)> FromRepository(
+			IRepoInspector repo,
+			string tagPrefix,
+			bool queryRemoteTags,
+			ILogger? log = null,
+			ITagFilter? tagFilter = null)
+		{
+			return FromRepository(repo, tagPrefix, queryRemoteTags, false, log, tagFilter);
+		}
+
+		private class CandidateOptions
 		{
 			public IRepoInspector Repo { get; }
 			public TagContainer Tags { get; }
@@ -73,7 +111,7 @@ namespace Verlite
 			public ILogger? Log { get; }
 			public ITagFilter? TagFilter { get; }
 
-			public FromCommitOptions(
+			public CandidateOptions(
 				IRepoInspector repo,
 				TagContainer tags,
 				string tagPrefix,
@@ -89,10 +127,10 @@ namespace Verlite
 
 		}
 
-		private static async Task<(int height, TaggedVersion? version)> FromCommit(
+		private static async Task<IReadOnlyList<(int height, TaggedVersion? version)>> GetCandidates(
 			Commit commit,
 			string commitDescriptor,
-			FromCommitOptions options)
+			CandidateOptions options)
 		{
 			var visited = new HashSet<Commit>();
 			var toVisit = new Stack<(Commit commit, int height, string descriptor, int heightSinceBranch)>();
@@ -176,11 +214,7 @@ namespace Verlite
 			}
 
 			Debug.Assert(candidates.Count != 0);
-
-			return candidates
-				.OrderByDescending(x => x.version is not null)
-				.ThenByDescending(x => x.version?.Version)
-				.First();
+			return candidates;
 		}
 	}
 }

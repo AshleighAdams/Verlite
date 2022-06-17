@@ -72,6 +72,10 @@ namespace Verlite
 		/// </summary>
 		public bool CanDeepen { get; set; }
 		/// <summary>
+		/// Enable shortcutting git fetch to eliminate potentially problematic git fetches.
+		/// </summary>
+		public bool EnableLightweightTags { get; set; }
+		/// <summary>
 		/// The root of the repository.
 		/// </summary>
 		public string Root { get; }
@@ -176,12 +180,22 @@ namespace Verlite
 						throw new UnknownGitException($"The git cat-file process returned unexpected output: {result}");
 				}
 
-				await cin.WriteLineAsync(id);
-				string line = await cout.ReadLineAsync();
-				string[] response = line.Split(' ');
+				using var cts2 = new CancellationTokenSource();
+				var timeout2 = Task.Delay(10_000, cts2.Token);
 
 				Log?.Verbatim($"git cat-file < {id}");
+				if (await Task.WhenAny(cin.WriteLineAsync(id), timeout2) == timeout2)
+					throw new UnknownGitException("The git cat-file process write timed out.");
+
+				var readLineTask = cout.ReadLineAsync();
+				if (await Task.WhenAny(readLineTask, timeout2) == timeout2)
+					throw new UnknownGitException("The git cat-file process read timed out.");
+				cts2.Cancel();
+
+				string line = await readLineTask;
 				Log?.Verbatim($"git cat-file > {line}");
+				string[] response = line.Split(' ');
+
 
 				if (response[0] != id)
 					throw new UnknownGitException("The returned blob hash did not match.");
@@ -270,6 +284,7 @@ namespace Verlite
 		}
 
 		private bool DeepenFromCommitSupported { get; set; } = true;
+
 		private async Task Deepen()
 		{
 			var probe = await ProbeDepth();
@@ -417,6 +432,12 @@ namespace Verlite
 		/// <inheritdoc/>
 		public async Task FetchTag(Tag tag, string remote)
 		{
+			if (EnableLightweightTags)
+			{
+				await Git("tag", "--no-sign", tag.Name, tag.PointsTo.Id);
+				return;
+			}
+
 			var probe = await ProbeDepth();
 
 			Log?.Verbose($"FetchTag({tag}, {remote})");

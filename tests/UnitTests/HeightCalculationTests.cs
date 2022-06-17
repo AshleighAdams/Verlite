@@ -23,7 +23,7 @@ namespace UnitTests
 				new("commit_c"),
 			});
 
-			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", queryRemoteTags: true, fetchTags: false, null, null);
 
 			tag.Should().NotBeNull();
 			SDebug.Assert(tag is not null);
@@ -39,7 +39,7 @@ namespace UnitTests
 		{
 			var repo = new MockRepoInspector(Array.Empty<MockRepoCommit>());
 
-			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", queryRemoteTags: true, fetchTags: false, null, null);
 
 			tag.Should().BeNull();
 			height.Should().Be(1);
@@ -53,7 +53,7 @@ namespace UnitTests
 				new("commit_a"),
 			});
 
-			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", queryRemoteTags: true, fetchTags: false, null, null);
 
 			tag.Should().BeNull();
 			height.Should().Be(1);
@@ -73,7 +73,7 @@ namespace UnitTests
 
 			var repo = new MockRepoInspector(gtor, master);
 
-			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", queryRemoteTags: true, fetchTags: false, null, null);
 
 			tag.Should().BeNull();
 			height.Should().Be(2);
@@ -93,7 +93,7 @@ namespace UnitTests
 
 			var repo = new MockRepoInspector(gtor, master);
 
-			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", queryRemoteTags: true, fetchTags: false, null, null);
 
 			tag.Should().BeNull();
 			height.Should().Be(2);
@@ -114,7 +114,7 @@ namespace UnitTests
 
 			var repo = new MockRepoInspector(gtor, master);
 
-			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", queryRemoteTags: true, fetchTags: false, null, null);
 
 			Assert.NotNull(tag);
 			tag!.Tag.Name.Should().Be("v1.0.0+master");
@@ -136,7 +136,7 @@ namespace UnitTests
 
 			var repo = new MockRepoInspector(gtor, feature);
 
-			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", queryRemoteTags: true, fetchTags: false, null, null);
 
 			Assert.NotNull(tag);
 			tag!.Tag.Name.Should().Be("v2.0.0");
@@ -159,7 +159,7 @@ namespace UnitTests
 
 			var repo = new MockRepoInspector(gtor, master);
 
-			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", queryRemoteTags: true, fetchTags: false, null, null);
 
 			Assert.NotNull(tag);
 			tag!.Tag.Name.Should().Be("v2.0.0");
@@ -182,7 +182,7 @@ namespace UnitTests
 
 			var repo = new MockRepoInspector(gtor, feature);
 
-			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", queryRemoteTags: true, fetchTags: false, null, null);
 
 			Assert.NotNull(tag);
 			tag!.Tag.Name.Should().Be("v2.0.0");
@@ -206,7 +206,7 @@ namespace UnitTests
 
 			var repo = new MockRepoInspector(gtor, master);
 
-			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", queryRemoteTags: true, fetchTags: false, null, null);
 
 			Assert.NotNull(tag);
 			tag!.Tag.Name.Should().Be("v1.0.0");
@@ -228,7 +228,7 @@ namespace UnitTests
 
 			var repo = new MockRepoInspector(gtor, master);
 
-			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", queryRemoteTags: true, fetchTags: false, null, null);
 
 			Assert.NotNull(tag);
 			tag!.Tag.Name.Should().Be("v1.0.0");
@@ -245,7 +245,7 @@ namespace UnitTests
 				new("commit_c"),
 			});
 
-			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", queryRemoteTags: true, fetchTags: false, null, null);
 
 			tag.Should().BeNull();
 			height.Should().Be(3);
@@ -261,7 +261,7 @@ namespace UnitTests
 				new("commit_c"),
 			});
 
-			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", queryRemoteTags: true, fetchTags: false, null, null);
 
 			tag.Should().BeNull();
 			height.Should().Be(3);
@@ -278,7 +278,7 @@ namespace UnitTests
 				new("commit_c") { Tags = new[]{ "v" } },
 			});
 
-			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", queryRemoteTags: true, fetchTags: false, null, null);
 
 			tag.Should().BeNull();
 			height.Should().Be(3);
@@ -294,7 +294,7 @@ namespace UnitTests
 				new("commit_c"),
 			});
 
-			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", queryRemoteTags: true, fetchTags: false, null, null);
 
 			tag.Should().NotBeNull();
 			SDebug.Assert(tag is not null);
@@ -315,7 +315,7 @@ namespace UnitTests
 				new("commit_c"),
 			});
 
-			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true);
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", queryRemoteTags: true, fetchTags: false, null, null);
 
 			tag.Should().NotBeNull();
 			SDebug.Assert(tag is not null);
@@ -337,7 +337,9 @@ namespace UnitTests
 				new("commit_c") { Tags = new[]{ "v1.0.0-alpha.1" } },
 			});
 
-			(_, _) = await HeightCalculator.FromRepository(repo, "v", true);
+#pragma warning disable CS0618 // intentional use of deprecated function
+			(_, _) = await HeightCalculator.FromRepository(repo, "v", true, null, null);
+#pragma warning restore CS0618
 
 			var tags = await (repo as IRepoInspector).GetTags(QueryTarget.Local);
 			tags.FindCommitTags(new("commit_c")).Should().BeEquivalentTo(Array.Empty<Tag>());
@@ -358,7 +360,7 @@ namespace UnitTests
 				new("commit_d"),
 			});
 
-			var (height, tag) = await HeightCalculator.FromRepository(repo, prefix, true);
+			var (height, tag) = await HeightCalculator.FromRepository(repo, prefix, queryRemoteTags: true, fetchTags: false, null, null);
 
 			height.Should().Be(resultHeight);
 
@@ -393,7 +395,7 @@ namespace UnitTests
 			var filter = new MockTagFilter();
 			filter.BlockTags.Add("v1.0.0");
 
-			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true, null, filter);
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", queryRemoteTags: true, fetchTags: false, null, filter);
 
 			tag.Should().NotBeNull();
 			SDebug.Assert(tag is not null);
@@ -416,7 +418,7 @@ namespace UnitTests
 			var filter = new MockTagFilter();
 			filter.BlockTags.Add("v1.0.0");
 
-			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", true, null, filter);
+			var (height, tag) = await HeightCalculator.FromRepository(repo, "v", queryRemoteTags: true, fetchTags: false, null, filter);
 
 			tag.Should().NotBeNull();
 			SDebug.Assert(tag is not null);

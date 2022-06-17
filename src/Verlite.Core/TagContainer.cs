@@ -35,6 +35,16 @@ namespace Verlite
 		}
 
 		/// <summary>
+		/// Check if the container contains this exact tag.
+		/// </summary>
+		/// <param name="tag">The tag to check.</param>
+		/// <returns>If it was found.</returns>
+		public bool ContainsTag(Tag tag)
+		{
+			return Tags.Contains(tag);
+		}
+
+		/// <summary>
 		/// Gets the enumerator for iterating over the collection.
 		/// </summary>
 		public IEnumerator<Tag> GetEnumerator() => Tags.GetEnumerator();

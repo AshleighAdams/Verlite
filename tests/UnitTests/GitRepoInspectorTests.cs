@@ -255,6 +255,35 @@ namespace UnitTests
 		}
 
 		[Fact]
+		public async Task CanCreateLightweightTags()
+		{
+			await TestRepo.Git("init");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "first");
+			await TestRepo.Git("tag", "tag-one");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "second");
+			await TestRepo.Git("tag", "tag-two");
+
+			using var clone = new GitTestDirectory();
+			await clone.Git("clone", TestRepo.RootPath, ".", "--no-tags");
+
+			using var repo = await clone.MakeInspector();
+			repo.EnableLightweightTags = true;
+			var remoteTags = await repo.GetTags(QueryTarget.Remote);
+
+			var firstTags = remoteTags.FindCommitTags(new Commit("b2000fc1f1d2e5f816cfa51a4ad8764048f22f0a"));
+			firstTags.Should().ContainSingle();
+			var firstTag = firstTags[0];
+
+			await repo.FetchTag(firstTag);
+
+			var localTags = await repo.GetTags(QueryTarget.Local);
+			localTags.Should().Contain(new Tag[]
+			{
+				firstTag,
+			});
+		}
+
+		[Fact]
 		public async Task ShallowCloneStillQueriesTags()
 		{
 			await TestRepo.Git("init");
@@ -513,7 +542,7 @@ namespace UnitTests
 
 			// forcibly desync the git catfile process
 			Assert.NotNull(repo.CatFileProcess);
-			repo.CatFileProcess!.StandardInput.WriteLine(head.Value);
+			await repo.CatFileProcess!.StandardInput.WriteLineAsync(head.Value.Id);
 
 			// attempt to read a non-cached parent
 			await Assert.ThrowsAsync<UnknownGitException>(() => repo.GetParents(parents[0]));

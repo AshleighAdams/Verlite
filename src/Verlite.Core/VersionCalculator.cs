@@ -114,22 +114,11 @@ namespace Verlite
 				repo: repo,
 				tagPrefix: options.TagPrefix,
 				queryRemoteTags: options.QueryRemoteTags,
+				fetchTags: options.QueryRemoteTags,
 				log: log,
 				tagFilter: tagFilter);
-			var version = FromTagInfomation(lastTagVer?.Version, options, height);
 
-			if (lastTagVer is not null && options.QueryRemoteTags)
-			{
-				var localTag = (await repo.GetTags(QueryTarget.Local))
-					.Where(x => x == lastTagVer.Tag);
-				if (!localTag.Any())
-				{
-					log?.Normal("Local repo missing version tag, fetching.");
-					await repo.FetchTag(lastTagVer.Tag);
-				}
-			}
-
-			return version;
+			return FromTagInfomation(lastTagVer?.Version, options, height);
 		}
 	}
 }
