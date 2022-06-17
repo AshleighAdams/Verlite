@@ -34,6 +34,7 @@ namespace Verlite
 		/// <param name="repo">The repo to walk.</param>
 		/// <param name="tagPrefix">What version tags are prefixed with.</param>
 		/// <param name="queryRemoteTags">Whether to query local or local and remote tags.</param>
+		/// <param name="fetchTags">Whether to fetch tags we don't yet have locally.</param>
 		/// <param name="log">The log to output verbose diagnostics to.</param>
 		/// <param name="tagFilter">A filter to test tags against. A value of <c>null</c> means do not filter.</param>
 		/// <returns>A task containing the height, and, if found, the tagged version.</returns>
@@ -41,8 +42,9 @@ namespace Verlite
 			IRepoInspector repo,
 			string tagPrefix,
 			bool queryRemoteTags,
-			ILogger? log = null,
-			ITagFilter? tagFilter = null)
+			bool fetchTags,
+			ILogger? log,
+			ITagFilter? tagFilter)
 		{
 			var head = await repo.GetHead();
 			var tags = await repo.GetTags(queryRemoteTags ? QueryTarget.Local | QueryTarget.Remote : QueryTarget.Local);
@@ -60,7 +62,7 @@ namespace Verlite
 				commitDescriptor: "HEAD",
 				options: new CandidateOptions(repo, tags, tagPrefix, log, tagFilter));
 
-			if (queryRemoteTags)
+			if (fetchTags)
 			{
 				var localTags = await repo.GetTags(QueryTarget.Local);
 				foreach (var (_, version) in candidates)
@@ -79,6 +81,27 @@ namespace Verlite
 				.OrderByDescending(x => x.version is not null)
 				.ThenByDescending(x => x.version?.Version)
 				.First();
+		}
+
+		[Obsolete("Use FromRepository() with all arguments present.")]
+		/// <summary>
+		/// Calculate the height from a repository by walking, from the head, the primary parents until a version tag is found.
+		/// </summary>
+		/// <param name="repo">The repo to walk.</param>
+		/// <param name="tagPrefix">What version tags are prefixed with.</param>
+		/// <param name="queryRemoteTags">Whether to query local or local and remote tags.</param>
+		/// <param name="fetchTags">Whether to fetch tags we don't yet have locally.</param>
+		/// <param name="log">The log to output verbose diagnostics to.</param>
+		/// <param name="tagFilter">A filter to test tags against. A value of <c>null</c> means do not filter.</param>
+		/// <returns>A task containing the height, and, if found, the tagged version.</returns>
+		public static Task<(int height, TaggedVersion?)> FromRepository(
+			IRepoInspector repo,
+			string tagPrefix,
+			bool queryRemoteTags,
+			ILogger? log = null,
+			ITagFilter? tagFilter = null)
+		{
+			return FromRepository(repo, tagPrefix, queryRemoteTags, false, log, tagFilter);
 		}
 
 		private class CandidateOptions
