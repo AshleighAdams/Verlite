@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -130,6 +131,9 @@ namespace Verlite
 
 		private readonly SemaphoreSlim catFileSemaphore = new(initialCount: 1, maxCount: 1);
 		internal Process? CatFileProcess { get; set; }
+		private UTF8Encoding Encoding { get; } = new(
+			encoderShouldEmitUTF8Identifier: false,
+			throwOnInvalidBytes: false);
 		private async Task<string?> CatFile(string type, string id)
 		{
 			await catFileSemaphore.WaitAsync();
@@ -139,6 +143,7 @@ namespace Verlite
 				if (CatFileProcess is null)
 				{
 					isFirst = true;
+
 					Log?.Verbatim($"{Root} $ git cat-file --batch");
 					ProcessStartInfo info = new()
 					{
@@ -147,13 +152,14 @@ namespace Verlite
 						WorkingDirectory = Root,
 						RedirectStandardError = false,
 						RedirectStandardOutput = true,
+						StandardOutputEncoding = Encoding,
 						RedirectStandardInput = true,
 						UseShellExecute = false,
 					};
 					CatFileProcess = Process.Start(info);
 				}
 
-				var (cin, cout) = (CatFileProcess.StandardInput, CatFileProcess.StandardOutput);
+				var (cin, cout) = (CatFileProcess.StandardInput, CatFileProcess.StandardOutput.BaseStream);
 
 				// if this git call is forwarded onto another shell script,
 				// then it's possible to query git before it's ready, but once
@@ -166,7 +172,7 @@ namespace Verlite
 					using var cts = new CancellationTokenSource();
 
 					var timeout = Task.Delay(5000, cts.Token);
-					var gotBack = cout.ReadLineAsync();
+					var gotBack = ReadLineAsync(cout);
 
 					var completedTask = await Task.WhenAny(timeout, gotBack);
 
@@ -181,16 +187,15 @@ namespace Verlite
 				}
 
 				using var cts2 = new CancellationTokenSource();
-				var timeout2 = Task.Delay(10_000, cts2.Token);
+				var timeout2 = Task.Delay(30_000, cts2.Token);
 
 				Log?.Verbatim($"git cat-file < {id}");
 				if (await Task.WhenAny(cin.WriteLineAsync(id), timeout2) == timeout2)
 					throw new UnknownGitException("The git cat-file process write timed out.");
 
-				var readLineTask = cout.ReadLineAsync();
+				var readLineTask = ReadLineAsync(cout);
 				if (await Task.WhenAny(readLineTask, timeout2) == timeout2)
 					throw new UnknownGitException("The git cat-file process read timed out.");
-				cts2.Cancel();
 
 				string line = await readLineTask;
 				Log?.Verbatim($"git cat-file > {line}");
@@ -204,13 +209,16 @@ namespace Verlite
 				else if (response[1] != type)
 					throw new UnknownGitException($"Blob for {id} expected {type} but was {response[1]}.");
 
-				int length = int.Parse(response[2], CultureInfo.InvariantCulture);
+				var length = int.Parse(response[2], CultureInfo.InvariantCulture);
+				var buffer = new byte[length];
 
-				var buffer = new char[length];
-				await cout.ReadBlockAsync(buffer, 0, length);
-				await cout.ReadLineAsync(); // git appends a linefeed
+				if (await Task.WhenAny(cout.ReadAsync(buffer, 0, length), timeout2) == timeout2)
+					throw new UnknownGitException("The git cat-file process read block timed out.");
+				if (await Task.WhenAny(ReadLineAsync(cout), timeout2) == timeout2)
+					throw new UnknownGitException("The git cat-file process read block line timed out.");
 
-				return new string(buffer);
+				cts2.Cancel();
+				return Encoding.GetString(buffer);
 			}
 			catch (Exception ex)
 			{
@@ -220,6 +228,22 @@ namespace Verlite
 			{
 				catFileSemaphore.Release();
 			}
+		}
+
+		private async Task<string> ReadLineAsync(Stream stream, int maxLength = 128)
+		{
+			var buffer = new byte[maxLength];
+
+			int length = 0;
+			for (; length < maxLength; length++)
+			{
+				if (await stream.ReadAsync(buffer, length, 1) == -1)
+					break;
+				else if (buffer[length] == '\n')
+					break;
+			}
+
+			return Encoding.GetString(buffer, 0, length);
 		}
 
 		private Dictionary<Commit, string> CommitCache { get; } = new();
