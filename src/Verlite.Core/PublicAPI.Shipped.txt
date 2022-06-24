@@ -15,6 +15,7 @@ static Verlite.Command.Run(string! directory, string! command, string![]! args, 
 static Verlite.Commit.operator !=(Verlite.Commit left, Verlite.Commit right) -> bool
 static Verlite.Commit.operator ==(Verlite.Commit left, Verlite.Commit right) -> bool
 static Verlite.GitRepoInspector.FromPath(string! path, string! remote, Verlite.ILogger? log, Verlite.ICommandRunner! commandRunner) -> System.Threading.Tasks.Task<Verlite.GitRepoInspector!>!
+static Verlite.HeightCalculator.FromRepository(Verlite.IRepoInspector! repo, string! tagPrefix, bool queryRemoteTags, bool fetchTags, Verlite.ILogger? log, Verlite.ITagFilter? tagFilter) -> System.Threading.Tasks.Task<(int height, Verlite.TaggedVersion?)>!
 static Verlite.HeightCalculator.FromRepository(Verlite.IRepoInspector! repo, string! tagPrefix, bool queryRemoteTags, Verlite.ILogger? log = null, Verlite.ITagFilter? tagFilter = null) -> System.Threading.Tasks.Task<(int height, Verlite.TaggedVersion?)>!
 static Verlite.SemVer.ComparePrerelease(string! left, string! right) -> int
 static Verlite.SemVer.IsValidIdentifierCharacter(char input) -> bool
@@ -57,12 +58,16 @@ Verlite.GitMissingOrNotGitRepoException.GitMissingOrNotGitRepoException() -> voi
 Verlite.GitRepoInspector
 Verlite.GitRepoInspector.CanDeepen.get -> bool
 Verlite.GitRepoInspector.CanDeepen.set -> void
+Verlite.GitRepoInspector.Dispose() -> void
+Verlite.GitRepoInspector.EnableLightweightTags.get -> bool
+Verlite.GitRepoInspector.EnableLightweightTags.set -> void
 Verlite.GitRepoInspector.FetchTag(Verlite.Tag tag) -> System.Threading.Tasks.Task!
 Verlite.GitRepoInspector.FetchTag(Verlite.Tag tag, string! remote) -> System.Threading.Tasks.Task!
 Verlite.GitRepoInspector.GetHead() -> System.Threading.Tasks.Task<Verlite.Commit?>!
 Verlite.GitRepoInspector.GetParent(Verlite.Commit commit) -> System.Threading.Tasks.Task<Verlite.Commit?>!
 Verlite.GitRepoInspector.GetParents(Verlite.Commit commit) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<Verlite.Commit>!>!
 Verlite.GitRepoInspector.GetTags(Verlite.QueryTarget queryTarget) -> System.Threading.Tasks.Task<Verlite.TagContainer!>!
+Verlite.GitRepoInspector.Remote.get -> string!
 Verlite.GitRepoInspector.Root.get -> string!
 Verlite.HeightCalculator
 Verlite.ICommandRunner
@@ -95,6 +100,7 @@ Verlite.SemVer
 Verlite.SemVer.BuildMetadata.get -> string?
 Verlite.SemVer.BuildMetadata.set -> void
 Verlite.SemVer.CompareTo(Verlite.SemVer other) -> int
+Verlite.SemVer.CoreVersion.get -> Verlite.SemVer
 Verlite.SemVer.DestinedVersion.get -> Verlite.SemVer
 Verlite.SemVer.Equals(Verlite.SemVer other) -> bool
 Verlite.SemVer.Major.get -> int
@@ -117,6 +123,7 @@ Verlite.Tag.PointsTo.get -> Verlite.Commit
 Verlite.Tag.Tag() -> void
 Verlite.Tag.Tag(string! name, Verlite.Commit pointsTo) -> void
 Verlite.TagContainer
+Verlite.TagContainer.ContainsTag(Verlite.Tag tag) -> bool
 Verlite.TagContainer.FindCommitTags(Verlite.Commit commit) -> System.Collections.Generic.IList<Verlite.Tag>!
 Verlite.TagContainer.GetEnumerator() -> System.Collections.Generic.IEnumerator<Verlite.Tag>!
 Verlite.TagContainer.TagContainer(System.Collections.Generic.ISet<Verlite.Tag>! tags) -> void
@@ -125,6 +132,8 @@ Verlite.TaggedVersion.Equals(Verlite.TaggedVersion? other) -> bool
 Verlite.TaggedVersion.Tag.get -> Verlite.Tag
 Verlite.TaggedVersion.TaggedVersion(Verlite.SemVer version, Verlite.Tag tag) -> void
 Verlite.TaggedVersion.Version.get -> Verlite.SemVer
+Verlite.UnknownGitException
+Verlite.UnknownGitException.UnknownGitException(string! message) -> void
 Verlite.VersionCalculationException
 Verlite.VersionCalculationException.VersionCalculationException() -> void
 Verlite.VersionCalculationException.VersionCalculationException(string? message) -> void
@@ -143,6 +152,8 @@ Verlite.VersionCalculationOptions.PrereleaseBaseHeight.get -> int
 Verlite.VersionCalculationOptions.PrereleaseBaseHeight.set -> void
 Verlite.VersionCalculationOptions.QueryRemoteTags.get -> bool
 Verlite.VersionCalculationOptions.QueryRemoteTags.set -> void
+Verlite.VersionCalculationOptions.Remote.get -> string!
+Verlite.VersionCalculationOptions.Remote.set -> void
 Verlite.VersionCalculationOptions.TagPrefix.get -> string!
 Verlite.VersionCalculationOptions.TagPrefix.set -> void
 Verlite.VersionCalculationOptions.VersionCalculationOptions() -> void

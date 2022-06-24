@@ -83,7 +83,6 @@ namespace Verlite
 				.First();
 		}
 
-		[Obsolete("Use FromRepository() with all arguments present.")]
 		/// <summary>
 		/// Calculate the height from a repository by walking, from the head, the primary parents until a version tag is found.
 		/// </summary>
@@ -93,6 +92,7 @@ namespace Verlite
 		/// <param name="log">The log to output verbose diagnostics to.</param>
 		/// <param name="tagFilter">A filter to test tags against. A value of <c>null</c> means do not filter.</param>
 		/// <returns>A task containing the height, and, if found, the tagged version.</returns>
+		[Obsolete("Use FromRepository() with all arguments present.")]
 		public static Task<(int height, TaggedVersion?)> FromRepository(
 			IRepoInspector repo,
 			string tagPrefix,
