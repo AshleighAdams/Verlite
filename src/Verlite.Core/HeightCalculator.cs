@@ -72,7 +72,7 @@ namespace Verlite
 					if (localTags.ContainsTag(version.Tag))
 						continue;
 
-					log?.Normal("Local repo missing version tag, fetching.");
+					log?.Normal($"Local repo missing version tag {version.Tag}, fetching.");
 					await repo.FetchTag(version.Tag);
 				}
 			}
