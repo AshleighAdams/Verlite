@@ -141,6 +141,10 @@ namespace Verlite.CLI
 				};
 
 				var version = opts.VersionOverride ?? new SemVer();
+				Commit? commit = null;
+				TaggedVersion? lastTag = null;
+				int? height = null;
+
 				if (opts.VersionOverride is null)
 				{
 					using var repo = await GitRepoInspector.FromPath(sourceDirectory, opts.Remote, log, commandRunner);
@@ -151,7 +155,8 @@ namespace Verlite.CLI
 					if (!string.IsNullOrWhiteSpace(filterTags))
 						tagFilter = new CommandTagFilter(commandRunner, log, filterTags, sourceDirectory);
 
-					version = await VersionCalculator.FromRepository(repo, opts, log, tagFilter);
+					commit = await repo.GetHead();
+					(version, lastTag, height) = await VersionCalculator.FromRepository2(repo, opts, log, tagFilter);
 				}
 
 				string toShow = show switch
@@ -162,6 +167,8 @@ namespace Verlite.CLI
 					Show.patch => version.Patch.ToString(CultureInfo.InvariantCulture),
 					Show.prerelease => version.Prerelease?.ToString(CultureInfo.InvariantCulture) ?? string.Empty,
 					Show.metadata => version.BuildMetadata?.ToString(CultureInfo.InvariantCulture) ?? string.Empty,
+					Show.height => height?.ToString(CultureInfo.InvariantCulture) ?? string.Empty,
+					Show.json => JsonOutput.GenerateOutput(version, commit, lastTag, height),
 					_ => throw new NotImplementedException(),
 				};
 

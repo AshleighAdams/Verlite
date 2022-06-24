@@ -1,1 +1,2 @@
 #nullable enable
+static Verlite.VersionCalculator.FromRepository2(Verlite.IRepoInspector! repo, Verlite.VersionCalculationOptions! options, Verlite.ILogger? log, Verlite.ITagFilter? tagFilter) -> System.Threading.Tasks.Task<(Verlite.SemVer version, Verlite.TaggedVersion? lastTag, int? height)>!

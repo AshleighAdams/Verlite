@@ -109,6 +109,7 @@ namespace Verlite.MsBuild
 
 			var version = opts.VersionOverride ?? new SemVer();
 			var commit = string.Empty;
+			var height = string.Empty;
 			if (opts.VersionOverride is null)
 			{
 				using var repo = await GitRepoInspector.FromPath(ProjectDirectory, opts.Remote, log, commandRunner);
@@ -117,8 +118,10 @@ namespace Verlite.MsBuild
 				if (!string.IsNullOrWhiteSpace(FilterTags))
 					tagFilter = new CommandTagFilter(commandRunner, log, FilterTags, ProjectDirectory);
 
-				version = await VersionCalculator.FromRepository(repo, opts, log, tagFilter);
+				int? heightInt;
+				(version, _, heightInt) = await VersionCalculator.FromRepository2(repo, opts, log, tagFilter);
 				commit = (await repo.GetHead())?.Id ?? string.Empty;
+				height = heightInt?.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
 			}
 
 			Version = version.ToString();
@@ -128,6 +131,7 @@ namespace Verlite.MsBuild
 			VersionPrerelease = version.Prerelease ?? string.Empty;
 			VersionBuildMetadata = version.BuildMetadata ?? string.Empty;
 			Commit = commit;
+			Height = height;
 			
 			return true;
 		}
@@ -138,5 +142,6 @@ namespace Verlite.MsBuild
 		[Output] public string VersionPrerelease { get; private set; } = "";
 		[Output] public string VersionBuildMetadata { get; private set; } = "";
 		[Output] public string Commit { get; private set; } = "";
+		[Output] public string Height { get; private set; } = "";
 	}
 }

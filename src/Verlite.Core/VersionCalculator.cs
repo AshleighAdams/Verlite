@@ -104,6 +104,7 @@ namespace Verlite
 		/// <param name="log">A log for diagnostics.</param>
 		/// <param name="tagFilter">A filter to ignore tags. When <c>null</c> no filter is used.</param>
 		/// <returns>The version for the state of the repository.</returns>
+		[Obsolete("Use FromRepository2()")]
 		public static async Task<SemVer> FromRepository(
 			IRepoInspector repo,
 			VersionCalculationOptions options,
@@ -119,6 +120,35 @@ namespace Verlite
 				tagFilter: tagFilter);
 
 			return FromTagInfomation(lastTagVer?.Version, options, height);
+		}
+
+		/// <summary>
+		/// Calculate the next version from a repository.
+		/// </summary>
+		/// <param name="repo">The repo to use.</param>
+		/// <param name="options">The options.</param>
+		/// <param name="log">A log for diagnostics.</param>
+		/// <param name="tagFilter">A filter to ignore tags. When <c>null</c> no filter is used.</param>
+		/// <returns>The version for the state of the repository, and the associated tag information.</returns>
+		public static async Task<(SemVer version, TaggedVersion? lastTag, int? height)> FromRepository2(
+			IRepoInspector repo,
+			VersionCalculationOptions options,
+			ILogger? log,
+			ITagFilter? tagFilter)
+		{
+			if (options.VersionOverride.HasValue)
+				return (options.VersionOverride.Value, null, null);
+
+			var (height, lastTag) = await HeightCalculator.FromRepository(
+				repo: repo,
+				tagPrefix: options.TagPrefix,
+				queryRemoteTags: options.QueryRemoteTags,
+				fetchTags: options.QueryRemoteTags,
+				log: log,
+				tagFilter: tagFilter);
+
+			var version = FromTagInfomation(lastTag?.Version, options, height);
+			return (version, lastTag, height);
 		}
 	}
 }
