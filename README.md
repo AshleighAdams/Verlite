@@ -57,7 +57,7 @@ See [docs/VersionCalculation.md](docs/VersionCalculation.md) for further reading
 | Set the build data to this value.                                   | -b, --build-metadata, VerliteBuildMetadata                       |         |
 | Part of the version to print.                                       | -s, --show                                                       | all     |
 | Automatically fetch commits and a tag for shallow clones.           | --auto-fetch                                                     | false   |
-| Create a lightweight tag instead of fetching the remote's.              | --enable-lightweight-tags                                        | false   |
+| Create a lightweight tag instead of fetching the remote's.          | --enable-lightweight-tags                                        | false   |
 | Set which version part should be bumped after an RTM release.       | -a, --auto-increment, VerliteAutoIncrement                       | patch   |
 | A command to test whether a tag should be ignored via exit code.    | -f, --filter-tags, VerliteFilterTags                             |         |
 | The remote endpoint to use when fetching tags and commits.          | -r, --remote, VerliteRemote                                      | origin  |
@@ -243,6 +243,8 @@ namespace Verlite
 		public const string Patch;
 		public const string Prerelease;
 		public const string BuildMetadata;
+		public const string Commit;
+		public const string Height;
 	}
 }
 ```

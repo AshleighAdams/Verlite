@@ -11,6 +11,8 @@ namespace Verlite.CLI
 		patch = 3,
 		prerelease = 4,
 		metadata = 5,
+		height = 6,
+		json = 7,
 	}
 	internal static partial class Parsers
 	{
@@ -34,6 +36,8 @@ namespace Verlite.CLI
 				"PATCH"      => Show.patch,
 				"PRERELEASE" => Show.prerelease,
 				"METADATA"   => Show.metadata,
+				"HEIGHT"     => Show.height,
+				"JSON"       => Show.json,
 				_ => invalid(),
 			};
 		}
