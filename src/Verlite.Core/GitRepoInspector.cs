@@ -134,6 +134,41 @@ namespace Verlite
 		private UTF8Encoding Encoding { get; } = new(
 			encoderShouldEmitUTF8Identifier: false,
 			throwOnInvalidBytes: false);
+
+		private char[] WhitespaceChars { get; } = new[]
+		{
+			'\t',
+			'\v',
+			'\f',
+			'\r',
+			'\n',
+			' ',
+			'\u0085', // NEXT LINE
+			'\u00A0', // NBSP
+			'\u1680', // OGHAM SPACE MARK
+			'\u2000', // EN QUAD
+			'\u2001', // EM QUAD
+			'\u2002', // EN SPACE
+			'\u2003', // EM SPACE
+			'\u2004', // THREE-PER-EM SPACE
+			'\u2005', // FOUR-PER-EM SPACE
+			'\u2006', // SIX-PER-EM SPACE
+			'\u2007', // FIGURE SPACE
+			'\u2008', // PUNCTUATION SPACE
+			'\u2009', // THIN SPACE
+			'\u200A', // HAIR SPACE
+			'\u2028', // LINE SEPARATOR
+			'\u2029', // PARAGRAPH SEPARATOR
+			'\u202F', // NARROW NBSP
+			'\u205F', // MEDIUM MATHEMATICAL SPACE
+			'\u3000', // IDEOGRAPHIC SPACE
+			'\u180E', // MONGOLIAN VOWEL SEPARATOR
+			'\u200B', // ZERO WIDTH SPACE
+			'\u200C', // ZERO WIDTH NON-JOINER
+			'\u200D', // ZERO WIDTH JOINER
+			'\u2060', // WORD JOINER
+			'\uFEFF', // ZERO WIDTH NON-BREAKING SPACE
+		};
 		private async Task<string?> CatFile(string type, string id)
 		{
 			await catFileSemaphore.WaitAsync();
@@ -182,7 +217,7 @@ namespace Verlite
 						throw new UnknownGitException("The git cat-file process timed out.");
 
 					var result = await gotBack;
-					if (result != "  missing")
+					if (result.Trim(WhitespaceChars) != "missing")
 						throw new UnknownGitException($"The git cat-file process returned unexpected output: {result}");
 				}
 
@@ -199,7 +234,7 @@ namespace Verlite
 
 				string line = await readLineTask;
 				Log?.Verbatim($"git cat-file > {line}");
-				string[] response = line.Split(' ');
+				string[] response = line.Trim(WhitespaceChars).Split(' ');
 
 
 				if (response[0] != id)
