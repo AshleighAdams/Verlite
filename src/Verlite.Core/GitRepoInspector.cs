@@ -493,6 +493,11 @@ namespace Verlite
 		{
 			if (EnableLightweightTags)
 			{
+				// make sure we actually have the commit object downloaded, else we can't tag it
+				// this may happen when the clone is exactly 1 commit too shallow, and this method,
+				// if using auto-fetch, we de-shallow appropriately
+				_ = await GetCommitObject(tag.PointsTo);
+				
 				await Git("tag", "--no-sign", tag.Name, tag.PointsTo.Id);
 				return;
 			}
