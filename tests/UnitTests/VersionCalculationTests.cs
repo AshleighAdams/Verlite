@@ -108,7 +108,7 @@ namespace UnitTests
 		{
 			var repo = new MockRepoInspector(Array.Empty<MockRepoCommit>());
 
-			var (semver, lastTag, height) = await VersionCalculator.FromRepository2(repo, new() { QueryRemoteTags = true }, null, null);
+			var (semver, lastTag, height) = await VersionCalculator.FromRepository3(repo, repo.Head, new() { QueryRemoteTags = true }, null, null);
 
 			semver.Should().Be(new SemVer(0, 1, 0, "alpha.1"));
 			lastTag.Should().BeNull();
@@ -123,7 +123,7 @@ namespace UnitTests
 				new("commit_a"),
 			});
 
-			var (semver, lastTag, height) = await VersionCalculator.FromRepository2(repo, new() { QueryRemoteTags = true }, null, null);
+			var (semver, lastTag, height) = await VersionCalculator.FromRepository3(repo, repo.Head, new() { QueryRemoteTags = true }, null, null);
 
 			semver.Should().Be(new SemVer(0, 1, 0, "alpha.1"));
 			lastTag.Should().BeNull();
@@ -138,7 +138,7 @@ namespace UnitTests
 				new("commit_a") { Tags = new[] { "v5.4.3-rc.2.1" } },
 			});
 
-			var (semver, _, height) = await VersionCalculator.FromRepository2(repo, new() { QueryRemoteTags = true }, null, null);
+			var (semver, _, height) = await VersionCalculator.FromRepository3(repo, repo.Head, new() { QueryRemoteTags = true }, null, null);
 
 			semver.Should().Be(new SemVer(5, 4, 3, "rc.2.1"));
 			height.Should().Be(0);
@@ -153,7 +153,7 @@ namespace UnitTests
 				new("commit_a") { Tags = new[] { "v4.3.2-rc.1" } },
 			});
 
-			var (semver, _, height) = await VersionCalculator.FromRepository2(repo, new() { QueryRemoteTags = true }, null, null);
+			var (semver, _, height) = await VersionCalculator.FromRepository3(repo, repo.Head, new() { QueryRemoteTags = true }, null, null);
 
 			semver.Should().Be(new SemVer(4, 3, 2, "rc.1.1"));
 			height?.Should().Be(1);
@@ -168,7 +168,7 @@ namespace UnitTests
 				new("commit_a") { Tags = new[] { "v3.2.1" } },
 			});
 
-			var (semver, lastTag, height) = await VersionCalculator.FromRepository2(repo, new() { QueryRemoteTags = true }, null, null);
+			var (semver, lastTag, height) = await VersionCalculator.FromRepository3(repo, repo.Head, new() { QueryRemoteTags = true }, null, null);
 
 			semver.Should().Be(new SemVer(3, 2, 2, "alpha.1"));
 			lastTag?.Tag.Name.Should().Be("v3.2.1");
@@ -185,7 +185,7 @@ namespace UnitTests
 				new("commit_a") { Tags = new[] { "v3.2.0" } },
 			});
 
-			_ = await VersionCalculator.FromRepository2(repo, new() { QueryRemoteTags = true }, null, null);
+			_ = await VersionCalculator.FromRepository3(repo, repo.Head, new() { QueryRemoteTags = true }, null, null);
 
 			repo.LocalTags.Should().Contain(new Tag[] { new Tag("v3.2.1", new Commit("commit_b")) });
 		}
@@ -200,7 +200,7 @@ namespace UnitTests
 				new("commit_a") { Tags = new[] { "v3.2.0" } },
 			});
 
-			_ = await VersionCalculator.FromRepository2(repo, new() { QueryRemoteTags = false }, null, null);
+			_ = await VersionCalculator.FromRepository3(repo, repo.Head, new() { QueryRemoteTags = false }, null, null);
 
 			repo.LocalTags.Should().BeEmpty();
 		}
@@ -213,7 +213,7 @@ namespace UnitTests
 				new("commit_a") { Tags = new[] { "v1.2.3+4" } },
 			});
 
-			var (version, _, height) = await VersionCalculator.FromRepository2(repo, new()
+			var (version, _, height) = await VersionCalculator.FromRepository3(repo, repo.Head, new()
 			{
 				QueryRemoteTags = true,
 			}, null, null);
@@ -231,7 +231,7 @@ namespace UnitTests
 				new("commit_a") { Tags = new[] { "v1.2.3+4" } },
 			});
 
-			var (version, _, height) = await VersionCalculator.FromRepository2(repo, new()
+			var (version, _, height) = await VersionCalculator.FromRepository3(repo, repo.Head, new()
 			{
 				QueryRemoteTags = true,
 			}, null, null);
@@ -249,7 +249,7 @@ namespace UnitTests
 				new("commit_a") { Tags = new[] { "v1.2.3+4" } },
 			});
 
-			var (version, _, _) = await VersionCalculator.FromRepository2(repo, new()
+			var (version, _, _) = await VersionCalculator.FromRepository3(repo, repo.Head, new()
 			{
 				QueryRemoteTags = true,
 				BuildMetadata = "git.a1b2c3d",
@@ -266,7 +266,7 @@ namespace UnitTests
 				new("commit_a") { Tags = new[] { "v1.2.3" } },
 			});
 
-			var (version, _, _) = await VersionCalculator.FromRepository2(repo, new()
+			var (version, _, _) = await VersionCalculator.FromRepository3(repo, repo.Head, new()
 			{
 				QueryRemoteTags = true,
 				BuildMetadata = "git.a1b2c3d",
@@ -283,7 +283,7 @@ namespace UnitTests
 				new("commit_a") { Tags = new[] { "v1.2.3+4" } },
 			});
 
-			var (version, _, _) = await VersionCalculator.FromRepository2(repo, new()
+			var (version, _, _) = await VersionCalculator.FromRepository3(repo, repo.Head, new()
 			{
 				BuildMetadata = "git.a1b2c3d",
 				QueryRemoteTags = true,

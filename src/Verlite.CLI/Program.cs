@@ -41,6 +41,10 @@ namespace Verlite.CLI
 					name: "sourceDirectory",
 					getDefaultValue: () => ".",
 					description: "Path to the Git repository."),
+				new Argument<string>(
+					name: "revision",
+					getDefaultValue: () => "",
+					description: "The revision to parse and calculate a version for."),
 				new Option<string>(
 					aliases: new[] { "--tag-prefix", "-t" },
 					getDefaultValue: () => DefaultOptions.TagPrefix.ToString(),
@@ -117,7 +121,8 @@ namespace Verlite.CLI
 			AutoIncrement autoIncrement,
 			string filterTags,
 			string remote,
-			string sourceDirectory)
+			string sourceDirectory,
+			string revision)
 		{
 			try
 			{
@@ -155,8 +160,11 @@ namespace Verlite.CLI
 					if (!string.IsNullOrWhiteSpace(filterTags))
 						tagFilter = new CommandTagFilter(commandRunner, log, filterTags, sourceDirectory);
 
-					commit = await repo.GetHead();
-					(version, lastTag, height) = await VersionCalculator.FromRepository2(repo, opts, log, tagFilter);
+					commit = string.IsNullOrEmpty(revision)
+						? await repo.GetHead()
+						: await repo.ParseRevision(revision);
+
+					(version, lastTag, height) = await VersionCalculator.FromRepository3(repo, commit, opts, log, tagFilter);
 				}
 
 				string toShow = show switch
@@ -173,6 +181,11 @@ namespace Verlite.CLI
 				};
 
 				Console.WriteLine($"{toShow}");
+			}
+			catch (RevParseException)
+			{
+				await Console.Error.WriteLineAsync($"Could not find a commit from the specified revision: {revision}");
+				Environment.Exit(1);
 			}
 			catch (GitMissingOrNotGitRepoException)
 			{
