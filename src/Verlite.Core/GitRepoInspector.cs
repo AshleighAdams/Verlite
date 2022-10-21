@@ -401,11 +401,18 @@ namespace Verlite
 			else if (!CanDeepen)
 				throw new RepoTooShallowException();
 
-			await Deepen();
-			commitObj = await GetCommitObjectInternal(commit);
+			int hardMaxRetries = 1000;
+			while (commitObj is null)
+			{
+				if (hardMaxRetries-- <= 0)
+					throw new AutoDeepenException("Failed to deepen the repository. Maximum attempts reached.");
+				await Deepen();
+				commitObj = await GetCommitObjectInternal(commit);
+			}
 
-			return commitObj
-				?? throw new AutoDeepenException($"Deepened repo did not contain commit {commit}");
+			return commitObj;
+			//return commitObj
+			//	?? throw new AutoDeepenException($"Deepened repo did not contain commit {commit}");
 		}
 
 		/// <inheritdoc/>
