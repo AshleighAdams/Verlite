@@ -145,6 +145,16 @@ namespace UnitTests
 		{
 			return Head;
 		}
+		async Task<Commit?> IRepoInspector.ParseRevision(string revision)
+		{
+			if (revision == "HEAD")
+				return Head;
+
+			if (!Commits.TryGetValue(new Commit(revision), out var commit))
+				throw new RevParseException();
+
+			return new Commit(revision);
+		}
 
 		async Task<IReadOnlyList<Commit>> IRepoInspector.GetParents(Commit commit)
 		{

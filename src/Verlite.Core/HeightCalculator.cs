@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -38,6 +39,7 @@ namespace Verlite
 		/// <param name="log">The log to output verbose diagnostics to.</param>
 		/// <param name="tagFilter">A filter to test tags against. A value of <c>null</c> means do not filter.</param>
 		/// <returns>A task containing the height, and, if found, the tagged version.</returns>
+		[Obsolete("Use FromRepository2() and specify a commit (old behavior was HEAD)")]
 		public static async Task<(int height, TaggedVersion?)> FromRepository(
 			IRepoInspector repo,
 			string tagPrefix,
@@ -46,19 +48,48 @@ namespace Verlite
 			ILogger? log,
 			ITagFilter? tagFilter)
 		{
-			var head = await repo.GetHead();
+			return await FromRepository2(
+				repo,
+				await repo.GetHead(),
+				tagPrefix,
+				queryRemoteTags,
+				fetchTags,
+				log,
+				tagFilter);
+		}
+
+		/// <summary>
+		/// Calculate the height from a repository by walking, from the head, the primary parents until a version tag is found.
+		/// </summary>
+		/// <param name="repo">The repo to walk.</param>
+		/// <param name="commit">The commit for which to find a version.</param>
+		/// <param name="tagPrefix">What version tags are prefixed with.</param>
+		/// <param name="queryRemoteTags">Whether to query local or local and remote tags.</param>
+		/// <param name="fetchTags">Whether to fetch tags we don't yet have locally.</param>
+		/// <param name="log">The log to output verbose diagnostics to.</param>
+		/// <param name="tagFilter">A filter to test tags against. A value of <c>null</c> means do not filter.</param>
+		/// <returns>A task containing the height, and, if found, the tagged version.</returns>
+		public static async Task<(int height, TaggedVersion?)> FromRepository2(
+			IRepoInspector repo,
+			Commit? commit,
+			string tagPrefix,
+			bool queryRemoteTags,
+			bool fetchTags,
+			ILogger? log,
+			ITagFilter? tagFilter)
+		{
 			var tags = await repo.GetTags(queryRemoteTags ? QueryTarget.Local | QueryTarget.Remote : QueryTarget.Local);
 
 			log?.Verbose("Found the following tags:");
 			foreach (var tag in tags)
 				log?.Verbose($"  {tag}");
 
-			if (head is null)
+			if (commit is null)
 				return (1, null);
 
 			// Stryker disable once all: used for logging only
 			var candidates = await GetCandidates(
-				commit: head.Value,
+				commit: commit.Value,
 				commitDescriptor: "HEAD",
 				options: new CandidateOptions(repo, tags, tagPrefix, log, tagFilter));
 
@@ -93,6 +124,7 @@ namespace Verlite
 		/// <param name="tagFilter">A filter to test tags against. A value of <c>null</c> means do not filter.</param>
 		/// <returns>A task containing the height, and, if found, the tagged version.</returns>
 		[Obsolete("Use FromRepository() with all arguments present.")]
+		[ExcludeFromCodeCoverage]
 		public static Task<(int height, TaggedVersion?)> FromRepository(
 			IRepoInspector repo,
 			string tagPrefix,

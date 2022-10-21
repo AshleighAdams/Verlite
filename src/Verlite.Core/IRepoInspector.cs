@@ -70,6 +70,12 @@ namespace Verlite
 		/// <returns>A task containing the commit, or <c>null</c> if there is none.</returns>
 		Task<Commit?> GetHead();
 		/// <summary>
+		/// Parse a revision to find the commit it points to.
+		/// </summary>
+		/// <param name="revision">The revision to parse.</param>
+		/// <returns>Returns the commit if found, else returns <c>null</c> when <paramref name="revision"/> is a head spec, else throws.</returns>
+		Task<Commit?> ParseRevision(string revision);
+		/// <summary>
 		/// Gets all parents of the specified commit.
 		/// </summary>
 		/// <param name="commit">The commit.</param>

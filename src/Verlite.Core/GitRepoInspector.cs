@@ -21,6 +21,13 @@ namespace Verlite
 	{
 	}
 	/// <summary>
+	/// An exception that gets thrown if a single commit could not be found from the specified revision.
+	/// </summary>
+	/// <seealso cref="RepoInspectionException"/>
+	public class RevParseException : RepoInspectionException
+	{
+	}
+	/// <summary>
 	/// An exception when an unknown git error occurs.
 	/// </summary>
 	/// <seealso cref="RepoInspectionException"/>
@@ -109,6 +116,24 @@ namespace Verlite
 			{
 				Log?.Verbatim($"GetHead() -> null");
 				return null;
+			}
+		}
+
+		public async Task<Commit?> ParseRevision(string rev)
+		{
+			try
+			{
+				var (commit, _) = await Git("rev-parse", rev);
+				Log?.Verbatim($"ParseRevision() -> {commit}");
+
+				if (commit.Split('\n').Length != 1)
+					throw new RevParseException();
+
+				return new Commit(commit);
+			}
+			catch (CommandException)
+			{
+				throw new RevParseException();
 			}
 		}
 
@@ -531,6 +556,7 @@ namespace Verlite
 				catFileSemaphore.Dispose();
 			}
 			catch (IOException) { } // process may already be terminated
+			catch (System.ComponentModel.Win32Exception) { }
 			finally { }
 		}
 	}
