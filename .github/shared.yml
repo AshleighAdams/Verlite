@@ -78,7 +78,7 @@ definitions:
 
   publish-github: &publish-github
     name: Publish Nuget GitHub
-    run: dotnet nuget push 'artifacts/*.nupkg' -k ${GITHUB_TOKEN} -s github --skip-duplicate --no-symbols 1
+    run: dotnet nuget push 'artifacts/*.nupkg' -k ${GITHUB_TOKEN} -s github --skip-duplicate --no-symbols
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
