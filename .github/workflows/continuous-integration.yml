@@ -88,12 +88,14 @@ jobs:
         dotnet tool install --global dotnet-stryker --version 3.2.0
         cd tests/UnitTests
         if [[ "$GITHUB_REF" == "refs/heads/master" ]]; then
-          dotnet stryker --reporter html --reporter dashboard --reporter progress --version master
+          dotnet stryker --reporter html --reporter dashboard --reporter progress --version master --log-to-file
         else
-          dotnet stryker --reporter html --reporter progress
+          dotnet stryker --reporter html --reporter progress --log-to-file
         fi
         mkdir -p ../../artifacts
         find StrykerOutput -name mutation-report.html -exec cp {} ../../artifacts/ \;
+        zip -r -q StrykerOutput.zip StrykerOutput
+        mv StrykerOutput.zip ../../artifacts/StrykerOutput.zip
       env:
         STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
 
