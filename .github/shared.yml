@@ -48,12 +48,20 @@ definitions:
       else
         dotnet stryker --reporter html --reporter progress --log-to-file
       fi
-      mkdir -p ../../artifacts
-      find StrykerOutput -name mutation-report.html -exec cp {} ../../artifacts/ \;
-      zip -r -q StrykerOutput.zip StrykerOutput
-      mv StrykerOutput.zip ../../artifacts/StrykerOutput.zip
     env:
       STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+
+  mutation-test-archive: &mutation-test-archive
+    name: Archive mutation output
+    if: success() || failure()
+    run: |
+      cd tests/UnitTests
+      mkdir -p ../../artifacts
+      find StrykerOutput -name mutation-report.html -exec cp {} ../../artifacts/ \;
+      if [[ -d StrykerOutput ]]; then
+        zip -r -q StrykerOutput.zip StrykerOutput
+        mv StrykerOutput.zip ../../artifacts/StrykerOutput.zip
+      fi
 
   publish-codecov: &publish-codecov
     name: Publish Codecov
@@ -69,6 +77,7 @@ definitions:
   upload-artifacts: &upload-artifacts
     name: Upload Artifacts
     uses: actions/upload-artifact@v2
+    if: success() || failure()
     with:
       name: artifacts
       path:  |

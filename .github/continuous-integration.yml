@@ -37,6 +37,7 @@ jobs:
     - *checkout
     - *setup-dotnet
     - *mutation-test
+    - *mutation-test-archive
     - *upload-artifacts
   integration-tests:
     name: 'Integration Tests'
