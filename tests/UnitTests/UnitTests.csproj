@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <!-- CA1014: Unit tests don't need to express thier CLS complience -->
     <!-- CS1591: Unit tests don't need xmldoc comments. -->
