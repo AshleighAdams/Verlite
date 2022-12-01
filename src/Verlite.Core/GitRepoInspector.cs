@@ -119,6 +119,7 @@ namespace Verlite
 			}
 		}
 
+		/// <inheritdoc/>
 		public async Task<Commit?> ParseRevision(string rev)
 		{
 			try

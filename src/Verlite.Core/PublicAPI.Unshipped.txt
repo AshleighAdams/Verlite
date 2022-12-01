@@ -1,4 +1,1 @@
 #nullable enable
-static Verlite.HeightCalculator.FromRepository2(Verlite.IRepoInspector! repo, Verlite.Commit? commit, string! tagPrefix, bool queryRemoteTags, bool fetchTags, Verlite.ILogger? log, Verlite.ITagFilter? tagFilter) -> System.Threading.Tasks.Task<(int height, Verlite.TaggedVersion?)>!
-static Verlite.VersionCalculator.FromRepository2(Verlite.IRepoInspector! repo, Verlite.VersionCalculationOptions! options, Verlite.ILogger? log, Verlite.ITagFilter? tagFilter) -> System.Threading.Tasks.Task<(Verlite.SemVer version, Verlite.TaggedVersion? lastTag, int? height)>!
-Verlite.IRepoInspector.ParseRevision(string! revision) -> System.Threading.Tasks.Task<Verlite.Commit?>!
