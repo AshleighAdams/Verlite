@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - *checkout
-    - *setup-dotnet5
+    - *setup-dotnet
     - *setup-nuget
 
     - name: Setup MinVer
