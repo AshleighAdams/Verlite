@@ -59,8 +59,7 @@ definitions:
       mkdir -p ../../artifacts
       find StrykerOutput -name mutation-report.html -exec cp {} ../../artifacts/ \;
       if [[ -d StrykerOutput ]]; then
-        zip -r -q StrykerOutput.zip StrykerOutput
-        mv StrykerOutput.zip ../../artifacts/StrykerOutput.zip
+        mv StrykerOutput ../../artifacts/StrykerOutput
       fi
 
   publish-codecov: &publish-codecov
