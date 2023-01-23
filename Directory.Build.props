@@ -95,7 +95,7 @@
     <AdditionalFiles Include="$(MSBuildThisFileDirectory)/.meta/BannedSymbols.txt" />
   </ItemGroup>
   <ItemGroup Condition="Exists('PublicAPI.Shipped.txt')">
-    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.3" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4" PrivateAssets="All" />
     <AdditionalFiles Include="PublicAPI.Shipped.txt" />
     <AdditionalFiles Include="PublicAPI.Unshipped.txt" />
   </ItemGroup>
