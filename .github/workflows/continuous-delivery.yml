@@ -50,7 +50,8 @@ jobs:
         -p:CoverletOutputFormat=cobertura
 
     - name: Pack
-      run: dotnet pack -o artifacts --configuration Release --no-restore
+      run: dotnet pack -p:PackageOutputPath="$(pwd)/artifacts" --configuration Release
+        --no-restore
 
     - name: Publish Codecov
       uses: codecov/codecov-action@v2

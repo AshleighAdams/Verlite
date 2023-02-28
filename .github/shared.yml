@@ -71,7 +71,7 @@ definitions:
 
   pack: &pack
     name: Pack
-    run: dotnet pack -o artifacts --configuration Release --no-restore
+    run: dotnet pack -p:PackageOutputPath="$(pwd)/artifacts" --configuration Release --no-restore
 
   upload-artifacts: &upload-artifacts
     name: Upload Artifacts
