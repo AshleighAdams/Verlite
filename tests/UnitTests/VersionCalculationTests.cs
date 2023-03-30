@@ -291,5 +291,18 @@ namespace UnitTests
 
 			version.BuildMetadata.Should().Be("4-git.a1b2c3d");
 		}
+
+		[Fact]
+		public void PostreleasesProhibitBuildMetadata()
+		{
+			var options = new VersionCalculationOptions()
+			{
+				EnablePostreleaseExtension = true,
+				BuildMetadata = "git.123",
+			};
+
+			Assert.Throws<ArgumentException>(() => VersionCalculator.FromTagInfomation(SemVer.Parse("1.2.3"), options, 0));
+			Assert.Throws<ArgumentException>(() => VersionCalculator.FromTagInfomation(SemVer.Parse("1.2.3"), options, 1));
+		}
 	}
 }

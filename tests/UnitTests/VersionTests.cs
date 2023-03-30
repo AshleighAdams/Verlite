@@ -80,6 +80,7 @@ namespace UnitTests
 		}
 
 		[Fact]
+		[Obsolete("Testing obsoleted functions")]
 		public void CompreableWorks()
 		{
 			(new SemVer(1, 0, 0).CompareTo(new SemVer(1, 0, 0))).Should().Be(0);
@@ -88,6 +89,7 @@ namespace UnitTests
 		}
 
 		[Fact]
+		[Obsolete("Testing obsoleted functions")]
 		public void CompreableBuildInfoIgnored()
 		{
 			(new SemVer(1, 0, 0, "alpha.1", "abc").CompareTo(new SemVer(1, 0, 0, "alpha.1", "def"))).Should().Be(0);
@@ -97,9 +99,11 @@ namespace UnitTests
 		[Fact]
 		public void CoreVersionFunctions()
 		{
-			new SemVer(1, 0, 0, "alpha.1", "abc").CoreVersion.Should().Be(new SemVer(1, 0, 0));
-			new SemVer(1, 0, 0, null, "abc").CoreVersion.Should().Be(new SemVer(1, 0, 0));
-			new SemVer(2, 0, 0).CoreVersion.Should().Be(new SemVer(2, 0, 0));
+			new SemVer(1, 0, 0, "alpha.1", "abc").GetCoreVersion(false).Should().Be(new SemVer(1, 0, 0));
+			new SemVer(1, 0, 0, "alpha.1", "abc").GetCoreVersion(true).Should().Be(new SemVer(1, 0, 0));
+			new SemVer(1, 0, 0, null, "abc").GetCoreVersion(false).Should().Be(new SemVer(1, 0, 0));
+			new SemVer(1, 0, 0, null, "abc").GetCoreVersion(true).Should().Be(new SemVer(1, 0, 0, "abc"));
+			new SemVer(2, 0, 0).GetCoreVersion(false).Should().Be(new SemVer(2, 0, 0));
 		}
 
 		[Fact]

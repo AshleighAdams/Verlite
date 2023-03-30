@@ -1,7 +1,7 @@
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Verlite
@@ -24,6 +24,18 @@ namespace Verlite
 			if (height < 1)
 				throw new ArgumentOutOfRangeException(nameof(height), height, "Must be greater than zero.");
 
+			// TODO: Perhaps diverge from SemVer, generalize versions such that a version between 2 other versions is always possible
+			//       where we can have pre-releases of pre-releases, v.1.2.3-alpha.1-alpha.1
+			//       where we can have pre-releases of post-releases, v.1.2.3+deb.1-alpha.1
+			//       where we can have post-releases of pre-releases, v.1.2.3-alpha.1+deb.1
+			//       where we can have post-releases of post-releases, v.1.2.3+deb.1+ubnt.1
+			//       the solution is recursive, and if done, I think Verlite can also additionally relax the exactly 3 version parts too,
+			//       tho a min parts = 3 and max parts = 3 would be specified by default
+			//       where v1 == v1.0 == v1.0.0 == v1.0.0.0
+			// Only alternative, which is less general, is to allow arbitrary number of core parts: v1.2.3.4.5
+			if (options.EnablePostreleaseExtension && version.BuildMetadata is not null)
+				throw new InvalidOperationException("Semantic versions are incapable of expressing a prereleases of postreleases, recursion required");
+
 			SemVer ret = version;
 			ret.Prerelease ??= options.DefaultPrereleasePhase;
 			ret.Prerelease += $".{options.PrereleaseBaseHeight + (height - 1)}";
@@ -40,13 +52,26 @@ namespace Verlite
 		/// <returns>The next version calculated from the input.</returns>
 		public static SemVer NextVersion(SemVer lastTag, VersionCalculationOptions options)
 		{
-			if (options.MinimumVersion > lastTag.CoreVersion)
+			IComparer<SemVer> versionComparer = options.EnablePostreleaseExtension ?
+				PostreleaseEnabledComparer.Instance :
+				StrictVersionComparer.Instance;
+
+			var coreVersion = lastTag.GetCoreVersion(options.EnablePostreleaseExtension);
+			const int leftMoreThanRight = 1;
+			if (versionComparer.Compare(options.MinimumVersion, coreVersion) == leftMoreThanRight)
 				return options.MinimumVersion;
 			else if (lastTag.Prerelease is not null)
 			{
 				var ret = lastTag;
-				ret.BuildMetadata = null;
+
+				if (!options.EnablePostreleaseExtension)
+					ret.BuildMetadata = null;
+
 				return ret;
+			}
+			else if (options.EnablePostreleaseExtension && lastTag.BuildMetadata is not null)
+			{
+				return lastTag;
 			}
 			else
 				return options.AutoIncrement switch
@@ -71,11 +96,21 @@ namespace Verlite
 			if (lastTag is null)
 				return Bump(options.MinimumVersion, options, height);
 
+			IComparer<SemVer> versionComparer = options.EnablePostreleaseExtension ?
+				PostreleaseEnabledComparer.Instance :
+				StrictVersionComparer.Instance;
+
+			if (options.EnablePostreleaseExtension && options.BuildMetadata is not null)
+				throw new ArgumentException("Metadata not allowed when post-releases are enabled", nameof(options));
+
 			bool directTag = height == 0;
 			if (directTag)
 			{
-				if (options.MinimumVersion > lastTag.Value.CoreVersion)
-					throw new VersionCalculationException($"Direct tag ({lastTag.Value}) destined version ({lastTag.Value.CoreVersion}) is below the minimum version ({options.MinimumVersion}).");
+				var coreVersion = lastTag.Value.GetCoreVersion(options.EnablePostreleaseExtension);
+
+				const int leftMoreThanRight = 1;
+				if (versionComparer.Compare(options.MinimumVersion, coreVersion) == leftMoreThanRight)
+					throw new VersionCalculationException($"Direct tag ({lastTag.Value}) destined version ({coreVersion}) is below the minimum version ({options.MinimumVersion}).");
 
 				var directVersion = lastTag.Value;
 
@@ -144,6 +179,10 @@ namespace Verlite
 			if (options.VersionOverride.HasValue)
 				return (options.VersionOverride.Value, null, null);
 
+			IComparer<SemVer> versionComparer = options.EnablePostreleaseExtension ?
+				PostreleaseEnabledComparer.Instance :
+				StrictVersionComparer.Instance;
+
 			var (height, lastTag) = await HeightCalculator.FromRepository2(
 				repo: repo,
 				commit: commit,
@@ -151,7 +190,8 @@ namespace Verlite
 				queryRemoteTags: options.QueryRemoteTags,
 				fetchTags: options.QueryRemoteTags,
 				log: log,
-				tagFilter: tagFilter);
+				tagFilter: tagFilter,
+				versionComparer: versionComparer);
 
 			var version = FromTagInfomation(lastTag?.Version, options, height);
 			return (version, lastTag, height);

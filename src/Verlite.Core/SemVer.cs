@@ -36,7 +36,25 @@ namespace Verlite
 		/// <summary>
 		/// The version without any prerelease or metadata, for which a prerelease would be working toward.
 		/// </summary>
+		[Obsolete("CoreVersion is context-dependent, use GetCoreVersion()")]
+		[ExcludeFromCodeCoverage]
 		public SemVer CoreVersion => new(Major, Minor, Patch);
+
+		/// <summary>
+		/// Get the next version to be released to the masses
+		/// </summary>
+		/// <param name="enablePostreleases">Whether metadata is treated as a post-release</param>
+		/// <returns>The target RTM version</returns>
+		public readonly SemVer GetCoreVersion(bool enablePostreleases) =>
+			enablePostreleases switch
+			{
+				false => new(Major, Minor, Patch),
+				true => Prerelease switch
+				{
+					not null => new(Major, Minor, Patch), // v1.2.3-alpha.1+1 -> v1.2.3
+					null => new(Major, Minor, Patch, null, BuildMetadata), // v1.2.3+1 -> v1.2.3+1
+				}
+			};
 
 		/// <summary>
 		/// The version without any prerelease or metadata, for which a prerelease would be working toward.<br/>
@@ -206,6 +224,52 @@ namespace Verlite
 		}
 
 		/// <summary>
+		/// Compares the postrelease taking into account ordinals within the string.
+		/// </summary>
+		/// <returns><c>-1</c> if <paramref name="left"/> precedes <paramref name="right"/>, <c>0</c> if they have the same precedence, and <c>1</c> if <paramref name="right"/> precedes the <paramref name="left"/>.</returns>
+		public static int ComparePostrelease(string left, string right)
+		{
+			int minLen = Math.Min(left.Length, right.Length);
+
+			for (int i = 0; i < minLen; i++)
+			{
+				char l = left[i];
+				char r = right[i];
+
+				bool lDigit = char.IsDigit(l);
+				bool rDigit = char.IsDigit(r);
+
+				if (lDigit && rDigit)
+				{
+					var (leftOrdinal, leftOrdinalLength) = SelectOrdinals(left.Substring(i));
+					var (rightOrdinal, rightOrdinalLength) = SelectOrdinals(right.Substring(i));
+
+					int cmpOrdinal = leftOrdinal.CompareTo(rightOrdinal);
+					if (cmpOrdinal != 0)
+						return cmpOrdinal;
+
+					Debug.Assert(leftOrdinalLength == rightOrdinalLength);
+					i += leftOrdinalLength - 1;
+				}
+
+				if (l != r)
+				{
+					// +0 should be greater than +a
+					return (lDigit, rDigit) switch
+					{
+						// +0 > +a
+						(true, false) => 1,
+						// +a < +0
+						(false, true) => -1,
+						_ => l.CompareTo(r),
+					};
+				}
+			}
+
+			return left.Length.CompareTo(right.Length);
+		}
+
+		/// <summary>
 		/// Return the sematic version formatted as a string.
 		/// </summary>
 		public override string ToString()
@@ -251,6 +315,7 @@ namespace Verlite
 		/// Compares one version to the other for determining precedence.
 		/// Does not take into account the <see cref="BuildMetadata"/> component.
 		/// </summary>
+		[Obsolete("Comparing precedence via SemVer type is deprecated, use an IVersionPrecedenceDescriptor implementation")]
 		public int CompareTo(SemVer other)
 		{
 			static bool areDifferent(int left, int right, out int result)
@@ -280,21 +345,25 @@ namespace Verlite
 		/// Compares one version to the other for determining precedence.
 		/// Does not take into account the <see cref="BuildMetadata"/> component.
 		/// </summary>
+		[Obsolete("Comparing precedence via SemVer type is deprecated, use an IVersionPrecedenceDescriptor implementation")]
 		public static bool operator <(SemVer left, SemVer right) => left.CompareTo(right) < 0;
 		/// <summary>
 		/// Compares one version to the other for determining precedence.
 		/// Does not take into account the <see cref="BuildMetadata"/> component.
 		/// </summary>
+		[Obsolete("Comparing precedence via SemVer type is deprecated, use an IVersionPrecedenceDescriptor implementation")]
 		public static bool operator <=(SemVer left, SemVer right) => left.CompareTo(right) <= 0;
 		/// <summary>
 		/// Compares one version to the other for determining precedence.
 		/// Does not take into account the <see cref="BuildMetadata"/> component.
 		/// </summary>
+		[Obsolete("Comparing precedence via SemVer type is deprecated, use an IVersionPrecedenceDescriptor implementation")]
 		public static bool operator >(SemVer left, SemVer right) => left.CompareTo(right) > 0;
 		/// <summary>
 		/// Compares one version to the other for determining precedence.
 		/// Does not take into account the <see cref="BuildMetadata"/> component.
 		/// </summary>
+		[Obsolete("Comparing precedence via SemVer type is deprecated, use an IVersionPrecedenceDescriptor implementation")]
 		public static bool operator >=(SemVer left, SemVer right) => left.CompareTo(right) >= 0;
 	}
 }
