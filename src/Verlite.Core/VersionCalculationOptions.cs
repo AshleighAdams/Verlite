@@ -45,5 +45,9 @@ namespace Verlite
 		/// The remote endpoint to use when fetching tags and commits.
 		/// </summary>
 		public string Remote { get; set; } = "origin";
+		/// <summary>
+		/// Treat "build metadata" as a post release, like a prerelease but comes after the RTM instead of before.
+		/// </summary>
+		public bool EnablePostreleaseExtension { get; set; }
 	}
 }

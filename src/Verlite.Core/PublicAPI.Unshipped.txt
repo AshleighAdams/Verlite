@@ -1,1 +1,15 @@
 #nullable enable
+static Verlite.HeightCalculator.FromRepository(Verlite.IRepoInspector! repo, string! tagPrefix, bool queryRemoteTags, Verlite.ILogger? log = null, Verlite.ITagFilter? tagFilter = null, Verlite.IVersionPrecedenceDescriptor? versionComparer = null) -> System.Threading.Tasks.Task<(int height, Verlite.TaggedVersion?)>!
+static Verlite.HeightCalculator.FromRepository2(Verlite.IRepoInspector! repo, Verlite.Commit? commit, string! tagPrefix, bool queryRemoteTags, bool fetchTags, Verlite.ILogger? log, Verlite.ITagFilter? tagFilter, Verlite.IVersionPrecedenceDescriptor? versionComparer = null) -> System.Threading.Tasks.Task<(int height, Verlite.TaggedVersion?)>!
+static Verlite.PostreleaseEnabledComparer.Instance.get -> Verlite.PostreleaseEnabledComparer!
+static Verlite.SemVer.ComparePostrelease(string! left, string! right) -> int
+static Verlite.StrictVersionComparer.Instance.get -> Verlite.StrictVersionComparer!
+Verlite.PostreleaseEnabledComparer
+Verlite.PostreleaseEnabledComparer.Compare(Verlite.SemVer x, Verlite.SemVer y) -> int
+Verlite.PostreleaseEnabledComparer.PostreleaseEnabledComparer() -> void
+Verlite.SemVer.GetCoreVersion(bool enablePostreleases) -> Verlite.SemVer
+Verlite.StrictVersionComparer
+Verlite.StrictVersionComparer.Compare(Verlite.SemVer x, Verlite.SemVer y) -> int
+Verlite.StrictVersionComparer.StrictVersionComparer() -> void
+Verlite.VersionCalculationOptions.EnablePostreleaseExtension.get -> bool
+Verlite.VersionCalculationOptions.EnablePostreleaseExtension.set -> void

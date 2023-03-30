@@ -68,6 +68,7 @@ namespace Verlite
 		/// <param name="fetchTags">Whether to fetch tags we don't yet have locally.</param>
 		/// <param name="log">The log to output verbose diagnostics to.</param>
 		/// <param name="tagFilter">A filter to test tags against. A value of <c>null</c> means do not filter.</param>
+		/// <param name="versionComparer">Used to determine the order of versions.</param>
 		/// <returns>A task containing the height, and, if found, the tagged version.</returns>
 		public static async Task<(int height, TaggedVersion?)> FromRepository2(
 			IRepoInspector repo,
@@ -76,8 +77,11 @@ namespace Verlite
 			bool queryRemoteTags,
 			bool fetchTags,
 			ILogger? log,
-			ITagFilter? tagFilter)
+			ITagFilter? tagFilter,
+			IComparer<SemVer>? versionComparer = null)
 		{
+			versionComparer ??= StrictVersionComparer.Instance;
+
 			var tags = await repo.GetTags(queryRemoteTags ? QueryTarget.Local | QueryTarget.Remote : QueryTarget.Local);
 
 			log?.Verbose("Found the following tags:");
@@ -110,7 +114,7 @@ namespace Verlite
 
 			return candidates
 				.OrderByDescending(x => x.version is not null)
-				.ThenByDescending(x => x.version?.Version)
+				.ThenByDescending(x => x.version?.Version ?? new SemVer(), versionComparer)
 				.First();
 		}
 
@@ -142,21 +146,23 @@ namespace Verlite
 			public string TagPrefix { get; }
 			public ILogger? Log { get; }
 			public ITagFilter? TagFilter { get; }
+			public IComparer<SemVer> VersionComparer { get; }
 
 			public CandidateOptions(
 				IRepoInspector repo,
 				TagContainer tags,
 				string tagPrefix,
 				ILogger? log,
-				ITagFilter? tagFilter)
+				ITagFilter? tagFilter,
+				IComparer<SemVer>? versionComparer = null)
 			{
 				Repo = repo;
 				Tags = tags;
 				TagPrefix = tagPrefix;
 				Log = log;
 				TagFilter = tagFilter;
+				VersionComparer = versionComparer ?? StrictVersionComparer.Instance;
 			}
-
 		}
 
 		private static async Task<IReadOnlyList<(int height, TaggedVersion? version)>> GetCandidates(
@@ -189,7 +195,7 @@ namespace Verlite
 				var versions = currentTags
 					.Where(t => t.Name.StartsWith(options.TagPrefix, StringComparison.Ordinal))
 					.SelectWhereSemver(options.TagPrefix, options.Log)
-					.OrderByDescending(v => v.Version)
+					.OrderByDescending(v => v.Version, options.VersionComparer)
 					.ToList();
 
 				options.Log?.Verbatim($"{descriptor} has {currentTags.Count} total tags with {versions.Count} versions.");

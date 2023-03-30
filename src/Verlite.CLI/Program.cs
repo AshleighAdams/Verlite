@@ -123,6 +123,7 @@ namespace Verlite.CLI
 			bool autoFetch,
 			bool enableLightweightTags,
 			bool enableShadowRepo,
+			bool enablePostreleases,
 			AutoIncrement autoIncrement,
 			string filterTags,
 			string remote,
@@ -148,6 +149,7 @@ namespace Verlite.CLI
 					QueryRemoteTags = autoFetch,
 					AutoIncrement = autoIncrement.Value(),
 					Remote = remote,
+					EnablePostreleaseExtension = enablePostreleases,
 				};
 
 				var version = opts.VersionOverride ?? new SemVer();

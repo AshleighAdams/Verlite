@@ -7,6 +7,14 @@
 
 Versioning with [SemVer 2][semver-2] Git tags. Automatically set the version from Git tags for .NET Core SDK-style projects, or use the CLI tool for all others. Platform agnostic.
 
+## Todo
+
+- Postreleases
+- Release deliminator
+- Shallow
+- Maybe json options
+- Local changes bump height and/or set build metadata
+
 ## Usage
 
 Add the following to your `Directory.Build.props` or `csproj`:
@@ -268,6 +276,56 @@ public static class Version
 Using a shadow repo is an experimental method of allowing shallow depth=1 clones without causing
 any issues with Verlite. A special repo within your repositories `.git` directory will be created
 and updated as needed, where only commits are fetched (via `--filter=tree:0`).
+
+<h3 id="post-releases">What is a post-release?</h3>
+
+A post-release is like a pre-release, except the opposite by repurposing build metadata.
+Instead post-releases coming before a given version, they instead come *after.*
+
+You may be asking: "But why?" Well, real software development is rarely as prestine as we desire,
+or we may have other limitations beyond our control, post-releases allow an existing version to be re-packaged
+without impeding on the next core version.
+There are a few scenarios that post-releases may be desirable:
+
+Scenario 1: We have some code that is very expensive to rerelease, and that the cost is proportional to the quantity of change,
+a post-release allows us to backport a patch to that exact version, plus one, without impeding on the next core version.
+The versions used may look similar to: v1.2.3 < v1.2.3+1 < v1.2.4.
+
+Scenario 2: The packaging step may be distinct from the release step. The same version may be repackaged many times in some workflows,
+such as metadata being attached or fixes to the package unrelated to the software itself. This allows us to version our packaging
+without it being disparate from the software being packaged.
+The versions used here will look similar to #1, but additionally can append additional details for repackaging rereleases: v1.2.3 < v1.2.3+pkg.1 < v1.2.3+1 < v1.2.3+1.pkg.1 < v1.2.4.
+
+Scenario 3: We're packaging some third party software, for who we should avoid creating new versions that conflict with any future versions they may release.
+A great example of this can be found in Debian, where deb packages will use a specific `original+deb.n` format to denote re-releases or patch counters,
+these versions do not impede on the original software's versions, and clearly denote show the upstream origin source version.
+The versions used may look something like: v1.2.3 < v1.2.3+deb.1 < v1.2.3+1 < v1.2.3+1-deb.1 < v1.2.4.
+
+Here is a quick reference for how post-releases fit in with pre-releases, RTM versions, and other post-releases:
+
+| Version ordering      |
+|-----------------------|
+| 1.2.3-alpha.1         |
+| 1.2.3-beta.1          |
+| 1.2.3-beta.1+1        |
+| 1.2.3-beta.1+1-deb.1  |
+| 1.2.3                 |
+| 1.2.3+deb.1           |
+| 1.2.3+1               |
+| 1.2.3+1.deb.1         |
+| 1.2.4-alpha.1         |
+| 1.2.4                 |
+
+<!-- Conan Center is in desire need of #3, please please get your act together Conan team :(
+My company has had to resort to hard coding the full recipe hash due to upstream rereleases that introduce regressions! -->
+
+/*
+if you're packaging upstream software, say verlite for debian, the following could occur
+	- official release: 1.0.0
+	- thirdparty rerelease with 1 patch applied: 1.0.0+deb.1
+	- official rerelease: 1.0.0+1
+	- thirdparty rerelease with 1 patch applied: 1.0.0+1-deb.1
+*/
 
 [verlite-msbuild-badge]: https://img.shields.io/nuget/v/Verlite.MsBuild?label=Verlite.MsBuild
 [verlite-msbuild-link]: https://www.nuget.org/packages/Verlite.MsBuild
