@@ -21,6 +21,7 @@ namespace Verlite.MsBuild
 		public string AutoIncrement { get; set; } = "";
 		public string FilterTags { get; set; } = "";
 		public string Remote { get; set; } = "";
+		public bool EnableShadowRepo { get; set; } = false;
 
 		public override bool Execute()
 		{
@@ -113,6 +114,7 @@ namespace Verlite.MsBuild
 			if (opts.VersionOverride is null)
 			{
 				using var repo = await GitRepoInspector.FromPath(ProjectDirectory, opts.Remote, log, commandRunner);
+				repo.EnableShadowRepo = EnableShadowRepo;
 
 				ITagFilter? tagFilter = null;
 				if (!string.IsNullOrWhiteSpace(FilterTags))

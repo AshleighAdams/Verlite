@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -79,6 +77,10 @@ namespace Verlite
 		/// Can the Git repository be deepened to fetch commits not in the local repository.
 		/// </summary>
 		public bool CanDeepen { get; set; }
+		/// <summary>
+		/// Whether Verlite use a shadow tree-less clone to work around limitations of deepening for some Git hosts.
+		/// </summary>
+		public bool EnableShadowRepo { get; set; }
 		/// <summary>
 		/// Enable shortcutting git fetch to eliminate potentially problematic git fetches.
 		/// </summary>
@@ -155,156 +157,24 @@ namespace Verlite
 			return parents is not null ? parents : Array.Empty<Commit>();
 		}
 
-		private readonly SemaphoreSlim catFileSemaphore = new(initialCount: 1, maxCount: 1);
-		internal Process? CatFileProcess { get; set; }
-		private UTF8Encoding Encoding { get; } = new(
-			encoderShouldEmitUTF8Identifier: false,
-			throwOnInvalidBytes: false);
-
-		private char[] WhitespaceChars { get; } = new[]
+		internal GitCatFileProcess? PrimaryCatfile { get; set; }
+		private GitShadowRepo? ShadowRepo { get; set; }
+		private async Task<GitShadowRepo> GetShadowRepo()
 		{
-			'\t',
-			'\v',
-			'\f',
-			'\r',
-			'\n',
-			' ',
-			'\u0085', // NEXT LINE
-			'\u00A0', // NBSP
-			'\u1680', // OGHAM SPACE MARK
-			'\u2000', // EN QUAD
-			'\u2001', // EM QUAD
-			'\u2002', // EN SPACE
-			'\u2003', // EM SPACE
-			'\u2004', // THREE-PER-EM SPACE
-			'\u2005', // FOUR-PER-EM SPACE
-			'\u2006', // SIX-PER-EM SPACE
-			'\u2007', // FIGURE SPACE
-			'\u2008', // PUNCTUATION SPACE
-			'\u2009', // THIN SPACE
-			'\u200A', // HAIR SPACE
-			'\u2028', // LINE SEPARATOR
-			'\u2029', // PARAGRAPH SEPARATOR
-			'\u202F', // NARROW NBSP
-			'\u205F', // MEDIUM MATHEMATICAL SPACE
-			'\u3000', // IDEOGRAPHIC SPACE
-			'\u180E', // MONGOLIAN VOWEL SEPARATOR
-			'\u200B', // ZERO WIDTH SPACE
-			'\u200C', // ZERO WIDTH NON-JOINER
-			'\u200D', // ZERO WIDTH JOINER
-			'\u2060', // WORD JOINER
-			'\uFEFF', // ZERO WIDTH NON-BREAKING SPACE
-		};
-		private async Task<string?> CatFile(string type, string id)
-		{
-			await catFileSemaphore.WaitAsync();
-			try
-			{
-				bool isFirst = false;
-				if (CatFileProcess is null)
-				{
-					isFirst = true;
-
-					Log?.Verbatim($"{Root} $ git cat-file --batch");
-					ProcessStartInfo info = new()
-					{
-						FileName = "git",
-						Arguments = "cat-file --batch",
-						WorkingDirectory = Root,
-						RedirectStandardError = false,
-						RedirectStandardOutput = true,
-						StandardOutputEncoding = Encoding,
-						RedirectStandardInput = true,
-						UseShellExecute = false,
-					};
-					CatFileProcess = Process.Start(info);
-				}
-
-				var (cin, cout) = (CatFileProcess.StandardInput, CatFileProcess.StandardOutput.BaseStream);
-
-				// if this git call is forwarded onto another shell script,
-				// then it's possible to query git before it's ready, but once
-				// it does respond, it's ready to be used.
-				if (isFirst)
-				{
-					Log?.Verbatim($"First run: awaiting cat-file startup.");
-					await cin.WriteLineAsync(" ");
-
-					using var cts = new CancellationTokenSource();
-
-					var timeout = Task.Delay(5000, cts.Token);
-					var gotBack = ReadLineAsync(cout);
-
-					var completedTask = await Task.WhenAny(timeout, gotBack);
-
-					if (completedTask != timeout)
-						cts.Cancel();
-					else
-						throw new UnknownGitException("The git cat-file process timed out.");
-
-					var result = await gotBack;
-					if (result.Trim(WhitespaceChars) != "missing")
-						throw new UnknownGitException($"The git cat-file process returned unexpected output: {result}");
-				}
-
-				using var cts2 = new CancellationTokenSource();
-				var timeout2 = Task.Delay(30_000, cts2.Token);
-
-				Log?.Verbatim($"git cat-file < {id}");
-				if (await Task.WhenAny(cin.WriteLineAsync(id), timeout2) == timeout2)
-					throw new UnknownGitException("The git cat-file process write timed out.");
-
-				var readLineTask = ReadLineAsync(cout);
-				if (await Task.WhenAny(readLineTask, timeout2) == timeout2)
-					throw new UnknownGitException("The git cat-file process read timed out.");
-
-				string line = await readLineTask;
-				Log?.Verbatim($"git cat-file > {line}");
-				string[] response = line.Trim(WhitespaceChars).Split(' ');
-
-
-				if (response[0] != id)
-					throw new UnknownGitException("The returned blob hash did not match.");
-				else if (response[1] == "missing")
-					return null;
-				else if (response[1] != type)
-					throw new UnknownGitException($"Blob for {id} expected {type} but was {response[1]}.");
-
-				var length = int.Parse(response[2], CultureInfo.InvariantCulture);
-				var buffer = new byte[length];
-
-				if (await Task.WhenAny(cout.ReadAsync(buffer, 0, length), timeout2) == timeout2)
-					throw new UnknownGitException("The git cat-file process read block timed out.");
-				if (await Task.WhenAny(ReadLineAsync(cout), timeout2) == timeout2)
-					throw new UnknownGitException("The git cat-file process read block line timed out.");
-
-				cts2.Cancel();
-				return Encoding.GetString(buffer);
-			}
-			catch (Exception ex)
-			{
-				throw new UnknownGitException($"Failed to communicate with the git cat-file process: {ex.Message}");
-			}
-			finally
-			{
-				catFileSemaphore.Release();
-			}
+			ShadowRepo ??= await GitShadowRepo.FromPath(Log, CommandRunner, Root, Remote);
+			return ShadowRepo;
 		}
-
-		private async Task<string> ReadLineAsync(Stream stream, int maxLength = 128)
+		private async Task<string?> ReadObject(string type, string id)
 		{
-			var buffer = new byte[maxLength];
+			PrimaryCatfile ??= new GitCatFileProcess(Log, Root, "primary");
 
-			int length = 0;
-			for (; length < maxLength; length++)
-			{
-				if (await stream.ReadAsync(buffer, length, 1) == -1)
-					break;
-				else if (buffer[length] == '\n')
-					break;
-			}
+			string? contents = await PrimaryCatfile.ReadObject(type, id); ;
 
-			return Encoding.GetString(buffer, 0, length);
+			if (contents is not null || !EnableShadowRepo)
+				return contents;
+
+			var shadowRepo = await GetShadowRepo();
+			return await shadowRepo.ReadObject(type, id, CanDeepen);
 		}
 
 		private Dictionary<Commit, string> CommitCache { get; } = new();
@@ -313,7 +183,7 @@ namespace Verlite
 			if (CommitCache.TryGetValue(commit, out var cached))
 				return cached;
 
-			var contents = await CatFile("commit", commit.Id);
+			var contents = await ReadObject("commit", commit.Id);
 			if (contents is not null)
 			{
 				CommitCache[commit] = contents;
@@ -424,6 +294,8 @@ namespace Verlite
 
 			if (commitObj is not null)
 				return commitObj;
+			else if (EnableShadowRepo)
+				throw new RepoTooShallowException();
 			else if (!CanDeepen)
 				throw new RepoTooShallowException();
 
@@ -506,7 +378,32 @@ namespace Verlite
 				try
 				{
 					Log?.Verbatim($"GetTags(): Reading local tags.");
-					var (response, _) = await Git("show-ref", "--tags", "--dereference");
+
+					string? response;
+
+					try
+					{
+						(response, _) = await Git("show-ref", "--tags", "--dereference");
+					}
+					catch (CommandException ex) when (ex.ExitCode == 1)
+					{
+						// allowed, no tags present
+						response = string.Empty;
+					}
+
+					if (EnableShadowRepo)
+					{
+						var shadowRepo = await GetShadowRepo();
+						try
+						{
+							var (shadowResponse, _) = await CommandRunner.Run(shadowRepo.Root, "git", new[] { "show-ref", "--tags", "--dereference" });
+							response += Environment.NewLine + shadowResponse;
+						}
+						catch (CommandException ex) when (ex.ExitCode == 1)
+						{
+							// allowed, no tags present
+						}
+					}
 
 					foreach (Tag tag in MatchTags(response))
 					{
@@ -524,6 +421,15 @@ namespace Verlite
 		/// <inheritdoc/>
 		public async Task FetchTag(Tag tag, string remote)
 		{
+			if (EnableShadowRepo)
+			{
+				Log?.Verbose($"FetchTag({tag}, {remote}) (shadow)");
+				var shadowRepo = await GetShadowRepo();
+				await CommandRunner.Run(shadowRepo.Root,
+					"git", new[] { "fetch", remote, $"refs/tags/{tag.Name}:refs/tags/{tag.Name}", "--filter=tree:0" });
+				return;
+			}
+
 			if (EnableLightweightTags)
 			{
 				// make sure we actually have the commit object downloaded, else we can't tag it
@@ -556,16 +462,8 @@ namespace Verlite
 		/// </summary>
 		public void Dispose()
 		{
-			try
-			{
-				CatFileProcess?.StandardInput.Close();
-				CatFileProcess?.Kill();
-				CatFileProcess?.Close();
-				catFileSemaphore.Dispose();
-			}
-			catch (IOException) { } // process may already be terminated
-			catch (System.ComponentModel.Win32Exception) { }
-			finally { }
+			PrimaryCatfile?.Dispose();
+			ShadowRepo?.Dispose();
 		}
 	}
 }

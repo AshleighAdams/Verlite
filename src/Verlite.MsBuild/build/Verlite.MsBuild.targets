@@ -58,6 +58,7 @@ This file has been modified by Ashleigh Adams and adapted for Verlite -->
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteAutoIncrement=$(VerliteAutoIncrement)" />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteFilterTags=$(VerliteFilterTags)" />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteRemote=$(VerliteRemote)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteEnableShadowRepo=$(VerliteEnableShadowRepo)" />
 
     <Verlite.MsBuild.GetVersionTask ProjectDirectory="$(MSBuildProjectDirectory)"
                                     BuildMetadata="$(VerliteBuildMetadata)"
@@ -70,7 +71,8 @@ This file has been modified by Ashleigh Adams and adapted for Verlite -->
                                     PrereleaseBaseHeight="$(VerlitePrereleaseBaseHeight)"
                                     AutoIncrement="$(VerliteAutoIncrement)"
                                     FilterTags="$(VerliteFilterTags)"
-                                    Remote="$(VerliteRemote)" >
+                                    Remote="$(VerliteRemote)"
+                                    EnableShadowRepo="$(VerliteEnableShadowRepo)">
       <Output TaskParameter="Version" PropertyName="VerliteVersion" />
       <Output TaskParameter="VersionMajor" PropertyName="VerliteMajor" />
       <Output TaskParameter="VersionMinor" PropertyName="VerliteMinor" />
