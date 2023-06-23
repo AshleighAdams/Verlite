@@ -21,7 +21,7 @@ namespace Verlite.MsBuild
 		public string AutoIncrement { get; set; } = "";
 		public string FilterTags { get; set; } = "";
 		public string Remote { get; set; } = "";
-		public bool EnableShadowRepo { get; set; } = false;
+		public bool EnableShadowRepo { get; set; }
 
 		public override bool Execute()
 		{
