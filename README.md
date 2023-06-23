@@ -62,6 +62,7 @@ See [docs/VersionCalculation.md](docs/VersionCalculation.md) for further reading
 | A command to test whether a tag should be ignored via exit code.    | -f, --filter-tags, VerliteFilterTags                             |         |
 | The remote endpoint to use when fetching tags and commits.          | -r, --remote, VerliteRemote                                      | origin  |
 | Generate version strings and embed them via a source generator.     | VerliteEmbedVersion                                              | true    |
+| Use a shadow repo (partial, only commits) to read commit history.   | --enable-shadow-repo, EnableShadowRepo                           | false   |
 
 ## Comparison with GitVersion
 
@@ -261,6 +262,12 @@ public static class Version
 	public string Version => Verlite.Version.FullVersion;
 }
 ```
+
+<h3 id="shadow-repo">What is a shadow repo?</h3>
+
+Using a shadow repo is an experimental method of allowing shallow depth=1 clones without causing
+any issues with Verlite. A special repo within your repositories `.git` directory will be created
+and updated as needed, where only commits are fetched (via `--filter=tree:0`).
 
 [verlite-msbuild-badge]: https://img.shields.io/nuget/v/Verlite.MsBuild?label=Verlite.MsBuild
 [verlite-msbuild-link]: https://www.nuget.org/packages/Verlite.MsBuild

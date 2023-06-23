@@ -101,8 +101,14 @@ namespace Verlite
 			proc.Start();
 			proc.StandardInput.Close();
 
-			string stdout = await proc.StandardOutput.ReadToEndAsync();
-			string stderr = await proc.StandardError.ReadToEndAsync();
+			Task<string> stdoutTask = proc.StandardOutput.ReadToEndAsync();
+			Task<string> stderrTask = proc.StandardError.ReadToEndAsync();
+
+			await Task.WhenAll(stdoutTask, stderrTask, exitPromise.Task);
+
+			string stdout = await stdoutTask;
+			string stderr = await stderrTask;
+			int exitCode = await exitPromise.Task;
 
 			if (await exitPromise.Task != 0)
 				throw new CommandException(proc.ExitCode, stdout, stderr);

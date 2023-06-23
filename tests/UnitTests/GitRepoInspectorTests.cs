@@ -9,6 +9,7 @@ using System.Threading;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 
 namespace UnitTests
 {
@@ -518,9 +519,10 @@ namespace UnitTests
 
 			// forcibly kill the process
 			// exposed internals to kill the process
-			Assert.NotNull(repo.CatFileProcess);
-			repo.CatFileProcess!.Kill(entireProcessTree: true);
-			await repo.CatFileProcess!.WaitForExitAsync();
+			Assert.NotNull(repo.PrimaryCatfile);
+			var proc = repo.PrimaryCatfile.GetProcess();
+			proc!.Kill(entireProcessTree: true);
+			await proc.WaitForExitAsync();
 
 			// attempt to read a non-cached parent
 			await Assert.ThrowsAsync<UnknownGitException>(() => repo.GetParents(parents[0]));
@@ -541,8 +543,9 @@ namespace UnitTests
 			var parents = await repo.GetParents(head.Value);
 
 			// forcibly desync the git catfile process
-			Assert.NotNull(repo.CatFileProcess);
-			await repo.CatFileProcess!.StandardInput.WriteLineAsync(head.Value.Id);
+			var proc = repo.PrimaryCatfile?.GetProcess();
+			Assert.NotNull(proc);
+			await proc.StandardInput.WriteLineAsync(head.Value.Id);
 
 			// attempt to read a non-cached parent
 			await Assert.ThrowsAsync<UnknownGitException>(() => repo.GetParents(parents[0]));

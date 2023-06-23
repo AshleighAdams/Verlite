@@ -89,6 +89,10 @@ namespace Verlite.CLI
 					aliases: new[] { "--enable-lightweight-tags" },
 					getDefaultValue: () => false,
 					description: "Create a lightweight tag instead of fetching the remote's."),
+				new Option<bool>(
+					aliases: new[] { "--enable-shadow-repo" },
+					getDefaultValue: () => false,
+					description: "Use a shadow repro for shallow clones using filter branches to fetch only commits."),
 				new Option<AutoIncrement>(
 					aliases: new[] { "--auto-increment", "-a" },
 					isDefault: true,
@@ -118,6 +122,7 @@ namespace Verlite.CLI
 			Show show,
 			bool autoFetch,
 			bool enableLightweightTags,
+			bool enableShadowRepo,
 			AutoIncrement autoIncrement,
 			string filterTags,
 			string remote,
@@ -155,6 +160,7 @@ namespace Verlite.CLI
 					using var repo = await GitRepoInspector.FromPath(sourceDirectory, opts.Remote, log, commandRunner);
 					repo.CanDeepen = autoFetch;
 					repo.EnableLightweightTags = enableLightweightTags;
+					repo.EnableShadowRepo = enableShadowRepo;
 
 					ITagFilter? tagFilter = null;
 					if (!string.IsNullOrWhiteSpace(filterTags))

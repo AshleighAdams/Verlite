@@ -1,1 +1,3 @@
 #nullable enable
+Verlite.GitRepoInspector.EnableShadowRepo.get -> bool
+Verlite.GitRepoInspector.EnableShadowRepo.set -> void
