@@ -425,8 +425,7 @@ namespace Verlite
 			{
 				Log?.Verbose($"FetchTag({tag}, {remote}) (shadow)");
 				var shadowRepo = await GetShadowRepo();
-				await CommandRunner.Run(shadowRepo.Root,
-					"git", new[] { "fetch", remote, $"refs/tags/{tag.Name}:refs/tags/{tag.Name}", "--filter=tree:0" });
+				await shadowRepo.FetchTag(tag, Root, remote);
 				return;
 			}
 

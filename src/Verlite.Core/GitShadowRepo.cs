@@ -65,6 +65,14 @@ namespace Verlite
 			return await CatFileProcess.ReadObject(type, id);
 		}
 
+		public async Task FetchTag(Tag tag, string gitRoot, string remoteName)
+		{
+			var (remoteUrl, _) = await CmdRunner.Run(gitRoot, "git", new[] { "remote", "get-url", remoteName });
+
+			await CmdRunner.Run(Root,
+				"git", new[] { "fetch", remoteUrl, $"+refs/tags/{tag.Name}:refs/tags/{tag.Name}", "--filter=tree:0" });
+		}
+
 		public void Dispose()
 		{
 			CatFileProcess?.Dispose();
