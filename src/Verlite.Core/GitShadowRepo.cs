@@ -59,6 +59,7 @@ namespace Verlite
 			}
 			catch (CommandException)
 			{
+				Log?.Verbose($"Shadow repo fetch failed during ReadObject(), trying with --refetch");
 				await CmdRunner.Run(Root, "git", new[] { "fetch", RemoteUrl, "--filter=tree:0", "--prune", "--force", "--refetch" });
 			}
 
@@ -69,8 +70,26 @@ namespace Verlite
 		{
 			var (remoteUrl, _) = await CmdRunner.Run(gitRoot, "git", new[] { "remote", "get-url", remoteName });
 
-			await CmdRunner.Run(Root,
-				"git", new[] { "fetch", remoteUrl, $"+refs/tags/{tag.Name}:refs/tags/{tag.Name}", "--filter=tree:0" });
+			try
+			{
+				await CmdRunner.Run(Root,
+					"git", new[] {
+						"fetch", remoteUrl,
+						$"+refs/tags/{tag.Name}:refs/tags/{tag.Name}",
+						"--filter=tree:0",
+					});
+			}
+			catch (CommandException)
+			{
+				Log?.Verbose($"Shadow repo fetch failed during FetchTag(), trying with --refetch");
+				await CmdRunner.Run(Root,
+					"git", new[] {
+						"fetch", remoteUrl,
+						$"+refs/tags/{tag.Name}:refs/tags/{tag.Name}",
+						"--filter=tree:0",
+						"--refetch",
+					});
+			}
 		}
 
 		public void Dispose()
