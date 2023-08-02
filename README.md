@@ -62,7 +62,7 @@ See [docs/VersionCalculation.md](docs/VersionCalculation.md) for further reading
 | A command to test whether a tag should be ignored via exit code.    | -f, --filter-tags, VerliteFilterTags                             |         |
 | The remote endpoint to use when fetching tags and commits.          | -r, --remote, VerliteRemote                                      | origin  |
 | Generate version strings and embed them via a source generator.     | VerliteEmbedVersion                                              | true    |
-| Use a shadow repo (partial, only commits) to read commit history.   | --enable-shadow-repo, EnableShadowRepo                           | false   |
+| Use a shadow repo (partial, only commits) to read commit history.   | --enable-shadow-repo, VerliteEnableShadowRepo                    | false   |
 
 ## Comparison with GitVersion
 

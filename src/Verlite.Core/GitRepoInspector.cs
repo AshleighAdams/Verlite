@@ -122,11 +122,11 @@ namespace Verlite
 		}
 
 		/// <inheritdoc/>
-		public async Task<Commit?> ParseRevision(string rev)
+		public async Task<Commit?> ParseRevision(string revision)
 		{
 			try
 			{
-				var (commit, _) = await Git("rev-parse", rev);
+				var (commit, _) = await Git("rev-parse", revision);
 				Log?.Verbatim($"ParseRevision() -> {commit}");
 
 				if (commit.Split('\n').Length != 1)

@@ -64,12 +64,15 @@ Verlite.GitRepoInspector.CanDeepen.set -> void
 Verlite.GitRepoInspector.Dispose() -> void
 Verlite.GitRepoInspector.EnableLightweightTags.get -> bool
 Verlite.GitRepoInspector.EnableLightweightTags.set -> void
+Verlite.GitRepoInspector.EnableShadowRepo.get -> bool
+Verlite.GitRepoInspector.EnableShadowRepo.set -> void
 Verlite.GitRepoInspector.FetchTag(Verlite.Tag tag) -> System.Threading.Tasks.Task!
 Verlite.GitRepoInspector.FetchTag(Verlite.Tag tag, string! remote) -> System.Threading.Tasks.Task!
 Verlite.GitRepoInspector.GetHead() -> System.Threading.Tasks.Task<Verlite.Commit?>!
 Verlite.GitRepoInspector.GetParent(Verlite.Commit commit) -> System.Threading.Tasks.Task<Verlite.Commit?>!
 Verlite.GitRepoInspector.GetParents(Verlite.Commit commit) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<Verlite.Commit>!>!
 Verlite.GitRepoInspector.GetTags(Verlite.QueryTarget queryTarget) -> System.Threading.Tasks.Task<Verlite.TagContainer!>!
+Verlite.GitRepoInspector.ParseRevision(string! revision) -> System.Threading.Tasks.Task<Verlite.Commit?>!
 Verlite.GitRepoInspector.Remote.get -> string!
 Verlite.GitRepoInspector.Root.get -> string!
 Verlite.HeightCalculator
@@ -100,6 +103,8 @@ Verlite.RepoInspectionException.RepoInspectionException(string! message) -> void
 Verlite.RepoInspectionException.RepoInspectionException(string! message, System.Exception! innerException) -> void
 Verlite.RepoInspectionException.RepoInspectionException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
 Verlite.RepoTooShallowException
+Verlite.RevParseException
+Verlite.RevParseException.RevParseException() -> void
 Verlite.SemVer
 Verlite.SemVer.BuildMetadata.get -> string?
 Verlite.SemVer.BuildMetadata.set -> void
