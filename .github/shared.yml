@@ -26,6 +26,13 @@ definitions:
       dotnet nuget update source github --store-password-in-clear-text --username AshleighAdams --password ${{ secrets.PERSONAL_ACCESS_TOKEN }}
       dotnet nuget enable source github
 
+  setup-minver: &setup-minver
+    name: Setup MinVer
+    run: |
+      git fetch --tags --force
+      git checkout "${GITHUB_REF#refs/*/}"
+      dotnet tool install --global minver-cli --version 2.5.0
+
   restore: &restore
     name: Restore
     run: dotnet restore
@@ -97,6 +104,39 @@ definitions:
     run: |
       chmod +x ./tests/IntegrationTests/run.sh
       ./tests/IntegrationTests/run.sh
+
+  build-standalone-binaries: &build-standalone-binaries
+    name: 'Build Standalone Binaries'
+    needs: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - rid: win-x64
+            os: windows-latest
+            exe: verlite.exe
+          - rid: linux-x64
+            os: ubuntu-latest
+            exe: verlite
+          - rid: osx-x64
+            os: macos-latest
+            exe: verlite
+    steps:
+    - *checkout
+    - *setup-dotnet
+    - name: Publish
+      run: |
+        dotnet publish -r "${rid}" -c Release src/Verlite.CLI/Verlite.CLI.csproj -p:PublishAot=true -o build
+        mkdir -p artifacts
+        cp "build/${exe}" "artifacts/${exe}"
+        cd artifacts/
+        tar -zcvf "verlite-${rid}.tar.gz" "${exe}"
+        rm "${exe}"
+      env:
+        rid: ${{ matrix.rid }}
+        exe: ${{ matrix.exe }}
+    - *upload-artifacts
 
   empty: "hi" # fixes the yml parser from messing the last value up
 
