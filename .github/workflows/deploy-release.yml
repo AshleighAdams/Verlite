@@ -127,6 +127,24 @@ jobs:
     - build
     - build-standalone-binaries
     steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: '0'
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: |
+          3.1.x
+          5.0.x
+          6.x
+          7.x
+
+    - name: Setup NuGet
+      run: |
+        dotnet nuget update source github --store-password-in-clear-text --username AshleighAdams --password ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        dotnet nuget enable source github
+
     - name: Download Artifacts
       uses: actions/download-artifact@v2
 

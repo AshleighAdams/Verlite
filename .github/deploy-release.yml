@@ -34,6 +34,9 @@ jobs:
     - build
     - build-standalone-binaries
     steps:
+    - *checkout
+    - *setup-dotnet
+    - *setup-nuget
     - *download-artifacts
     - name: 'Create Release'
       run: |
