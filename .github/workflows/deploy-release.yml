@@ -14,10 +14,10 @@ defaults:
 
 jobs:
   build:
-    name: Build & Release
+    name: Build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: '0'
 
@@ -35,16 +35,16 @@ jobs:
         dotnet nuget update source github --store-password-in-clear-text --username AshleighAdams --password ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         dotnet nuget enable source github
 
-
     - name: Setup MinVer
       run: |
         git fetch --tags --force
         git checkout "${GITHUB_REF#refs/*/}"
         dotnet tool install --global minver-cli --version 2.5.0
 
+
     - name: Verify Tag
       run: |
-        [[ "v$(minver --tag-prefix=v)" == "${GITHUB_REF#refs/*/}" ]] # error out if the versions don't match
+        \[[ "v$(minver --tag-prefix=v)" == "${GITHUB_REF#refs/*/}" ]] # error out if the versions don't match
 
     - name: Restore
       run: dotnet restore
@@ -68,6 +68,67 @@ jobs:
         path: |
           artifacts/*
 
+  build-standalone-binaries:
+    name: Build Standalone Binaries
+    needs: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - rid: win-x64
+          os: windows-latest
+          exe: verlite.exe
+        - rid: linux-x64
+          os: ubuntu-latest
+          exe: verlite
+        - rid: osx-x64
+          os: macos-latest
+          exe: verlite
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: '0'
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: |
+          3.1.x
+          5.0.x
+          6.x
+          7.x
+
+    - name: Publish
+      run: |
+        dotnet publish -r "${rid}" -c Release src/Verlite.CLI/Verlite.CLI.csproj -p:PublishAot=true -o build
+        mkdir -p artifacts
+        cp "build/${exe}" "artifacts/${exe}"
+        cd artifacts/
+        ./${exe} --version
+        tar -zcvf "verlite-${rid}.tar.gz" "${exe}"
+        rm "${exe}"
+      env:
+        rid: ${{ matrix.rid }}
+        exe: ${{ matrix.exe }}
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v2
+      if: success() || failure()
+      with:
+        name: artifacts
+        path: |
+          artifacts/*
+
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    needs:
+    - build
+    - build-standalone-binaries
+    steps:
+    - name: Download Artifacts
+      uses: actions/download-artifact@v2
 
     - name: Create Release
       run: |
@@ -78,6 +139,10 @@ jobs:
         options+=("-m" "") # leave the title and body unchanged
 
         IFS=$'\n';
+        for asset in $(find ./artifacts -name "verlite-*.tar.gz"); do
+          options+=("-a" "$asset")
+        done
+
         for asset in $(find ./artifacts -name "*.nupkg"); do
           options+=("-a" "$asset")
         done

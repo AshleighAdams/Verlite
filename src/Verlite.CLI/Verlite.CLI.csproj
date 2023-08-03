@@ -1,7 +1,26 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
+
+  <PropertyGroup Condition="'$(PublishAot)'!='true'">
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <TargetFrameworks>netcoreapp2.1;net5.0;</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(PublishAot)'=='true'">
+    <TargetName>verlite</TargetName>
+    <TargetExtension>elf</TargetExtension>
+    <TargetFramework>net7.0</TargetFramework>
+    <SelfContained>true</SelfContained>
+    <TrimMode>Link</TrimMode>
+    <RootAllApplicationAssemblies>false</RootAllApplicationAssemblies>
+    <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
+    <IlcGenerateStackTraceData>true</IlcGenerateStackTraceData>
+    <!-- Some parts still using reflection -->
+    <!--<IlcDisableReflection>true</IlcDisableReflection>-->
+    <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
+    <IlcOptimizationPreference>Size</IlcOptimizationPreference>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <OutputType>Exe</OutputType>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>verlite</ToolCommandName>

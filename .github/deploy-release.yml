@@ -9,29 +9,32 @@ defaults: *default-defaults
 
 jobs:
   build:
-    name: 'Build & Release'
+    name: 'Build'
     runs-on: ubuntu-latest
     steps:
     - *checkout
     - *setup-dotnet
     - *setup-nuget
-
-    - name: Setup MinVer
-      run: |
-        git fetch --tags --force
-        git checkout "${GITHUB_REF#refs/*/}"
-        dotnet tool install --global minver-cli --version 2.5.0
+    - *setup-minver
 
     - name: 'Verify Tag'
       run: |
-        [[ "v$(minver --tag-prefix=v)" == "${GITHUB_REF#refs/*/}" ]] # error out if the versions don't match
+        \[[ "v$(minver --tag-prefix=v)" == "${GITHUB_REF#refs/*/}" ]] # error out if the versions don't match
 
     - *restore
     - *build
     - *test
     - *pack
     - *upload-artifacts
-
+  build-standalone-binaries: *build-standalone-binaries
+  release:
+    name: 'Release'
+    runs-on: ubuntu-latest
+    needs:
+    - build
+    - build-standalone-binaries
+    steps:
+    - *download-artifacts
     - name: 'Create Release'
       run: |
         set -x
@@ -41,6 +44,10 @@ jobs:
         options+=("-m" "") # leave the title and body unchanged
 
         IFS=$'\n';
+        for asset in $(find ./artifacts -name "verlite-*.tar.gz"); do
+          options+=("-a" "$asset")
+        done
+
         for asset in $(find ./artifacts -name "*.nupkg"); do
           options+=("-a" "$asset")
         done

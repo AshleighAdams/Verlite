@@ -17,7 +17,7 @@ on:
 defaults: *default-defaults
 
 jobs:
-  build-and-test:
+  build:
     name: 'Build & Test'
     runs-on: ubuntu-latest
     steps:
@@ -29,9 +29,10 @@ jobs:
     - *pack
     - *publish-codecov
     - *upload-artifacts
+  build-standalone-binaries: *build-standalone-binaries
   mutation-tests:
     name: 'Mutation Test'
-    needs: build-and-test
+    needs: build
     runs-on: windows-latest
     steps:
     - *checkout
@@ -41,7 +42,7 @@ jobs:
     - *upload-artifacts
   integration-tests:
     name: 'Integration Tests'
-    needs: build-and-test
+    needs: build
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
