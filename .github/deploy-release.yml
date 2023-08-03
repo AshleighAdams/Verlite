@@ -19,7 +19,7 @@ jobs:
 
     - name: 'Verify Tag'
       run: |
-        \[[ "v$(minver --tag-prefix=v)" == "${GITHUB_REF#refs/*/}" ]] # error out if the versions don't match
+        [[ "v$(minver --tag-prefix=v)" == "${GITHUB_REF#refs/*/}" ]] # error out if the versions don't match
 
     - *restore
     - *build
