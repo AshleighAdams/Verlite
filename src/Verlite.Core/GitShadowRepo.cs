@@ -1,11 +1,32 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Verlite
 {
 	internal class GitShadowRepo : IDisposable
 	{
+		private static bool ShouldCopySetting(string setting)
+		{
+			if (setting.StartsWith("http."))
+				return true;
+			return false;
+		}
+
+		private static KeyValuePair<string, string> ReadConfigEntry(string configLine)
+		{
+			int equalsPos = configLine.IndexOf('=');
+			if (equalsPos <= 0)
+				throw new UnknownGitException("Could not parse config key-value pair, please report a bug with redacted .git/config file");
+
+			string key = configLine.Substring(0, equalsPos);
+			string value = configLine.Substring(equalsPos + 1);
+			return new(key, value);
+		}
+
+		private static readonly char[] Newlines = { '\r', '\n' };
 		public static async Task<GitShadowRepo> FromPath(
 			ILogger? log,
 			ICommandRunner runner,
@@ -14,21 +35,34 @@ namespace Verlite
 		{
 			var (remoteUrl, _) = await runner.Run(gitRoot, "git", new[] { "remote", "get-url", remoteName });
 			var (gitDir, _) = await runner.Run(gitRoot, "git", new[] { "rev-parse", "--git-dir" });
-			string root = Path.Combine(gitRoot, gitDir, "verlite-shadow");
+			string shadowRoot = Path.Combine(gitRoot, gitDir, "verlite-shadow");
 
-			if (!Directory.Exists(root))
+			if (!Directory.Exists(shadowRoot))
 			{
-				log?.Verbose($"Shadow clone does not exist, creating at {root}");
-				Directory.CreateDirectory(root);
-				await runner.Run(root, "git", new[] { "init", "--bare" });
-				await runner.Run(root, "git", new[] { "config", "fetch.recurseSubmodules", "false" });
-				await runner.Run(root, "git", new[] { "fetch", remoteUrl, "--filter=tree:0", "--no-tags" });
+				var (configsListStr, _) = await runner.Run(gitRoot, "git", new string[] { "config", "--local", "--list" });
+				var configs = configsListStr
+					.Split(Newlines, StringSplitOptions.RemoveEmptyEntries)
+					.Where(ShouldCopySetting)
+					.Select(ReadConfigEntry);
+
+				log?.Verbose($"Shadow clone does not exist, creating at {shadowRoot}");
+				Directory.CreateDirectory(shadowRoot);
+				await runner.Run(shadowRoot, "git", new[] { "init", "--bare" });
+				await runner.Run(shadowRoot, "git", new[] { "config", "fetch.recurseSubmodules", "false" });
+
+				foreach (var config in configs)
+				{
+					log?.Verbose($"Shadow clone copying local config {config.Key}");
+					await runner.Run(shadowRoot, "git", new string[] { "config", "--local", "--", config.Key, config.Value });
+				}
+
+				await runner.Run(shadowRoot, "git", new[] { "fetch", remoteUrl, "--filter=tree:0", "--no-tags" });
 			}
 
 			return new GitShadowRepo(
 				log,
 				runner,
-				root,
+				shadowRoot,
 				remoteUrl);
 		}
 
