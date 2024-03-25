@@ -111,6 +111,7 @@ Additionally, Verlite has some extra features, some of which I required or desir
  - [What happens if tag buildmeta and options buildmeta are set?](#tag-and-option-meta) *(concatenated together)*
  - [Can I access computed versions in my assembly?](#embedded-versions) *(yes)*
  - [Can others access computed versions in the assembly?](#embedded-versions-visibility) *(no\*)*
+ - [Can I query the version from the command line for a project?](#query-project-version) *(yes, since net8)*
 
 ### Why Verlite?
 
@@ -268,6 +269,14 @@ public static class Version
 Using a shadow repo is an experimental method of allowing shallow depth=1 clones without causing
 any issues with Verlite. A special repo within your repositories `.git` directory will be created
 and updated as needed, where only commits are fetched (via `--filter=tree:0`).
+
+<h3 id="query-project-version">Can I query the version from the command line for a project?</h3>
+
+Yes, this has been possible since .NET 8 with the following command:
+
+```sh
+$ dotnet msbuild $ProjectPath -getproperty:Version -target:Restore,Verlite
+```
 
 [verlite-msbuild-badge]: https://img.shields.io/nuget/v/Verlite.MsBuild?label=Verlite.MsBuild
 [verlite-msbuild-link]: https://www.nuget.org/packages/Verlite.MsBuild
