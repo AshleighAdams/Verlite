@@ -111,7 +111,7 @@ namespace Verlite.CLI
 			return await rootCommand.InvokeAsync(args);
 		}
 
-		private async static Task RootCommandAsync(
+		private static async Task RootCommandAsync(
 			string tagPrefix,
 			string defaultPrereleasePhase,
 			SemVer minVersion,

@@ -5,6 +5,7 @@ namespace Verlite.CLI
 {
 	internal enum AutoIncrement
 	{
+		none = -1,
 		patch = default,
 		minor = 1,
 		major = 2,
@@ -19,6 +20,7 @@ namespace Verlite.CLI
 				AutoIncrement.patch => VersionPart.Patch,
 				AutoIncrement.minor => VersionPart.Minor,
 				AutoIncrement.major => VersionPart.Major,
+				AutoIncrement.none  => VersionPart.None,
 				_ => throw new ArgumentException("Unknown or invalid auto increment.", nameof(self)),
 			};
 		}
@@ -40,6 +42,7 @@ namespace Verlite.CLI
 				"MAJOR" => AutoIncrement.major,
 				"MINOR" => AutoIncrement.minor,
 				"PATCH" => AutoIncrement.patch,
+				"NONE" => AutoIncrement.none,
 				_ => invalid(),
 			};
 		}
