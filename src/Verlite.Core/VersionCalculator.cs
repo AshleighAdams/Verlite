@@ -45,13 +45,9 @@ namespace Verlite
 		{
 			if (options.MinimumVersion > lastTag.CoreVersion)
 				return options.MinimumVersion;
-			else if (lastTag.Prerelease is not null)
+
+			if (lastTag.Prerelease is null)
 			{
-				var ret = lastTag;
-				ret.BuildMetadata = null;
-				return ret;
-			}
-			else
 				return options.AutoIncrement switch
 				{
 					VersionPart.None => lastTag,
@@ -60,6 +56,11 @@ namespace Verlite
 					VersionPart.Major => new SemVer(lastTag.Major + 1, 0, 0),
 					_ => throw new InvalidOperationException("NextVersion(): Can only bump by major, minor, or patch (default)."),
 				};
+			}
+
+			var ret = lastTag;
+			ret.BuildMetadata = null;
+			return ret;
 		}
 
 		/// <summary>
