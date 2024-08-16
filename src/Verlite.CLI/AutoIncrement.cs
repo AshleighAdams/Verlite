@@ -5,10 +5,10 @@ namespace Verlite.CLI
 {
 	internal enum AutoIncrement
 	{
-		none = -1,
 		patch = default,
 		minor = 1,
 		major = 2,
+		none = 3,
 	}
 
 	internal static partial class Parsers
