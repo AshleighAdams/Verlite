@@ -49,23 +49,25 @@ namespace UnitTests
 
 
 		[Theory]
-		//               lastTag   minVersion, height,          result
-		[InlineData(null, null, 1, "0.1.0")]
-		[InlineData(null, null, 10, "0.1.0")]
-		[InlineData("0.1.0-rc.1", null, 0, "0.1.0-rc.1")]
-		[InlineData("0.1.0-rc.1", null, 1, "0.1.0-rc.1")]
-		[InlineData("0.1.0-rc.1", null, 2, "0.1.0-rc.1")]
-		[InlineData("1.0.0-rc.2", "1.0.0", 0, "1.0.0-rc.2")]
-		[InlineData("1.0.0-rc.2", "1.0.0", 1, "1.0.0-rc.2")]
-		[InlineData("1.0.0-rc.2", "1.0.0", 2, "1.0.0-rc.2")]
-		[InlineData("0.1.0-rc.1", "1.0.0", 1, "1.0.0")]
-		[InlineData("0.1.0-rc.1", "1.0.0", 3, "1.0.0")]
-		[InlineData("1.0.0", null, 0, "1.0.0")]
-		[InlineData("1.0.0", "1.0.0", 0, "1.0.0")]
-		[InlineData("1.0.0", "1.0.0", 1, "1.0.0")]
-		[InlineData("1.0.0", "2.0.0", 1, "2.0.0")]
-		[InlineData("1.0.0-pre+meta", null, 0, "1.0.0-pre+meta")]
-		[InlineData("1.0.0+meta", null, 0, "1.0.0+meta")]
+		//               lastTag,     minVersion, height,      result
+		[InlineData(            null,     null,      1,           "0.1.0")]
+		[InlineData(            null,     null,     10,           "0.1.0")]
+		[InlineData(    "0.1.0-rc.1",     null,      0,      "0.1.0-rc.1")]
+		[InlineData(    "0.1.0-rc.1",     null,      1,      "0.1.0-rc.1")]
+		[InlineData(    "0.1.0-rc.1",     null,      2,      "0.1.0-rc.1")]
+		[InlineData(    "1.0.0-rc.2",  "1.0.0",      0,      "1.0.0-rc.2")]
+		[InlineData(    "1.0.0-rc.2",  "1.0.0",      1,      "1.0.0-rc.2")]
+		[InlineData(    "1.0.0-rc.2",  "1.0.0",      2,      "1.0.0-rc.2")]
+		[InlineData(    "0.1.0-rc.1",  "1.0.0",      1,           "1.0.0")]
+		[InlineData(    "0.1.0-rc.1",  "1.0.0",      3,           "1.0.0")]
+		[InlineData(         "1.0.0",     null,      0,           "1.0.0")]
+		[InlineData(         "1.0.0",  "1.0.0",      0,           "1.0.0")]
+		[InlineData(         "1.0.0",  "1.0.0",      1,           "1.0.0")]
+		[InlineData(         "1.0.0",  "2.0.0",      1,           "2.0.0")]
+		[InlineData("1.0.0-pre+meta",     null,      0,  "1.0.0-pre+meta")]
+		[InlineData(    "1.0.0+meta",     null,      0,      "1.0.0+meta")]
+		[InlineData(    "1.0.0+meta",  "2.0.0",      1,           "2.0.0")]
+		[InlineData(    "1.0.0+meta", "2.0.0+x",      1,        "2.0.0+x")]
 		public void CheckVersionDoesNotBump(string? versionStr, string? minVer, int height, string resultStr)
 		{
 			var options = new VersionCalculationOptions()

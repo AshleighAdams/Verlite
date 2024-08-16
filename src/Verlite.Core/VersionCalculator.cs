@@ -23,11 +23,8 @@ namespace Verlite
 		{
 			if (height < 1)
 				throw new ArgumentOutOfRangeException(nameof(height), height, "Must be greater than zero.");
-
 			if (options.AutoIncrement == VersionPart.None)
-			{
 				return version;
-			}
 
 			SemVer ret = version;
 			ret.Prerelease ??= options.DefaultPrereleasePhase;
@@ -49,21 +46,19 @@ namespace Verlite
 				return options.MinimumVersion;
 			if (options.AutoIncrement == VersionPart.None)
 				return lastTag;
-
-			if (lastTag.Prerelease is null)
+			if (lastTag.Prerelease is not null)
 			{
-				return options.AutoIncrement switch
-				{
-					VersionPart.Patch => new SemVer(lastTag.Major, lastTag.Minor, lastTag.Patch + 1),
-					VersionPart.Minor => new SemVer(lastTag.Major, lastTag.Minor + 1, 0),
-					VersionPart.Major => new SemVer(lastTag.Major + 1, 0, 0),
-					_ => throw new InvalidOperationException("NextVersion(): Can only bump by major, minor, or patch (default)."),
-				};
+				var ret = lastTag;
+				ret.BuildMetadata = null;
+				return ret;
 			}
-
-			var ret = lastTag;
-			ret.BuildMetadata = null;
-			return ret;
+			return options.AutoIncrement switch
+			{
+				VersionPart.Patch => new SemVer(lastTag.Major, lastTag.Minor, lastTag.Patch + 1),
+				VersionPart.Minor => new SemVer(lastTag.Major, lastTag.Minor + 1, 0),
+				VersionPart.Major => new SemVer(lastTag.Major + 1, 0, 0),
+				_ => throw new InvalidOperationException("NextVersion(): Can only bump by major, minor, or patch (default)."),
+			};
 		}
 
 		/// <summary>
