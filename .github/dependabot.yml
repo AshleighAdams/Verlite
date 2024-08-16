@@ -6,3 +6,7 @@ updates:
     interval: weekly
     time: "11:00"
   open-pull-requests-limit: 10
+  groups:
+    all:
+      patterns:
+        - "*"
