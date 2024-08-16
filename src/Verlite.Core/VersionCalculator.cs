@@ -24,13 +24,15 @@ namespace Verlite
 			if (height < 1)
 				throw new ArgumentOutOfRangeException(nameof(height), height, "Must be greater than zero.");
 
-			SemVer ret = version;
-			if (options.AutoIncrement != VersionPart.None)
+			if (options.AutoIncrement == VersionPart.None)
 			{
-				ret.Prerelease ??= options.DefaultPrereleasePhase;
-				ret.BuildMetadata = options.BuildMetadata;
-				ret.Prerelease += $".{options.PrereleaseBaseHeight + (height - 1)}";
+				return version;
 			}
+
+			SemVer ret = version;
+			ret.Prerelease ??= options.DefaultPrereleasePhase;
+			ret.BuildMetadata = options.BuildMetadata;
+			ret.Prerelease += $".{options.PrereleaseBaseHeight + (height - 1)}";
 
 			return ret;
 		}
@@ -45,12 +47,13 @@ namespace Verlite
 		{
 			if (options.MinimumVersion > lastTag.CoreVersion)
 				return options.MinimumVersion;
+			if (options.AutoIncrement == VersionPart.None)
+				return lastTag;
 
 			if (lastTag.Prerelease is null)
 			{
 				return options.AutoIncrement switch
 				{
-					VersionPart.None => lastTag,
 					VersionPart.Patch => new SemVer(lastTag.Major, lastTag.Minor, lastTag.Patch + 1),
 					VersionPart.Minor => new SemVer(lastTag.Major, lastTag.Minor + 1, 0),
 					VersionPart.Major => new SemVer(lastTag.Major + 1, 0, 0),
