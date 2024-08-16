@@ -40,6 +40,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Verlite.Core\Verlite.Core.csproj" />
-    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20574.7" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
   </ItemGroup>
 </Project>
