@@ -8,6 +8,7 @@ namespace Verlite.CLI
 		patch = default,
 		minor = 1,
 		major = 2,
+		none = 3,
 	}
 
 	internal static partial class Parsers
@@ -19,6 +20,7 @@ namespace Verlite.CLI
 				AutoIncrement.patch => VersionPart.Patch,
 				AutoIncrement.minor => VersionPart.Minor,
 				AutoIncrement.major => VersionPart.Major,
+				AutoIncrement.none  => VersionPart.None,
 				_ => throw new ArgumentException("Unknown or invalid auto increment.", nameof(self)),
 			};
 		}
@@ -40,6 +42,7 @@ namespace Verlite.CLI
 				"MAJOR" => AutoIncrement.major,
 				"MINOR" => AutoIncrement.minor,
 				"PATCH" => AutoIncrement.patch,
+				"NONE" => AutoIncrement.none,
 				_ => invalid(),
 			};
 		}

@@ -110,7 +110,7 @@ namespace Verlite
 			string stderr = await stderrTask;
 			int exitCode = await exitPromise.Task;
 
-			if (await exitPromise.Task != 0)
+			if (exitCode != 0)
 				throw new CommandException(proc.ExitCode, stdout, stderr);
 
 			return (stdout.Trim(), stderr.Trim());

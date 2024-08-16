@@ -47,6 +47,44 @@ namespace UnitTests
 			gotVersion.ToString().Should().Be(resultStr);
 		}
 
+
+		[Theory]
+		//               lastTag,     minVersion, height,      result
+		[InlineData(            null,     null,      1,           "0.1.0")]
+		[InlineData(            null,     null,     10,           "0.1.0")]
+		[InlineData(    "0.1.0-rc.1",     null,      0,      "0.1.0-rc.1")]
+		[InlineData(    "0.1.0-rc.1",     null,      1,      "0.1.0-rc.1")]
+		[InlineData(    "0.1.0-rc.1",     null,      2,      "0.1.0-rc.1")]
+		[InlineData(    "1.0.0-rc.2",  "1.0.0",      0,      "1.0.0-rc.2")]
+		[InlineData(    "1.0.0-rc.2",  "1.0.0",      1,      "1.0.0-rc.2")]
+		[InlineData(    "1.0.0-rc.2",  "1.0.0",      2,      "1.0.0-rc.2")]
+		[InlineData(    "0.1.0-rc.1",  "1.0.0",      1,           "1.0.0")]
+		[InlineData(    "0.1.0-rc.1",  "1.0.0",      3,           "1.0.0")]
+		[InlineData(         "1.0.0",     null,      0,           "1.0.0")]
+		[InlineData(         "1.0.0",  "1.0.0",      0,           "1.0.0")]
+		[InlineData(         "1.0.0",  "1.0.0",      1,           "1.0.0")]
+		[InlineData(         "1.0.0",  "2.0.0",      1,           "2.0.0")]
+		[InlineData("1.0.0-pre+meta",     null,      0,  "1.0.0-pre+meta")]
+		[InlineData(    "1.0.0+meta",     null,      0,      "1.0.0+meta")]
+		[InlineData(    "1.0.0+meta",  "2.0.0",      1,           "2.0.0")]
+		[InlineData(    "1.0.0+meta", "2.0.0+x",      1,        "2.0.0+x")]
+		public void CheckVersionDoesNotBump(string? versionStr, string? minVer, int height, string resultStr)
+		{
+			var options = new VersionCalculationOptions()
+			{
+				MinimumVersion = SemVer.Parse(minVer ?? "0.1.0"),
+				AutoIncrement = VersionPart.None
+			};
+
+			var version = versionStr is null ? (SemVer?)null : SemVer.Parse(versionStr);
+			var result = SemVer.Parse(resultStr);
+
+			var gotVersion = VersionCalculator.FromTagInfomation(version, options, height);
+
+			gotVersion.Should().Be(result);
+			gotVersion.ToString().Should().Be(resultStr);
+		}
+
 		[Fact]
 		public void BumpWithInvalidHeightThrows()
 		{
@@ -58,14 +96,18 @@ namespace UnitTests
 		}
 
 		[Theory]
+		[InlineData("1.0.0", VersionPart.None, "1.0.0")]
 		[InlineData("1.0.0", VersionPart.Patch, "1.0.1")]
 		[InlineData("1.0.0", VersionPart.Minor, "1.1.0")]
 		[InlineData("1.0.0", VersionPart.Major, "2.0.0")]
+		[InlineData("1.1.2", VersionPart.None, "1.1.2")]
 		[InlineData("1.1.2", VersionPart.Patch, "1.1.3")]
 		[InlineData("1.1.2", VersionPart.Minor, "1.2.0")]
 		[InlineData("1.1.2", VersionPart.Major, "2.0.0")]
 		[InlineData("1.1.2+abc", VersionPart.Major, "2.0.0")]
+		[InlineData("1.1.2+abc", VersionPart.None, "1.1.2+abc")]
 		[InlineData("1.0.0-alpha.1", VersionPart.Patch, "1.0.0-alpha.1")]
+		[InlineData("1.0.0-alpha.1+data.2", VersionPart.None, "1.0.0-alpha.1+data.2")]
 		[InlineData("1.0.0-alpha.1+data.2", VersionPart.Patch, "1.0.0-alpha.1")]
 		[InlineData("1.0.0-alpha.1+data.2", VersionPart.Minor, "1.0.0-alpha.1")]
 		[InlineData("1.0.0-alpha.1+data.2", VersionPart.Major, "1.0.0-alpha.1")]
@@ -81,16 +123,6 @@ namespace UnitTests
 			var actualNext = VersionCalculator.NextVersion(version, opts);
 
 			actualNext.Should().Be(expectedNext);
-		}
-
-		[Fact]
-		public void NextVersionWithInvalidAutoIncrementThrows()
-		{
-			var opts = new VersionCalculationOptions()
-			{
-				AutoIncrement = VersionPart.None,
-			};
-			Assert.Throws<InvalidOperationException>(() => VersionCalculator.NextVersion(new SemVer(1, 0, 0), opts));
 		}
 
 		[Fact]
