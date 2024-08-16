@@ -29,6 +29,7 @@ jobs:
           5.0.x
           6.x
           7.x
+          8.x
 
     - name: Setup NuGet
       run: |
@@ -83,7 +84,7 @@ jobs:
           os: ubuntu-latest
           exe: verlite
         - rid: osx-x64
-          os: macos-latest
+          os: macos-13
           exe: verlite
     steps:
     - uses: actions/checkout@v3
@@ -98,10 +99,11 @@ jobs:
           5.0.x
           6.x
           7.x
+          8.x
 
     - name: Publish
       run: |
-        dotnet publish -r "${rid}" -c Release src/Verlite.CLI/Verlite.CLI.csproj -p:PublishAot=true -o build
+        dotnet publish -r "${rid}" -c Release src/Verlite.CLI/Verlite.CLI.csproj -p:VerliteAot=true -o build
         mkdir -p artifacts
         cp "build/${exe}" "artifacts/${exe}"
         cd artifacts/
@@ -139,6 +141,7 @@ jobs:
           5.0.x
           6.x
           7.x
+          8.x
 
     - name: Setup NuGet
       run: |

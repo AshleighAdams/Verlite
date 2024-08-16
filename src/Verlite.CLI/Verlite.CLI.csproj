@@ -1,5 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup Condition="'$(VerliteAot)'=='true'">
+    <PublishAot>true</PublishAot>
+  </PropertyGroup>
+  
   <PropertyGroup Condition="'$(PublishAot)'!='true'">
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <TargetFrameworks>netcoreapp2.1;net5.0;</TargetFrameworks>
@@ -8,7 +12,7 @@
   <PropertyGroup Condition="'$(PublishAot)'=='true'">
     <TargetName>verlite</TargetName>
     <TargetExtension>elf</TargetExtension>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <SelfContained>true</SelfContained>
     <TrimMode>Link</TrimMode>
     <RootAllApplicationAssemblies>false</RootAllApplicationAssemblies>
