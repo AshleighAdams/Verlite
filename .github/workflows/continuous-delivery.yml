@@ -226,7 +226,7 @@ jobs:
         dotnet nuget enable source github
 
     - name: Download Artifacts
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4.1.7
 
     - name: Publish Nuget GitHub
       run: dotnet nuget push 'artifacts/*.nupkg' -k ${GITHUB_TOKEN} -s github --skip-duplicate
