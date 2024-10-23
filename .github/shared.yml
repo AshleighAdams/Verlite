@@ -83,7 +83,7 @@ definitions:
 
   upload-artifacts: &upload-artifacts
     name: Upload Artifacts
-    uses: actions/upload-artifact@v2
+    uses: actions/upload-artifact@v4
     if: success() || failure()
     with:
       name: artifacts
@@ -92,7 +92,7 @@ definitions:
 
   download-artifacts: &download-artifacts
     name: Download Artifacts
-    uses: actions/download-artifact@v2
+    uses: actions/download-artifact@v4
 
   publish-github: &publish-github
     name: Publish Nuget GitHub
