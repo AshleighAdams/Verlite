@@ -66,6 +66,7 @@ jobs:
       if: success() || failure()
       with:
         name: artifacts
+        if-no-files-found: error
         path: |
           artifacts/*
 
@@ -117,10 +118,10 @@ jobs:
       uses: actions/upload-artifact@v4
       if: success() || failure()
       with:
-        name: artifacts
+        name: artifacts-${{ matrix.rid }}
+        if-no-files-found: error
         path: |
           artifacts/*
-
 
   release:
     name: Release
@@ -150,25 +151,28 @@ jobs:
 
     - name: Download Artifacts
       uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+        pattern: '*'
+        merge-multiple: true
 
     - name: Create Release
       run: |
         set -x
         tag="${GITHUB_REF#refs/*/}"
-        options=()
-
-        options+=("-m" "") # leave the title and body unchanged
+        files=()
 
         IFS=$'\n';
         for asset in $(find ./artifacts -name "verlite-*.tar.gz"); do
-          options+=("-a" "$asset")
+          files+=("$asset")
         done
 
+        IFS=$'\n';
         for asset in $(find ./artifacts -name "*.nupkg"); do
-          options+=("-a" "$asset")
+          files+=("$asset")
         done
 
-        hub release edit "${options[@]}" "$tag"
+        gh release upload "$tag" "${files[@]}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

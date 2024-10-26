@@ -39,7 +39,7 @@ jobs:
     - *setup-dotnet
     - *mutation-test
     - *mutation-test-archive
-    - *upload-artifacts
+    - *mutation-test-upload-artifacts
   integration-tests:
     name: 'Integration Tests'
     needs: build

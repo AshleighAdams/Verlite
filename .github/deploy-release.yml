@@ -42,20 +42,19 @@ jobs:
       run: |
         set -x
         tag="${GITHUB_REF#refs/*/}"
-        options=()
-
-        options+=("-m" "") # leave the title and body unchanged
+        files=()
 
         IFS=$'\n';
         for asset in $(find ./artifacts -name "verlite-*.tar.gz"); do
-          options+=("-a" "$asset")
+          files+=("$asset")
         done
 
+        IFS=$'\n';
         for asset in $(find ./artifacts -name "*.nupkg"); do
-          options+=("-a" "$asset")
+          files+=("$asset")
         done
 
-        hub release edit "${options[@]}" "$tag"
+        gh release upload "$tag" "${files[@]}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

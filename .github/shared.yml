@@ -70,6 +70,16 @@ definitions:
         mv StrykerOutput ../../artifacts/StrykerOutput
       fi
 
+  mutation-test-upload-artifacts: &mutation-test-upload-artifacts
+    name: Upload Artifacts
+    uses: actions/upload-artifact@v4
+    if: success() || failure()
+    with:
+      name: artifacts-mutation-test
+      if-no-files-found: error
+      path:  |
+        artifacts/*
+
   publish-codecov: &publish-codecov
     name: Publish Codecov
     uses: codecov/codecov-action@v2
@@ -87,12 +97,17 @@ definitions:
     if: success() || failure()
     with:
       name: artifacts
+      if-no-files-found: error
       path:  |
         artifacts/*
 
   download-artifacts: &download-artifacts
     name: Download Artifacts
     uses: actions/download-artifact@v4
+    with:
+      path: artifacts
+      pattern: '*'
+      merge-multiple: true
 
   publish-github: &publish-github
     name: Publish Nuget GitHub
@@ -138,7 +153,14 @@ definitions:
       env:
         rid: ${{ matrix.rid }}
         exe: ${{ matrix.exe }}
-    - *upload-artifacts
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      if: success() || failure()
+      with:
+        name: artifacts-${{ matrix.rid }}
+        if-no-files-found: error
+        path:  |
+          artifacts/*
 
   empty: "hi" # fixes the yml parser from messing the last value up
 
