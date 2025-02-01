@@ -12,7 +12,7 @@
   <PropertyGroup Condition="'$(PublishAot)'=='true'">
     <TargetName>verlite</TargetName>
     <TargetExtension>elf</TargetExtension>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <SelfContained>true</SelfContained>
     <TrimMode>Link</TrimMode>
     <RootAllApplicationAssemblies>false</RootAllApplicationAssemblies>
