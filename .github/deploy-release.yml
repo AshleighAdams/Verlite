@@ -18,6 +18,8 @@ jobs:
     - *setup-minver
 
     - name: 'Verify Tag'
+      env:
+        DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: 1
       run: |
         [[ "v$(minver --tag-prefix=v)" == "${GITHUB_REF#refs/*/}" ]] # error out if the versions don't match
 
