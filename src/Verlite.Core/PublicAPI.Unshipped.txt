@@ -1,1 +1,3 @@
 #nullable enable
+static Verlite.SemVer.CompareMetadata(string? left, string? right) -> int
+static Verlite.SemVer.ComparePrerelease(string? left, string? right) -> int
