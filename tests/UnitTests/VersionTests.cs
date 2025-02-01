@@ -88,13 +88,6 @@ namespace UnitTests
 		}
 
 		[Fact]
-		public void CompreableBuildInfoIgnored()
-		{
-			(new SemVer(1, 0, 0, "alpha.1", "abc").CompareTo(new SemVer(1, 0, 0, "alpha.1", "def"))).Should().Be(0);
-			(new SemVer(1, 0, 0, "alpha.1", "abc").CompareTo(new SemVer(1, 0, 0, "alpha.2", "def"))).Should().Be(-1);
-		}
-
-		[Fact]
 		public void CoreVersionFunctions()
 		{
 			new SemVer(1, 0, 0, "alpha.1", "abc").CoreVersion.Should().Be(new SemVer(1, 0, 0));

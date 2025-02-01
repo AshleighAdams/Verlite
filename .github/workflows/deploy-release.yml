@@ -27,9 +27,7 @@ jobs:
         dotnet-version: |
           3.1.x
           5.0.x
-          6.x
-          7.x
-          8.x
+          9.x
 
     - name: Setup NuGet
       run: |
@@ -98,9 +96,7 @@ jobs:
         dotnet-version: |
           3.1.x
           5.0.x
-          6.x
-          7.x
-          8.x
+          9.x
 
     - name: Publish
       run: |
@@ -140,9 +136,7 @@ jobs:
         dotnet-version: |
           3.1.x
           5.0.x
-          6.x
-          7.x
-          8.x
+          9.x
 
     - name: Setup NuGet
       run: |

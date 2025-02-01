@@ -176,9 +176,16 @@ namespace Verlite
 		/// Compares the prerelease taking into account ordinals within the string.
 		/// </summary>
 		/// <returns><c>-1</c> if <paramref name="left"/> precedes <paramref name="right"/>, <c>0</c> if they have the same precedence, and <c>1</c> if <paramref name="right"/> precedes the <paramref name="left"/>.</returns>
-		public static int ComparePrerelease(string left, string right)
+		public static int ComparePrerelease(string? left, string? right)
 		{
-			int minLen = Math.Min(left.Length, right.Length);
+			if (left is null && right is null)
+				return 0;
+			if (left is null)
+				return 1;
+			if (right is null)
+				return -1;
+
+			int minLen = Math.Min(left.Length, right!.Length);
 
 			for (int i = 0; i < minLen; i++)
 			{
@@ -199,10 +206,60 @@ namespace Verlite
 				}
 
 				if (l != r)
-					return l.CompareTo(r);
+					return l < r ? -1 : 1;
 			}
 
-			return left.Length.CompareTo(right.Length);
+			return left.Length.CompareTo(right.Length) switch
+			{
+				0 => 0,
+				<0 => -1,
+				>0 => 1,
+			};
+		}
+
+		/// <summary>
+		/// Compares the meta taking into account ordinals within the string.
+		/// </summary>
+		/// <returns><c>-1</c> if <paramref name="left"/> precedes <paramref name="right"/>, <c>0</c> if they have the same precedence, and <c>1</c> if <paramref name="right"/> precedes the <paramref name="left"/>.</returns>
+		public static int CompareMetadata(string? left, string? right)
+		{
+			if (left is null && right is null)
+				return 0;
+			if (left is null)
+				return -1;
+			if (right is null)
+				return 1;
+
+			int minLen = Math.Min(left.Length, right!.Length);
+
+			for (int i = 0; i < minLen; i++)
+			{
+				char l = left[i];
+				char r = right[i];
+
+				if (char.IsDigit(l) && char.IsDigit(r))
+				{
+					var (leftOrdinal, leftOrdinalLength) = SelectOrdinals(left.Substring(i));
+					var (rightOrdinal, rightOrdinalLength) = SelectOrdinals(right.Substring(i));
+
+					int cmpOrdinal = leftOrdinal.CompareTo(rightOrdinal);
+					if (cmpOrdinal != 0)
+						return cmpOrdinal;
+
+					Debug.Assert(leftOrdinalLength == rightOrdinalLength);
+					i += leftOrdinalLength - 1;
+				}
+
+				if (l != r)
+					return l < r ? -1 : 1;
+			}
+
+			return left.Length.CompareTo(right.Length) switch
+			{
+				0 => 0,
+				< 0 => -1,
+				> 0 => 1,
+			};
 		}
 
 		/// <summary>
@@ -266,14 +323,11 @@ namespace Verlite
 			if (areDifferent(Patch, other.Patch, out compareResult))
 				return compareResult;
 
-			if (Prerelease is null && other.Prerelease is null)
-				return 0;
-			else if (other.Prerelease is null)
-				return -1;
-			else if (Prerelease is null)
-				return 1;
-			else
-				return ComparePrerelease(Prerelease, other.Prerelease);
+			compareResult = ComparePrerelease(Prerelease, other.Prerelease);
+			if (compareResult != 0)
+				return compareResult;
+
+			return CompareMetadata(BuildMetadata, other.BuildMetadata);
 		}
 
 		/// <summary>
