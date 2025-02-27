@@ -24,7 +24,7 @@ defaults:
 jobs:
   build:
     name: Build & Test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v3
       with:
@@ -37,6 +37,12 @@ jobs:
           3.1.x
           5.0.x
           9.x
+
+    - name: Install OpenSSL 1.1
+      if: runner.os == 'Linux'
+      run: |
+        wget http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.24_amd64.deb
+        sudo apt-get install ./libssl1.1_1.1.1f-1ubuntu2.24_amd64.deb -f
 
     - name: Restore
       run: dotnet restore
@@ -79,7 +85,7 @@ jobs:
           os: windows-latest
           exe: verlite.exe
         - rid: linux-x64
-          os: ubuntu-latest
+          os: ubuntu-24.04
           exe: verlite
         - rid: osx-x64
           os: macos-13
@@ -173,7 +179,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-13]
+        os: [ubuntu-24.04, windows-latest, macos-13]
     steps:
     - uses: actions/checkout@v3
       with:
@@ -186,6 +192,12 @@ jobs:
           3.1.x
           5.0.x
           9.x
+
+    - name: Install OpenSSL 1.1
+      if: runner.os == 'Linux'
+      run: |
+        wget http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.24_amd64.deb
+        sudo apt-get install ./libssl1.1_1.1.1f-1ubuntu2.24_amd64.deb -f
 
     - name: Run Integration Tests
       run: |
@@ -198,7 +210,7 @@ jobs:
     - build
     - build-standalone-binaries
     - integration-tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v3
       with:
@@ -211,6 +223,12 @@ jobs:
           3.1.x
           5.0.x
           9.x
+
+    - name: Install OpenSSL 1.1
+      if: runner.os == 'Linux'
+      run: |
+        wget http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.24_amd64.deb
+        sudo apt-get install ./libssl1.1_1.1.1f-1ubuntu2.24_amd64.deb -f
 
     - name: Setup NuGet
       run: |

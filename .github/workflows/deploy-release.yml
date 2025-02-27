@@ -15,7 +15,7 @@ defaults:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v3
       with:
@@ -28,6 +28,12 @@ jobs:
           3.1.x
           5.0.x
           9.x
+
+    - name: Install OpenSSL 1.1
+      if: runner.os == 'Linux'
+      run: |
+        wget http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.24_amd64.deb
+        sudo apt-get install ./libssl1.1_1.1.1f-1ubuntu2.24_amd64.deb -f
 
     - name: Setup NuGet
       run: |
@@ -82,7 +88,7 @@ jobs:
           os: windows-latest
           exe: verlite.exe
         - rid: linux-x64
-          os: ubuntu-latest
+          os: ubuntu-24.04
           exe: verlite
         - rid: osx-x64
           os: macos-13
@@ -123,7 +129,7 @@ jobs:
 
   release:
     name: Release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
     - build
     - build-standalone-binaries
@@ -139,6 +145,12 @@ jobs:
           3.1.x
           5.0.x
           9.x
+
+    - name: Install OpenSSL 1.1
+      if: runner.os == 'Linux'
+      run: |
+        wget http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.24_amd64.deb
+        sudo apt-get install ./libssl1.1_1.1.1f-1ubuntu2.24_amd64.deb -f
 
     - name: Setup NuGet
       run: |

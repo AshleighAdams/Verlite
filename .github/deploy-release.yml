@@ -10,10 +10,11 @@ defaults: *default-defaults
 jobs:
   build:
     name: 'Build'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
     - *checkout
     - *setup-dotnet
+    - *setup-openssl
     - *setup-nuget
     - *setup-minver
 
@@ -31,13 +32,14 @@ jobs:
   build-standalone-binaries: *build-standalone-binaries
   release:
     name: 'Release'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
     - build
     - build-standalone-binaries
     steps:
     - *checkout
     - *setup-dotnet
+    - *setup-openssl
     - *setup-nuget
     - *download-artifacts
     - name: 'Create Release'

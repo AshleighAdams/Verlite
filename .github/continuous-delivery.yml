@@ -19,10 +19,11 @@ defaults: *default-defaults
 jobs:
   build:
     name: 'Build & Test'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
     - *checkout
     - *setup-dotnet
+    - *setup-openssl
     - *restore
     - *build
     - *test
@@ -47,10 +48,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-13]
+        os: [ubuntu-24.04, windows-latest, macos-13]
     steps:
     - *checkout
     - *setup-dotnet
+    - *setup-openssl
     - *run-integration-tests
   publish:
     name: 'Publish'
@@ -58,10 +60,11 @@ jobs:
     - build
     - build-standalone-binaries
     - integration-tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
     - *checkout
     - *setup-dotnet
+    - *setup-openssl
     - *setup-nuget
     - *download-artifacts
     - *publish-github
