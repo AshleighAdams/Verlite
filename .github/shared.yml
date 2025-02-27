@@ -19,6 +19,13 @@ definitions:
         5.0.x
         9.x
 
+  setup-openssl: &setup-openssl
+    name: Install OpenSSL 1.1
+    if: runner.os == 'Linux'
+    run: |
+      wget http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.24_amd64.deb
+      sudo apt-get install ./libssl1.1_1.1.1f-1ubuntu2.24_amd64.deb -f
+
   setup-nuget: &setup-nuget
     name: Setup NuGet
     run: |
@@ -131,7 +138,7 @@ definitions:
             os: windows-latest
             exe: verlite.exe
           - rid: linux-x64
-            os: ubuntu-latest
+            os: ubuntu-24.04
             exe: verlite
           - rid: osx-x64
             os: macos-13
