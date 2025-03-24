@@ -96,6 +96,42 @@ namespace UnitTests
 		}
 
 		[Fact]
+		public void CoreVersionFunctionsWithPostTag()
+		{
+			var opts = new VersionCalculationOptions()
+			{
+				MinimumVersion = SemVer.Parse("1.0.0+rev.12"),
+			};
+			var directTag = SemVer.Parse("1.0.0+rev.500");
+			var version = VersionCalculator.FromTagInfomation(directTag, opts, 0);
+			version.Should().Be(directTag);
+		}
+
+		[Fact]
+		public void PrereleaseVersionFunctionsWithPostTag()
+		{
+			var opts = new VersionCalculationOptions()
+			{
+				MinimumVersion = SemVer.Parse("1.0.0-rc.2+rev.12"),
+			};
+			var directTag = SemVer.Parse("1.0.0-rc.2+rev.500");
+			var version = VersionCalculator.FromTagInfomation(directTag, opts, 0);
+			version.Should().Be(directTag);
+		}
+
+		[Fact]
+		public void InvalidPrereleaseVersionThrowsWithPostTag()
+		{
+			var opts = new VersionCalculationOptions()
+			{
+				MinimumVersion = SemVer.Parse("1.0.0-rc.2+rev.12"),
+			};
+
+			Assert.Throws<VersionCalculationException>(() => VersionCalculator.FromTagInfomation(SemVer.Parse("1.0.0-rc.1+rev.501"), opts, 0));
+			Assert.Throws<VersionCalculationException>(() => VersionCalculator.FromTagInfomation(SemVer.Parse("1.0.0-rc.2+rev.1"), opts, 0));
+		}
+
+		[Fact]
 		[Obsolete("Function tested is obsolete.")]
 		public void DestinedVersionFunctions()
 		{
