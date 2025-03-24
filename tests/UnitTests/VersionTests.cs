@@ -120,6 +120,19 @@ namespace UnitTests
 		}
 
 		[Fact]
+		public void LargestPostReleaseSelectedForBump()
+		{
+			var opts = new VersionCalculationOptions()
+			{
+				MinimumVersion = SemVer.Parse("1.0.0+rev.4"),
+				AutoIncrement = VersionPart.None,
+			};
+			var directTag = SemVer.Parse("1.0.0+rev.6");
+			var version = VersionCalculator.FromTagInfomation(directTag, opts, 3);
+			version.Should().Be(directTag);
+		}
+
+		[Fact]
 		public void InvalidPrereleaseVersionThrowsWithPostTag()
 		{
 			var opts = new VersionCalculationOptions()
