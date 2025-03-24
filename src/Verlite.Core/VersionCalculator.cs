@@ -42,8 +42,19 @@ namespace Verlite
 		/// <returns>The next version calculated from the input.</returns>
 		public static SemVer NextVersion(SemVer lastTag, VersionCalculationOptions options)
 		{
-			if (options.MinimumVersion > lastTag.CoreVersion)
+			SemVer targetVersion;
+			if (options.MinimumVersion.Prerelease is not null)
+				targetVersion = lastTag;
+			else
+			{
+				targetVersion = lastTag;
+				if (targetVersion.CoreVersion > targetVersion) // allow prereleases to be considered a core release
+					targetVersion = targetVersion.CoreVersion;
+			}
+
+			if (targetVersion < options.MinimumVersion)
 				return options.MinimumVersion;
+
 			if (options.AutoIncrement == VersionPart.None)
 				return lastTag;
 			if (lastTag.Prerelease is not null)
@@ -84,18 +95,18 @@ namespace Verlite
 				// min: 1.0.0+rev.2, tag: 1.0.0+rev.1: not allowed
 				// min: 1.0.0-rc.2+rev.2, tag: 1.0.0-rc.1+rev.3: not allowed
 				// min: 1.0.0-rc.2+rev.2, tag: 1.0.0-rc.2+rev.1: not allowed
-				SemVer targetVersion, minVersion;
+				SemVer targetVersion;
 				if (options.MinimumVersion.Prerelease is not null)
-					(targetVersion, minVersion) = (lastTag.Value, options.MinimumVersion);
+					targetVersion = lastTag.Value;
 				else
 				{
-					(targetVersion, minVersion) = (lastTag.Value, options.MinimumVersion);
+					targetVersion = lastTag.Value;
 					if (targetVersion.CoreVersion > targetVersion) // allow prereleases to be considered a core release
 						targetVersion = targetVersion.CoreVersion;
 				}
 
 				if (targetVersion < options.MinimumVersion)
-					throw new VersionCalculationException($"Direct tag ({lastTag.Value}) destined version ({lastTag.Value.CoreVersion}) is below the minimum version ({options.MinimumVersion}).");
+					throw new VersionCalculationException($"Direct tag ({lastTag.Value}) destined version ({targetVersion}) is below the minimum version ({options.MinimumVersion}).");
 
 				var directVersion = lastTag.Value;
 
