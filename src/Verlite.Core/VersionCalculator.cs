@@ -77,7 +77,24 @@ namespace Verlite
 			bool directTag = height == 0;
 			if (directTag)
 			{
-				if (options.MinimumVersion > lastTag.Value.CoreVersion)
+				// check the tag is valid:
+				// min: 1.0.0, tag: 1.0.0-rc.1: allowed
+				// min: 1.0.0-rc.2, tag: 1.0.0-rc.1: not allowed
+				// min: 1.0.0+rev.2, tag: 1.0.0+rev.3: allowed
+				// min: 1.0.0+rev.2, tag: 1.0.0+rev.1: not allowed
+				// min: 1.0.0-rc.2+rev.2, tag: 1.0.0-rc.1+rev.3: not allowed
+				// min: 1.0.0-rc.2+rev.2, tag: 1.0.0-rc.2+rev.1: not allowed
+				SemVer targetVersion, minVersion;
+				if (options.MinimumVersion.Prerelease is not null)
+					(targetVersion, minVersion) = (lastTag.Value, options.MinimumVersion);
+				else
+				{
+					(targetVersion, minVersion) = (lastTag.Value, options.MinimumVersion);
+					if (targetVersion.CoreVersion > targetVersion) // allow prereleases to be considered a core release
+						targetVersion = targetVersion.CoreVersion;
+				}
+
+				if (targetVersion < options.MinimumVersion)
 					throw new VersionCalculationException($"Direct tag ({lastTag.Value}) destined version ({lastTag.Value.CoreVersion}) is below the minimum version ({options.MinimumVersion}).");
 
 				var directVersion = lastTag.Value;
