@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.13.9" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.14.8" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.11.0" />
   </ItemGroup>
 
