@@ -70,6 +70,11 @@ namespace Verlite
 		/// <returns>A task containing the commit, or <c>null</c> if there is none.</returns>
 		Task<Commit?> GetHead();
 		/// <summary>
+		/// Check if a repo has changes.
+		/// </summary>
+		/// <returns>true if there are changes.</returns>
+		Task<bool> GetDirty();
+		/// <summary>
 		/// Parse a revision to find the commit it points to.
 		/// </summary>
 		/// <param name="revision">The revision to parse.</param>

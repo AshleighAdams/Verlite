@@ -9,7 +9,8 @@ namespace Verlite.CLI
 			SemVer version,
 			Commit? commit,
 			TaggedVersion? lastTag,
-			int? height)
+			int? height,
+			bool? dirty)
 		{
 			var sb = new StringBuilder();
 			sb.AppendLine("{");
@@ -21,6 +22,7 @@ namespace Verlite.CLI
 			sb.AppendString(1, "prerelease", version.Prerelease);
 			sb.AppendString(1, "meta", version.BuildMetadata);
 			sb.AppendInteger(1, "height", height);
+			sb.AppendBool(1, "dirty", dirty);
 			if (lastTag is null)
 			{
 				sb.AppendLine("\t" + @"""lastTag"": null");
@@ -56,6 +58,21 @@ namespace Verlite.CLI
 		private static void AppendInteger(this StringBuilder sb, int indentation, string key, int? value, bool final = false)
 		{
 			var valuestr = value is null ? "null" : value.Value.ToString(CultureInfo.InvariantCulture);
+			sb.Append(new string('\t', indentation));
+			sb.Append($@"""{key}"": ""{valuestr}""");
+			if (final)
+				sb.AppendLine("");
+			else
+				sb.AppendLine(",");
+		}
+		private static void AppendBool(this StringBuilder sb, int indentation, string key, bool? value, bool final = false)
+		{
+			var valuestr = value switch
+			{
+				null => "null",
+				true => "true",
+				false=> "false",
+			};
 			sb.Append(new string('\t', indentation));
 			sb.Append($@"""{key}"": ""{valuestr}""");
 			if (final)

@@ -29,6 +29,7 @@ This file has been modified by Ashleigh Adams and adapted for Verlite -->
     <CompilerVisibleProperty Include="VerliteBuildMetadata" />
     <CompilerVisibleProperty Include="VerliteCommit" />
     <CompilerVisibleProperty Include="VerliteHeight" />
+    <CompilerVisibleProperty Include="VerliteDirty" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -59,6 +60,7 @@ This file has been modified by Ashleigh Adams and adapted for Verlite -->
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteFilterTags=$(VerliteFilterTags)" />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteRemote=$(VerliteRemote)" />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteEnableShadowRepo=$(VerliteEnableShadowRepo)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [input] VerliteDirtyVersionBump=$(VerliteDirtyVersionBump)" />
 
     <Verlite.MsBuild.GetVersionTask ProjectDirectory="$(MSBuildProjectDirectory)"
                                     BuildMetadata="$(VerliteBuildMetadata)"
@@ -72,7 +74,8 @@ This file has been modified by Ashleigh Adams and adapted for Verlite -->
                                     AutoIncrement="$(VerliteAutoIncrement)"
                                     FilterTags="$(VerliteFilterTags)"
                                     Remote="$(VerliteRemote)"
-                                    EnableShadowRepo="$(VerliteEnableShadowRepo)">
+                                    EnableShadowRepo="$(VerliteEnableShadowRepo)"
+                                    DirtyVersionBump="$(VerliteDirtyVersionBump)">
       <Output TaskParameter="Version" PropertyName="VerliteVersion" />
       <Output TaskParameter="VersionMajor" PropertyName="VerliteMajor" />
       <Output TaskParameter="VersionMinor" PropertyName="VerliteMinor" />
@@ -81,6 +84,7 @@ This file has been modified by Ashleigh Adams and adapted for Verlite -->
       <Output TaskParameter="VersionBuildMetadata" PropertyName="VerliteBuildMetadata" />
       <Output TaskParameter="Commit" PropertyName="VerliteCommit" />
       <Output TaskParameter="Height" PropertyName="VerliteHeight" />
+      <Output TaskParameter="Dirty" PropertyName="VerliteDirty" />
     </Verlite.MsBuild.GetVersionTask>
 
     <PropertyGroup>
@@ -97,6 +101,8 @@ This file has been modified by Ashleigh Adams and adapted for Verlite -->
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] VerlitePrerelease=$(VerlitePrerelease)" />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] VerliteBuildMetadata=$(VerliteBuildMetadata)" />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] VerliteCommit=$(VerliteCommit)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] VerliteHeight=$(VerliteHeight)" />
+    <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] VerliteDirty=$(VerliteDirty)" />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] AssemblyVersion=$(AssemblyVersion)" />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] FileVersion=$(FileVersion)" />
     <Message Importance="$(VerliteDetailed)" Text="Verlite: [output] PackageVersion=$(PackageVersion)" />

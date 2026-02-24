@@ -602,5 +602,42 @@ namespace UnitTests
 
 			await Assert.ThrowsAsync<UnknownGitException>(() => repo.GetParents(new Commit(tree)));
 		}
+
+		[Fact]
+		public async Task NewUnstagedFilesAreDirty()
+		{
+			await TestRepo.Git("init");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "first");
+
+			await File.WriteAllTextAsync(Path.Combine(TestRepo.RootPath, "readme.md"), "# Hello");
+
+			using var repo = await TestRepo.MakeInspector();
+			(await repo.GetDirty()).Should().BeTrue();
+		}
+
+		[Fact]
+		public async Task IgnoredFilesNotDirty()
+		{
+			await TestRepo.Git("init");
+			await File.WriteAllTextAsync(Path.Combine(TestRepo.RootPath, ".gitignore"), "readme.md");
+			await TestRepo.Git("add", ".gitignore");
+			await TestRepo.Git("commit", "-m", "first");
+			await File.WriteAllTextAsync(Path.Combine(TestRepo.RootPath, "readme.md"), "# Hello");
+
+			using var repo = await TestRepo.MakeInspector();
+			(await repo.GetDirty()).Should().BeFalse();
+		}
+
+		[Fact]
+		public async Task StagedChangesDirty()
+		{
+			await TestRepo.Git("init");
+			await TestRepo.Git("commit", "--allow-empty", "-m", "first");
+			await File.WriteAllTextAsync(Path.Combine(TestRepo.RootPath, "readme.md"), "# Hello");
+			await TestRepo.Git("add", "readme.md");
+
+			using var repo = await TestRepo.MakeInspector();
+			(await repo.GetDirty()).Should().BeTrue();
+		}
 	}
 }
