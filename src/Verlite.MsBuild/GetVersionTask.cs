@@ -22,6 +22,7 @@ namespace Verlite.MsBuild
 		public string FilterTags { get; set; } = "";
 		public string Remote { get; set; } = "";
 		public bool EnableShadowRepo { get; set; }
+		public bool DirtyVersionBump { get; set; }
 
 		public override bool Execute()
 		{
@@ -106,11 +107,14 @@ namespace Verlite.MsBuild
 
 				if (!string.IsNullOrWhiteSpace(Remote))
 					opts.Remote = Remote;
+
+				opts.DirtyVersionBump = DirtyVersionBump;
 			}
 
 			var version = opts.VersionOverride ?? new SemVer();
 			var commitString = string.Empty;
 			var heightString = string.Empty;
+			var dirtyString = string.Empty;
 			if (opts.VersionOverride is null)
 			{
 				using var repo = await GitRepoInspector.FromPath(ProjectDirectory, opts.Remote, log, commandRunner);
@@ -122,10 +126,12 @@ namespace Verlite.MsBuild
 
 				var commit = await repo.GetHead();
 				commitString = commit?.Id ?? string.Empty;
+				dirtyString = await repo.GetDirty() ? "true" : "false";
 
 				int? height;
 				(version, _, height) = await VersionCalculator.FromRepository3(repo, commit, opts, log, tagFilter);
 				heightString = height?.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
+
 			}
 
 			Version = version.ToString();
@@ -136,6 +142,7 @@ namespace Verlite.MsBuild
 			VersionBuildMetadata = version.BuildMetadata ?? string.Empty;
 			Commit = commitString;
 			Height = heightString;
+			Dirty = dirtyString;
 			
 			return true;
 		}
@@ -147,5 +154,6 @@ namespace Verlite.MsBuild
 		[Output] public string VersionBuildMetadata { get; private set; } = "";
 		[Output] public string Commit { get; private set; } = "";
 		[Output] public string Height { get; private set; } = "";
+		[Output] public string Dirty { get; private set; } = "";
 	}
 }

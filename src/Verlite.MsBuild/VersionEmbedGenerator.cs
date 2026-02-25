@@ -25,6 +25,7 @@ namespace Verlite
 			context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.VerliteBuildMetadata", out var meta);
 			context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.VerliteCommit", out var commit);
 			context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.VerliteHeight", out var height);
+			context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.VerliteDirty", out var dirty);
 
 			version ??= string.Empty;
 			major ??= string.Empty;
@@ -34,6 +35,14 @@ namespace Verlite
 			meta ??= string.Empty;
 			commit ??= string.Empty;
 			height ??= string.Empty;
+			dirty ??= string.Empty;
+
+			var normalizedDirty = dirty.Trim() switch
+			{
+				"true" or "1" => "true",
+				"false" or "0" => "false",
+				_ => "false",
+			};
 
 			var coreVersion = string.IsNullOrEmpty(version) ? string.Empty : $"{major}.{minor}.{patch}";
 
@@ -57,6 +66,7 @@ namespace Verlite
 		public const string BuildMetadata = ""{meta}"";
 		public const string Commit = ""{commit}"";
 		public const string Height = ""{height}"";
+		public const bool Dirty = {normalizedDirty};
 	}}
 }}
 ";

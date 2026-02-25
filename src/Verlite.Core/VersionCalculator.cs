@@ -1,7 +1,6 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Verlite
@@ -175,12 +174,13 @@ namespace Verlite
 			if (options.VersionOverride.HasValue)
 				return (options.VersionOverride.Value, null, null);
 
-			var (height, lastTag) = await HeightCalculator.FromRepository2(
+			var (height, lastTag) = await HeightCalculator.FromRepository3(
 				repo: repo,
 				commit: commit,
 				tagPrefix: options.TagPrefix,
 				queryRemoteTags: options.QueryRemoteTags,
 				fetchTags: options.QueryRemoteTags,
+				dirtyBumpsHeight: options.DirtyVersionBump,
 				log: log,
 				tagFilter: tagFilter);
 

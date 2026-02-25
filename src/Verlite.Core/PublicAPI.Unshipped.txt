@@ -1,3 +1,7 @@
 #nullable enable
+static Verlite.HeightCalculator.FromRepository3(Verlite.IRepoInspector! repo, Verlite.Commit? commit, string! tagPrefix, bool queryRemoteTags, bool fetchTags, bool dirtyBumpsHeight, Verlite.ILogger? log, Verlite.ITagFilter? tagFilter) -> System.Threading.Tasks.Task<(int height, Verlite.TaggedVersion?)>!
 static Verlite.SemVer.CompareMetadata(string? left, string? right) -> int
 static Verlite.SemVer.ComparePrerelease(string? left, string? right) -> int
+Verlite.GitRepoInspector.GetDirty() -> System.Threading.Tasks.Task<bool>!
+Verlite.VersionCalculationOptions.DirtyVersionBump.get -> bool
+Verlite.VersionCalculationOptions.DirtyVersionBump.set -> void

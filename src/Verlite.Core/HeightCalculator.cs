@@ -69,12 +69,46 @@ namespace Verlite
 		/// <param name="log">The log to output verbose diagnostics to.</param>
 		/// <param name="tagFilter">A filter to test tags against. A value of <c>null</c> means do not filter.</param>
 		/// <returns>A task containing the height, and, if found, the tagged version.</returns>
-		public static async Task<(int height, TaggedVersion?)> FromRepository2(
+		[Obsolete("Use FromRepository3")]
+		public static Task<(int height, TaggedVersion?)> FromRepository2(
 			IRepoInspector repo,
 			Commit? commit,
 			string tagPrefix,
 			bool queryRemoteTags,
 			bool fetchTags,
+			ILogger? log,
+			ITagFilter? tagFilter)
+		{
+			return FromRepository3(
+				repo,
+				commit,
+				tagPrefix,
+				queryRemoteTags,
+				fetchTags,
+				dirtyBumpsHeight: false,
+				log,
+				tagFilter);
+		}
+
+		/// <summary>
+		/// Calculate the height from a repository by walking, from the head, the primary parents until a version tag is found.
+		/// </summary>
+		/// <param name="repo">The repo to walk.</param>
+		/// <param name="commit">The commit for which to find a version.</param>
+		/// <param name="tagPrefix">What version tags are prefixed with.</param>
+		/// <param name="queryRemoteTags">Whether to query local or local and remote tags.</param>
+		/// <param name="fetchTags">Whether to fetch tags we don't yet have locally.</param>
+		/// <param name="dirtyBumpsHeight">Should a dirty repo bump the height.</param>
+		/// <param name="log">The log to output verbose diagnostics to.</param>
+		/// <param name="tagFilter">A filter to test tags against. A value of <c>null</c> means do not filter.</param>
+		/// <returns>A task containing the height, and, if found, the tagged version.</returns>
+		public static async Task<(int height, TaggedVersion?)> FromRepository3(
+			IRepoInspector repo,
+			Commit? commit,
+			string tagPrefix,
+			bool queryRemoteTags,
+			bool fetchTags,
+			bool dirtyBumpsHeight,
 			ILogger? log,
 			ITagFilter? tagFilter)
 		{
@@ -108,10 +142,18 @@ namespace Verlite
 				}
 			}
 
-			return candidates
+			var (height, taggedVersion) = candidates
 				.OrderByDescending(x => x.version is not null)
 				.ThenByDescending(x => x.version?.Version)
 				.First();
+
+			if (dirtyBumpsHeight && await repo.GetDirty())
+			{
+				log?.Normal($"Local repo is dirty, bumping height from {height} to {height + 1}.");
+				height += 1;
+			}
+
+			return (height, taggedVersion);
 		}
 
 		/// <summary>

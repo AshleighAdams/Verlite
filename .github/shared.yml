@@ -141,7 +141,7 @@ definitions:
             os: ubuntu-24.04
             exe: verlite
           - rid: osx-x64
-            os: macos-13
+            os: macos-14-large
             exe: verlite
     steps:
     - *checkout

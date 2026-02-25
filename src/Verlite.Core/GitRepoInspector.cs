@@ -464,5 +464,19 @@ namespace Verlite
 			PrimaryCatfile?.Dispose();
 			ShadowRepo?.Dispose();
 		}
+
+		/// <inheritdoc/>
+		public async Task<bool> GetDirty()
+		{
+			try
+			{
+				var (stdout, stderr) = await Git("status", "--porcelain");
+				return !string.IsNullOrWhiteSpace(stdout);
+			}
+			catch (CommandException)
+			{
+				return true;
+			}
+		}
 	}
 }

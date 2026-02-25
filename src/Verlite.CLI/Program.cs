@@ -93,6 +93,10 @@ namespace Verlite.CLI
 					aliases: new[] { "--enable-shadow-repo" },
 					getDefaultValue: () => false,
 					description: "Use a shadow repro for shallow clones using filter branches to fetch only commits."),
+				new Option<bool>(
+					aliases: new[] { "--dirty-version-bump" },
+					getDefaultValue: () => false,
+					description: "Any non-ignored modifications to the repo result in a version bump."),
 				new Option<AutoIncrement>(
 					aliases: new[] { "--auto-increment", "-a" },
 					isDefault: true,
@@ -123,6 +127,7 @@ namespace Verlite.CLI
 			bool autoFetch,
 			bool enableLightweightTags,
 			bool enableShadowRepo,
+			bool dirtyVersionBump,
 			AutoIncrement autoIncrement,
 			string filterTags,
 			string remote,
@@ -148,12 +153,14 @@ namespace Verlite.CLI
 					QueryRemoteTags = autoFetch,
 					AutoIncrement = autoIncrement.Value(),
 					Remote = remote,
+					DirtyVersionBump = dirtyVersionBump,
 				};
 
 				var version = opts.VersionOverride ?? new SemVer();
 				Commit? commit = null;
 				TaggedVersion? lastTag = null;
 				int? height = null;
+				bool? dirty = null;
 
 				if (opts.VersionOverride is null)
 				{
@@ -169,6 +176,7 @@ namespace Verlite.CLI
 					commit = string.IsNullOrEmpty(revision)
 						? await repo.GetHead()
 						: await repo.ParseRevision(revision);
+					dirty = await repo.GetDirty();
 
 					(version, lastTag, height) = await VersionCalculator.FromRepository3(repo, commit, opts, log, tagFilter);
 				}
@@ -182,7 +190,7 @@ namespace Verlite.CLI
 					Show.prerelease => version.Prerelease?.ToString(CultureInfo.InvariantCulture) ?? string.Empty,
 					Show.metadata => version.BuildMetadata?.ToString(CultureInfo.InvariantCulture) ?? string.Empty,
 					Show.height => height?.ToString(CultureInfo.InvariantCulture) ?? string.Empty,
-					Show.json => JsonOutput.GenerateOutput(version, commit, lastTag, height),
+					Show.json => JsonOutput.GenerateOutput(version, commit, lastTag, height, dirty),
 					_ => throw new NotImplementedException(),
 				};
 

@@ -42,6 +42,10 @@ namespace Verlite
 		/// </summary>
 		public VersionPart AutoIncrement { get; set; } = VersionPart.Patch;
 		/// <summary>
+		/// Whether the version should be bumped if the repo is considered to be dirty.
+		/// </summary>
+		public bool DirtyVersionBump { get; set; }
+		/// <summary>
 		/// The remote endpoint to use when fetching tags and commits.
 		/// </summary>
 		public string Remote { get; set; } = "origin";

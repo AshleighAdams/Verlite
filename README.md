@@ -63,6 +63,7 @@ See [docs/VersionCalculation.md](docs/VersionCalculation.md) for further reading
 | The remote endpoint to use when fetching tags and commits.          | -r, --remote, VerliteRemote                                      | origin  |
 | Generate version strings and embed them via a source generator.     | VerliteEmbedVersion                                              | true    |
 | Use a shadow repo (partial, only commits) to read commit history.   | --enable-shadow-repo, VerliteEnableShadowRepo                    | false   |
+| Any change except for ignored files causes a version bump.          | --dirty-version-bump- VerliteDirtyVersionBump                    | false   |
 
 ## Comparison with GitVersion
 
@@ -247,6 +248,7 @@ namespace Verlite
 		public const string BuildMetadata;
 		public const string Commit;
 		public const string Height;
+		public const bool Dirty;
 	}
 }
 ```

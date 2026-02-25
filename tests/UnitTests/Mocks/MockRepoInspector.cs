@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 
 namespace UnitTests
 {
@@ -77,6 +78,7 @@ namespace UnitTests
 		}
 	}
 
+	[SuppressMessage("Naming", "CA1721:Property names should not match get methods")]
 	public sealed class MockRepoInspector : IRepoInspector
 	{
 		private class InternalCommit
@@ -173,6 +175,12 @@ namespace UnitTests
 					tags.Add(tag);
 
 			return new TagContainer(tags);
+		}
+
+		public bool Dirty { get; set; }
+		public Task<bool> GetDirty()
+		{
+			return Task.FromResult(Dirty);
 		}
 	}
 }
